@@ -42,10 +42,13 @@ path[] substitution(Chair t, int N){
 	return B;
 }
 
+int N=8;
+real lambda=2;    // expansion constant
+real w=0.5/lambda^(N-1);    // scaled linewidth
 
 Chair t;
-B=substitution(t, N);
-draw(B);
+path[] B=substitution(t, N);
+draw(B, linewidth(w));
 
 //path theBox=box((0,0),(1,2));
 //clip(theBox);
