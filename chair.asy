@@ -3,6 +3,20 @@ int pix=300;
 size(pix,IgnoreAspect);
 settings.render=16;
 
+struct Chair {
+
+	path[] protoTile=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
+
+	path[][] rule(path[] B){
+		path[] b1=scale(1/2)*B;
+		path[] b2=shift(1/2,1/2)*b1;
+		path[] b3=shift(2,0)*rotate(90)*b1;
+		path[] b4=shift(0,2)*rotate(270)*b1;
+		path[][] A={b1,b2,b3,b4};
+		return A;
+	}
+}
+
 path[] colour(path[] B){
 	for(int k=0; k < B.length; k+=4){
 		fill(B[k],white);
@@ -13,34 +27,24 @@ path[] colour(path[] B){
 	return B;
 }
 
-path[] substitute(path[] B){
-	path[] b1;
-	path[] b2;
-	path[] b3;
-	path[] b4;
-
-	b1=scale(1/2)*B;
-	b2=shift(1/2,1/2)*b1;
-	b3=shift(2,0)*rotate(90)*b1;
-	b4=shift(0,2)*rotate(270)*b1;
-	return b1^^b2^^b3^^b4;
+path[] substitute(path[][] A){
+	return A[0]^^A[1]^^A[2]^^A[3];
 }
 
-path[] substitution(path[] B, int N){
-	path[] b0=B;
+path[] substitution(Chair t, int N){
 	int i=0;
+	path[] B=t.protoTile;
 	while(i < N){
-		B=substitute(B);
+		B=substitute(t.rule(B));
 		i+=1;
 	}
 	B=colour(B);
 	return B;
 }
 
-int N=5;
-path[] B=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
-B=substitution(B, N);
+Chair t;
+B=substitution(t, N);
 draw(B);
 
 //path theBox=box((0,0),(1,2));
