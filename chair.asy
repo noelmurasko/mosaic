@@ -3,6 +3,8 @@ int pix=300;
 size(pix,IgnoreAspect);
 settings.render=16;
 
+real lambda=2;    // expansion constant
+
 path[] colour(path[] B){
 	for(int k=0; k < B.length; k+=4){
 		fill(B[k],white);
@@ -19,7 +21,7 @@ path[] substitute(path[] B){
 	path[] b3;
 	path[] b4;
 
-	b1=scale(1/2)*B;
+	b1=scale(1/lambda)*B;
 	b2=shift(1/2,1/2)*b1;
 	b3=shift(2,0)*rotate(90)*b1;
 	b4=shift(0,2)*rotate(270)*b1;
@@ -40,8 +42,10 @@ path[] substitution(path[] B, int N){
 int N=5;
 path[] B=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
+real w=0.5/lambda^(N-1);    // scaled linewidth
+
 B=substitution(B, N);
-draw(B);
+draw(B, linewidth(w));
 
 //path theBox=box((0,0),(1,2));
 //clip(theBox);
