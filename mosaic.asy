@@ -23,7 +23,7 @@ path[] colour(path[] B, pen[] colours){
 }
 
 // An array of colours provided
-path[] subTile(path[] pTile, path[][] rule(path[] B), pen[] colours, int N){
+path[] subTile(path[] pTile, path[][] rule(path[] B), pen[] colours, int N=1){
 	path[] B=pTile;
 	int i=0;
 	while(i < N){
@@ -37,14 +37,14 @@ path[] subTile(path[] pTile, path[][] rule(path[] B), pen[] colours, int N){
 }
 
 // A single colour provided
-path[] subTile(path[] pTile, path[][] rule(path[] B), pen colour, int N){
+path[] subTile(path[] pTile, path[][] rule(path[] B), pen colour, int N=1){
 	pen[] colours={colour};
 	colours.cyclic=true;
 	return subTile(pTile,rule,colours,N);
 }
 
 // No colours provided
-path[] subTile(path[] pTile, path[][] rule(path[] B), int N){
+path[] subTile(path[] pTile, path[][] rule(path[] B), int N=1){
 	pen[] colours;
 	return subTile(pTile,rule,colours,N);
 }
