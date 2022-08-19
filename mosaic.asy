@@ -37,10 +37,16 @@ path[] subTile(path[] pTile, path[] rule(path[]), pen[] colours, int N=1){
 
 // An array of colours provided
 path[] subTile(path[] pTile, path[][] rule(path[]), pen[] colours, int N=1){
-	path[] newRule(path[] B) {
-		return join(rule(B));
+	path[] B=pTile;
+	int i=0;
+	while(i < N){
+		B=join(rule(B));
+		i+=1;
 	}
-	return subTile(pTile,newRule,colours,N);
+	if(colours.length > 0){
+		B=colour(B,colours);
+	}
+	return B;
 }
 
 // A single colour provided
