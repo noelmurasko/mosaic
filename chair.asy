@@ -3,16 +3,6 @@ int pix=300;
 size(pix,IgnoreAspect);
 settings.render=16;
 
-path[] colour(path[] B){
-	for(int k=0; k < B.length; k+=4){
-		fill(B[k],white);
-		fill(B[k+1],orange);
-		fill(B[k+2],blue);
-		fill(B[k+3],blue);
-	}
-	return B;
-}
-
 path[] join(path[][] A){
 	path[] B=A[0];
 	for(int k=1; k < A.length; ++k){
@@ -21,14 +11,64 @@ path[] join(path[][] A){
 	return B;
 }
 
-path[] substitution(path[] protoTile, path[][] rule(path[] B), int N){
-	path[] B=protoTile;
+// An array of colours provided
+path[] colour(path[] B, pen[] colours){
+	bool coloursNotCyclic=!colours.cyclic;
+	
+	if(coloursNotCyclic)
+		colours.cyclic=true;
+
+	for(int k=0; k < B.length; ++k)
+		fill(B[k],colours[k]);
+
+	if(coloursNotCyclic)
+		colours.cyclic=false;
+
+	return B;
+}
+
+// A single colour provided
+path[] colour(path[] B, pen colour){
+	for(int k=0; k < B.length; ++k){
+		fill(B[k],colour);
+	}
+	return B;
+}
+
+// An array of colours provided
+path[] subTile(path[] pTile, path[][] rule(path[] B), pen[] colours, int N){
+	path[] B=pTile;
 	int i=0;
 	while(i < N){
 		B=join(rule(B));
 		i+=1;
 	}
-	B=colour(B);
+	if(colours.length > 0){
+		B=colour(B,colours);
+	}
+	return B;
+}
+
+// A single colour provided
+path[] subTile(path[] pTile, path[][] rule(path[] B), pen colour, int N){
+	path[] B=pTile;
+	int i=0;
+	while(i < N){
+		B=join(rule(B));
+		i+=1;
+	}
+	B=colour(B,colour);
+	return B;
+}
+
+// No colours provided
+path[] subTile(path[] pTile, path[][] rule(path[] B), int N){
+	path[] B=pTile;
+	int i=0;
+	while(i < N){
+		B=join(rule(B));
+		i+=1;
+	}
 	return B;
 }
 
@@ -46,9 +86,9 @@ path[][] rule(path[] B){
 		path[][] A={b1,b2,b3,b4};
 		return A;
 }
+pen[] colours={white,orange,blue,blue};
 
-
-path[] B=substitution(protoTile, rule, N);
+path[] B=subTile(protoTile, rule, colours, N);
 draw(B, linewidth(w));
 
 //path theBox=box((0,0),(1,2));
