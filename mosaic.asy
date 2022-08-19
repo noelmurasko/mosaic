@@ -5,7 +5,6 @@ path[] join(path[][] A){
 	return B;
 }
 
-// An array of colours provided
 path[] colour(path[] B, pen[] colours){
 	bool coloursNotCyclic=!colours.cyclic;
 
@@ -21,17 +20,21 @@ path[] colour(path[] B, pen[] colours){
 	return B;
 }
 
-// An array of colours provided
-path[] subTile(path[] pTile, path[] rule(path[]), pen[] colours, int N=1){
-	path[] B=pTile;
+//Colouring is currently kinda broken.
+path[][] subTile(path[][] pTile, path[][][] rule(path[][]), pen[] colours, int N=1, int colourTile=0){
+	path[][] B=pTile;
+	int pTiles=pTile.length;
 	int i=0;
 	while(i < N){
-		B=rule(B);
+		path[][][] super=rule(B);
+		for(int k=0; k < pTiles; ++k)
+			B[k]=join(super[k]);
 		i+=1;
 	}
-	if(colours.length > 0){
-		B=colour(B,colours);
-	}
+
+	//if(colours.length > 0){
+	//	B[colourTile]=colour(B[colourTile],colours);
+	//}
 	return B;
 }
 
@@ -41,6 +44,20 @@ path[] subTile(path[] pTile, path[][] rule(path[]), pen[] colours, int N=1){
 	int i=0;
 	while(i < N){
 		B=join(rule(B));
+		i+=1;
+	}
+	if(colours.length > 0){
+		B=colour(B,colours);
+	}
+	return B;
+}
+
+// An array of colours provided
+path[] subTile(path[] pTile, path[] rule(path[]), pen[] colours, int N=1){
+	path[] B=pTile;
+	int i=0;
+	while(i < N){
+		B=rule(B);
 		i+=1;
 	}
 	if(colours.length > 0){
