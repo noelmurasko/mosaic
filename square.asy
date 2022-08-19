@@ -23,6 +23,3 @@ pen[] colours={purple,yellow};
 
 path[] B=subTile(protoTile, rule, colours, N);
 draw(B, linewidth(w));
-
-//path theBox=box((0,0),(1,2));
-//clip(theBox);
