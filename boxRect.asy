@@ -1,5 +1,5 @@
 settings.outformat="pdf";
-int pix=2000;
+int pix=300;
 size(pix);
 settings.render=16;
 
@@ -25,17 +25,17 @@ path[][][] rule(path[][] B){
 	path[][][] A={{S1,S2,S3},{R1,R2,R3,R4,R5}};
 	return A;
 }
-pen[] colours={white};
+pen[] colours={red,orange,yellow,green,blue,purple};
 
 
 
 
-int N=1;
+int N=2;
 real lambda=2;    // expansion constant
 real w=0.5/lambda^(N-1);    // scaled linewidth
-path[] square1=subTile(protoTiles, rule, colours, N)[1];
-
-
+path[] B=subTile(protoTiles, rule, colours, N)[0];
+draw(B);
+/*
 path[] square0=protoTiles[0];
 draw(shift(1/2,0)*square0);
 
@@ -57,7 +57,7 @@ while(m < M) {
 }
 
 draw(box((-1/2,-2),(15/2,3/2)),invisible);
-
+*/
 
 
 

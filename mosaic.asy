@@ -32,9 +32,9 @@ path[][] subTile(path[][] pTile, path[][][] rule(path[][]), pen[] colours, int N
 		i+=1;
 	}
 
-	//if(colours.length > 0){
-	//	B[colourTile]=colour(B[colourTile],colours);
-	//}
+	if(colours.length > 0){
+		B[colourTile]=colour(B[colourTile],colours);
+	}
 	return B;
 }
 
