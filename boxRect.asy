@@ -1,24 +1,16 @@
-settings.outformat="png";
+settings.outformat="pdf";
 int pix=300;
 size(pix);
 settings.render=16;
 
 import mosaic;
 
-
-Tile squareTile;
-squareTile.border=box((0,0),(1,1));
-pen[] col={blue};
-squareTile.id=col;
-
-Tile rectTile;
-rectTile.border=box((0,0),(2,1));
-pen[] col={red};
-rectTile.id=col;
+Tile squareTile=Tile(box((0,0),(1,1)),blue);
+Tile rectTile=Tile(box((0,0),(2,1)),red);
 
 Tile[] protoTiles={squareTile,rectTile};
 
-Tile[][] rule(Tile[] B){
+Tile[][] rule(Tile[] B) {
 	Tile B0=scale(1/2)*B[0];
 	Tile B1=scale(1/2)*B[1];
 
@@ -35,31 +27,19 @@ Tile[][] rule(Tile[] B){
 	return A;
 }
 
-int N=4;
+int N=3;
 real lambda=2;    // expansion constant
 real w=0.5/lambda^(N-1);    // scaled linewidth
+
 Tile[] B=subTile(protoTiles, rule, N);
+
+// We can draw and colour both tiles
+// but they can't be on top of each other before we
+// do so.
+B[0]=shift(.5,0)*B[0];
+B[0].fillColour();
 draw(B[0].border);
-/*
-path[] square0=protoTiles[0];
-draw(shift(1/2,0)*square0);
 
-path[] rect0=protoTiles[1];
-draw(shift(0,-3/2)*rect0);
-
-int M=3;
-int m=1;
-real ns=3;
-real nr=5/2;
-while(m < M) {
-	real lambda=2;    // expansion constant
-	real w=0.5/lambda^(m-1);    // scaled linewidth
-	draw(shift(ns,0)*subTile(protoTiles, rule, colours, m)[0],linewidth(w));
-	draw(shift(nr,-3/2)*subTile(protoTiles, rule, colours, m)[1],linewidth(w));
-	m+=1;
-	ns+=5/2;
-	nr+=5/2;
-}
-
-draw(box((-1/2,-2),(15/2,3/2)),invisible);
-*/
+B[1]=shift(0,-1.5)*B[1];
+B[1].fillColour();
+draw(B[1].border);
