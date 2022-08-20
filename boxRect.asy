@@ -1,4 +1,4 @@
-settings.outformat="pdf";
+settings.outformat="png";
 int pix=300;
 size(pix);
 settings.render=16;
@@ -6,35 +6,40 @@ settings.render=16;
 import mosaic;
 
 
+Tile squareTile;
+squareTile.border=box((0,0),(1,1));
+pen[] col={blue};
+squareTile.id=col;
 
-path[][] protoTiles={box((0,0),(1,1)),box((0,0),(2,1))};
+Tile rectTile;
+rectTile.border=box((0,0),(2,1));
+pen[] col={red};
+rectTile.id=col;
 
-path[][][] rule(path[][] B){
-	path[] B0=scale(1/2)*B[0];
-	path[] B1=scale(1/2)*B[1];
+Tile[] protoTiles={squareTile,rectTile};
 
-	path[] S1=shift(0,1/2)*B0;
-	path[] S2=shift(1/2,1/2)*B0;
-	path[] S3=B1;
+Tile[][] rule(Tile[] B){
+	Tile B0=scale(1/2)*B[0];
+	Tile B1=scale(1/2)*B[1];
 
-	path[] R1=shift(1/2,0)*rotate(90)*B1;
-	path[] R2=shift(1/2,0)*B1;
-	path[] R3=shift(1,1/2)*B1;
-	path[] R4=shift(1/2,1/2)*B0;
-	path[] R5=shift(3/2,0)*B0;
-	path[][][] A={{S1,S2,S3},{R1,R2,R3,R4,R5}};
+	Tile S1=shift(0,1/2)*B0;
+	Tile S2=shift(1/2,1/2)*B0;
+	Tile S3=B1;
+
+	Tile R1=shift(1/2,0)*rotate(90)*B1;
+	Tile R2=shift(1/2,0)*B1;
+	Tile R3=shift(1,1/2)*B1;
+	Tile R4=shift(1/2,1/2)*B0;
+	Tile R5=shift(3/2,0)*B0;
+	Tile[][] A={{S1,S2,S3},{R1,R2,R3,R4,R5}};
 	return A;
 }
-pen[] colours={red,orange,yellow,green,blue,purple};
 
-
-
-
-int N=2;
+int N=4;
 real lambda=2;    // expansion constant
 real w=0.5/lambda^(N-1);    // scaled linewidth
-path[] B=subTile(protoTiles, rule, colours, N)[0];
-draw(B);
+Tile[] B=subTile(protoTiles, rule, N);
+draw(B[0].border);
 /*
 path[] square0=protoTiles[0];
 draw(shift(1/2,0)*square0);
@@ -58,6 +63,3 @@ while(m < M) {
 
 draw(box((-1/2,-2),(15/2,3/2)),invisible);
 */
-
-
-
