@@ -38,8 +38,8 @@ Tile[] B=subTile(protoTiles, rule, N);
 // do so.
 B[0]=shift(.5,0)*B[0];
 B[0].fillColour();
-draw(B[0].border);
+draw(B[0],linewidth(w));
 
 B[1]=shift(0,-1.5)*B[1];
 B[1].fillColour();
-draw(B[1].border);
+draw(B[1],linewidth(w));

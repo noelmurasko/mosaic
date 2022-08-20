@@ -24,4 +24,4 @@ real w=0.5/lambda^(N-1);    // scaled linewidth
 Tile B=subTile(protoTile, rule, N);
 B.fillColour();
 
-draw(B.border, linewidth(w));
+draw(B, linewidth(w));
