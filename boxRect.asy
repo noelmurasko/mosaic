@@ -5,8 +5,10 @@ settings.render=16;
 
 import mosaic;
 
-Tile squareTile=Tile(box((0,0),(1,1)),blue);
-Tile rectTile=Tile(box((0,0),(2,1)),red);
+pen[] colours={red,orange,yellow};
+Tile squareTile=Tile(box((0,0),(1,1)),colours);
+pen[] colours={red,orange,yellowb,green,blue};
+Tile rectTile=Tile(box((0,0),(2,1)),colours);
 
 Tile[] protoTiles={squareTile,rectTile};
 

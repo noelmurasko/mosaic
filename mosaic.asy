@@ -23,17 +23,9 @@ struct Tile {
 void draw(picture pic=currentpicture, Label L="", Tile B, align align=NoAlign,
 	        pen p=currentpen, arrowbar arrow=None, arrowbar bar=None,
 	        margin margin=NoMargin, Label legend="", marker marker=nomarker) {
-
 	picture pict=pic;
-	Label lab=Label(L);
-	align ali=align;
-	arrowbar arr=arrow;
-	arrowbar ba=bar;
-	margin mar=margin;
-	Label leg=legend;
-	marker mark=marker;
 	for(int k=0; k < B.border.length; ++k)
-		draw(B.border[k], p=p,pic=pict, L=L, align=align, arrow=arrow,
+		draw(B.border[k], p=p, pic=pict, L=L, align=align, arrow=arrow,
 			   bar, margin, legend, marker);
 }
 
