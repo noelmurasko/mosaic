@@ -5,15 +5,24 @@ struct Tile {
 	string name="";
 	transform transform=identity;
 
-	void operator init(path[] border, pen colour=invisible) {
+	void operator init(path[] border, string name="") {
+    pen[] colArray={invisible};
+    this.border=border;
+    this.colour=colArray;
+    this.name=name;
+  }
+
+	void operator init(path[] border, pen colour, string name="") {
     pen[] colArray={colour};
     this.border=border;
     this.colour=colArray;
+    this.name=name;
   }
 
-  void operator init(path[] border, pen[] colour={invisible}) {
+  void operator init(path[] border, pen[] colour, string name="") {
     this.border=border;
     this.colour=colour;
+    this.name=name;
   }
 
   void operator init(Tile B, pen colour=invisible) {
@@ -86,7 +95,8 @@ Tile[] subTile(Tile[] pTile, Tile[][] rule(Tile[]), int N=1) {
 	return B;
 }
 
-Tile subTile(Tile pTile, Tile[] rule(Tile, int), int N=1) {
+Tile subTile(Tile pTile, Tile[] rule(Tile, real), int N=1) {
+	assert(point(pTile.border[0],0)==(0,0)); // WE MUST START AT (0,0)
 	Tile[] B={pTile};
 	int i=1;
 	real lambda=1/2; //scaling factor
@@ -99,7 +109,7 @@ Tile subTile(Tile pTile, Tile[] rule(Tile, int), int N=1) {
 			pair start=point(Bk.border[0],0);
 			pair correction=(1-lambda)*start;
 			Bk=shift(correction)*scale(lambda)*Bk;
-			Tile[] rBk=rule(Bk,i);
+			Tile[] rBk=rule(Bk,lambda^i);
 			B.insert(k ... rBk);
 			k+=rBk.length;
 			M+=rBk.length-1;
