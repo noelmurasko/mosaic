@@ -16,6 +16,13 @@ struct Tile {
     this.colour=colour;
   }
 
+  void operator init(Tile B, pen colour=invisible) {
+    pen[] colArray={colour};
+    this.border=B.border;
+    this.colour=colArray;
+    this.name=B.name;
+  }
+
 	void fillColour() {
 		for(int k=0; k < border.length; ++k)
 			fill(border[k],colour[k]);
@@ -84,17 +91,15 @@ Tile subTile(Tile pTile, Tile[] rule(Tile, int), int N=1) {
 	int i=1;
 	real lambda=1/2; //scaling factor
 	while(i <= N){
-		write();
 		int M=B.length;
 		int k=0;
 		while(k < M){
-			write();
 			Tile Bk=B[k];
-			write(Bk.border);
 			B.delete(k);
+			pair start=point(Bk.border[0],0);
+			pair correction=(1-lambda)*start;
+			Bk=shift(correction)*scale(lambda)*Bk;
 			Tile[] rBk=rule(Bk,i);
-			for(int j=0; j<rBk.length; ++j)
-				write(rBk[j].border);
 			B.insert(k ... rBk);
 			k+=rBk.length;
 			M+=rBk.length-1;

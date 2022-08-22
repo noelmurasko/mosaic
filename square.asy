@@ -8,31 +8,23 @@ import mosaic;
 pen[] colours={};
 Tile protoTile=Tile(box((0,0),(1,1)),colours);
 protoTile.name="square";
+assert(point(protoTile.border[0],0)==(0,0)); // WE MUST START AT (0,0)
 
 Tile[] rule(Tile B,int i) {
 	Tile[] A;
 	real lambda=1/2;
 	if(B.name == "square"){
-		pair start=point(B.border[0],0);
-		pair correction=(1-lambda)*start;
-		Tile b1=shift(correction)*scale(lambda)*B;
-		Tile b2=shift(lambda^i,0)*b1;
-	  Tile b3=shift(lambda^i,lambda^i)*b1;
-		Tile b4=shift(0,lambda^i)*b1;
-		pen[] g={green};
-		pen[] b={blue};
-		b1.colour=g;
-		b2.colour=b;
-		b3.colour=g;
-		b4.colour=b;
-		int s=1;
+		Tile b1=Tile(B,green);
+		Tile b2=Tile(shift(lambda^i,0)*b1,blue);
+	  Tile b3=Tile(shift(lambda^i,lambda^i)*b1,green);
+		Tile b4=Tile(shift(0,lambda^i)*b1,blue);
 		Tile[] As={b1,b2,b3,b4};
 		A=As;
 	}
 	return A;
 }
 
-int N=1;
+int N=5;
 real lambda=2;    // expansion constant
 real w=0.5/lambda^(N-1);    // scaled linewidth
 
