@@ -1,6 +1,6 @@
 settings.outformat="pdf";
 int pix=300;
-size(pix,IgnoreAspect);
+size(pix);
 settings.render=16;
 
 import mosaic;
@@ -18,16 +18,15 @@ Tile[] rule(Tile B) {
 	Tile b4=reflect((0,1/sqrt(5)),(1,1/sqrt(5)))*b2;
 	Tile b5=shift(4/sqrt(5),2/sqrt(5))*rotate(-90)*b1;
 	Tile[] A={b1,b2,b3,b4,b5};
-	
+
 	//Transform back to original position
-	for(int i=0; i < A.length; ++i) {
+	for(int i=0; i < A.length; ++i)
 		A[i]=reflect((0,0),(0,1))*rotate(90+aTan(2))*A[i];
-	}
-	
+
 	return A;
 }
 
-int N=5;
+int N=7;
 real lambda=sqrt(5);    // expansion constant
 real w=0.5/lambda^(N-1);    // scaled linewidth
 
