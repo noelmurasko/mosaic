@@ -26,7 +26,7 @@ Tile[] rule(Tile B) {
 	return A;
 }
 
-int N=7;
+int N=3;
 real lambda=sqrt(5);    // expansion constant
 real w=0.5/lambda^(N-1);    // scaled linewidth
 

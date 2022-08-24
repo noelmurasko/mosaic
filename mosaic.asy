@@ -36,6 +36,14 @@ Tile operator *(transform tran, Tile tile1) {
 	return tile2;
 }
 
+Tile[] operator *(transform tran, Tile[] tiles1) {
+	int L=tiles1.length;
+	Tile[] tiles2=new Tile[L];
+	for(int i=0; i < L; ++i)
+		tiles2[i]=tran*tiles1[i];
+	return tiles2;
+}
+
 Tile operator ^^(Tile tile1, Tile tile2) {
 	Tile tile3;
 	tile3.border=tile1.border^^tile2.border;
@@ -52,9 +60,10 @@ Tile join(Tile[] A) {
 }
 
 Tile[] join(Tile[][] A) {
-	Tile[] B;
-	for(int i=0; i < A.length; ++i)
-		B.push(join(A[i]));
+	int L=A.length;
+	Tile[] B=new Tile[L];
+	for(int i=0; i < L; ++i)
+		B[i]=join(A[i]);
 	return B;
 }
 
