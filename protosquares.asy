@@ -7,7 +7,7 @@ import mosaic;
 
 pen[] colours={purple,yellow};
 
-void loop(path s, transform T, transform[] Ts, int n, int nmax) {
+void loop(Tile s, transform T, transform[] Ts, int n, int nmax) {
 	if(n < nmax) {
 		int imax=Ts.length;
 		for(int i; i < imax; ++i) {
@@ -35,6 +35,8 @@ loop(s,identity,T,n,nmax);
 */
 
 path s=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
+
+Tile s=Tile(s,red);
 transform T1=scale(1/2);
 transform T2=shift(1/2,1/2)*T1;
 transform T3=shift(2,0)*rotate(90)*T1;
