@@ -29,24 +29,45 @@ Tile operator *(Tile t1, Tile t2) {
 	return t3;
 }
 
-void subTile(Tile[] Ts, Tile T, int nmax, int n=0) {
+void loop(Tile[] Ts, Tile T, int nmax, int n, Tile[] tiles) {
 	if(n < nmax) {
 		int imax=Ts.length;
 		for(int i; i < imax; ++i) {
 			Tile Ti=Ts[i];
 			if(Ti.domain == T.range)
-				subTile(Ts, T*Ts[i], nmax, n+1);
+				loop(Ts, T*Ts[i], nmax, n+1,tiles);
 		}
 	} else {
-		filldraw(T.tran*T.range,T.colour,black+linewidth(0.5/(2^n)));
+		tiles.push(T);
+		//filldraw(T.tran*T.range,T.colour,black+linewidth(0.5/(2^n)));
 	}
 }
 
-void subTile(Tile[] Ts, path T, int nmax, int n=0) {
+Tile[] subTile(Tile[] Ts, path T, int nmax, int n=0) {
+	Tile[] tiles;
 	if(n < nmax)
-		subTile(Ts,Tile(T),nmax,n);
+		loop(Ts,Tile(T),nmax,n,tiles);
+	return tiles;
 }
+
+void drawTiling(picture pic=currentpicture, Tile[] T, align align=NoAlign,
+	        pen p=currentpen) {
+	picture pict=pic;
+	for(int k=0; k < T.length; ++k)
+		filldraw(T[k].tran*T[k].range, T[k].colour, p, pic=pict);
+}
+
+
 /*
+void draw(picture pic=currentpicture, Label L="", Tile[] T, align align=NoAlign,
+	        pen p=currentpen, arrowbar arrow=None, arrowbar bar=None,
+	        margin margin=NoMargin, Label legend="", marker marker=nomarker) {
+	picture pict=pic;
+	for(int k=0; k < T.length; ++k)
+		draw(T[k].tran*T[k].range, p=p, pic=pict, L=L, align=align, arrow=arrow,
+			   bar, margin, legend, marker);
+}
+
 struct Tile {
 	path[] border;
 	pen[] colour;

@@ -20,4 +20,5 @@ Tile R3=Tile(shift(1/2,1/2)*shift(1/2,0)*scale(1/2),rect,red);
 
 int nmax=5;
 Tile[] Ts={C1,C2,C3,C4,C5,R1,R2,R3};
-subTile(Ts,rect,nmax);
+Tile[] b=subTile(Ts,chair,nmax);
+drawTiling(b);
