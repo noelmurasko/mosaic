@@ -1,4 +1,41 @@
 struct Tile {
+	transform tran;
+	path domain;
+	path range;
+	pen colour;
+
+	void operator init(transform tran, path domain, path range, pen colour=invisible) {
+    this.tran=tran;
+    this.domain=domain;
+    // Note: tiles obtained through multiplication don't have domains...
+    this.range=range;
+    this.colour=colour;
+  }
+}
+
+Tile operator *(Tile t1, Tile t2) {
+	Tile t3;
+	t3.tran=t1.tran*t2.tran;
+	t3.range=t2.range;
+	t3.colour=t2.colour;
+	return t3;
+}
+
+void loop(Tile[] Ts, Tile T, int n, int nmax) {
+	if(n < nmax) {
+		int imax=Ts.length;
+		for(int i; i < imax; ++i) {
+			Tile Ti=Ts[i];
+			if(Ti.domain == T.range)
+				loop(Ts, T*Ts[i], n+1, nmax);
+		}
+	} else {
+		filldraw(T.tran*T.range,T.colour,black+linewidth(0.5/(2^n)));
+	}
+}
+
+/*
+struct Tile {
 	path[] border;
 	pen[] colour;
 	transform T;
@@ -88,3 +125,4 @@ Tile subTile(Tile pTile, Tile[] rule(Tile), int N=1) {
 	}
 	return B;
 }
+*/
