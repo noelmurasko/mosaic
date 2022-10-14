@@ -4,9 +4,17 @@ struct Tile {
 	path range;
 	pen colour;
 
-	void operator init(transform tran, path domain, path range, pen colour=invisible) {
+	void operator init(transform tran=identity, path domain, path range, pen colour=invisible) {
     this.tran=tran;
     this.domain=domain;
+    // Note: tiles obtained through multiplication don't have domains...
+    this.range=range;
+    this.colour=colour;
+  }
+
+  void operator init(transform tran=identity, path range, pen colour=invisible) {
+    this.tran=tran;
+    this.domain=range;
     // Note: tiles obtained through multiplication don't have domains...
     this.range=range;
     this.colour=colour;
@@ -21,19 +29,23 @@ Tile operator *(Tile t1, Tile t2) {
 	return t3;
 }
 
-void loop(Tile[] Ts, Tile T, int n, int nmax) {
+void subTile(Tile[] Ts, Tile T, int nmax, int n=0) {
 	if(n < nmax) {
 		int imax=Ts.length;
 		for(int i; i < imax; ++i) {
 			Tile Ti=Ts[i];
 			if(Ti.domain == T.range)
-				loop(Ts, T*Ts[i], n+1, nmax);
+				subTile(Ts, T*Ts[i], nmax, n+1);
 		}
 	} else {
 		filldraw(T.tran*T.range,T.colour,black+linewidth(0.5/(2^n)));
 	}
 }
 
+void subTile(Tile[] Ts, path T, int nmax, int n=0) {
+	if(n < nmax)
+		subTile(Ts,Tile(T),nmax,n);
+}
 /*
 struct Tile {
 	path[] border;

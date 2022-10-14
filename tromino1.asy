@@ -4,38 +4,6 @@ size(pix);
 settings.render=16;
 
 import mosaic;
-import gargoyle;
-
-
-//Tile protoTile=Tile(box((0,0),(1,1)),colours);
-/*
-path s=box((0,0),(1,1));
-transform T1=scale(1/2);
-transform T2=shift(1/2,0)*T1;
-transform T3=shift(1/2,1/2)*T1;
-transform T4=shift(0,1/2)*T1;
-
-int nmax=3;
-int n=0;
-transform[] T={T1,T2,T3,T4};
-transform[] subTiling={};
-loop(s,identity,T,n,nmax);
-
-path c=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
-
-Tile T1=Tile(scale(1/2),c);
-Tile T2=Tile(shift(1/2,1/2)*scale(1/2),c);
-Tile T3=Tile(shift(2,0)*rotate(90)*scale(1/2),c);
-Tile T4=Tile(shift(0,2)*rotate(270)*scale(1/2),c);
-
-int n=2;
-Tile[] Ts={T1,T2,T3,T4};
-
-Tiling T=Tiling(Ts);
-transform[] subTiling={};
-
-loop(T,Tile(identity,c),0,n);
-*/
 
 path chair=(0,0)--(2,0)--(2,2)--(1,2)--(1,1)--(0,1)--cycle;
 path rect=(0,0)--(3,0)--(3,1)--(0,1)--cycle;
