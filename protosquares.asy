@@ -7,18 +7,37 @@ import mosaic;
 
 struct Tile2 {
 	transform tran;
+	path border;
+
+	void operator init(transform tran, path border) {
+    this.tran=tran;
+    this.border=border;
+  }
+}
+
+struct Border {
+	path border;
 	string name;
 
-	void operator init(transform tran, string name) {
-    this.tran=tran;
+	void operator init(path border, string name) {
+    this.border=border;
     this.name=name;
   }
 }
 
+struct Tiling {
+	Tile2[] tiles;
+
+	void operator init(Tile2[] tiles) {
+    this.tiles=tiles;
+  }
+}
+
+
 Tile2 operator *(Tile2 t1, Tile2 t2) {
 	Tile2 t3;
 	t3.tran=t1.tran*t2.tran;
-	t3.name=t2.name;
+	t3.border=t2.border;
 	return t3;
 }
 
@@ -27,15 +46,16 @@ Tile operator *(Tile2 t1, Tile t2) {
 	return t3;
 }
 
-void loop(Tile s, Tile2 T, Tile2[] Ts, int n, int nmax) {
+void loop(Tiling Ts, Tile2 T, int n, int nmax) {
 	if(n < nmax) {
-		int imax=Ts.length;
+		Tile2[] tiles=Ts.tiles;
+		int imax=tiles.length;
 		for(int i; i < imax; ++i) {
-			Tile2 TTi=T*Ts[i];
-			loop(s, TTi, Ts, n+1, nmax);
+			Tile2 TTi=T*tiles[i];
+			loop(Ts, TTi, n+1, nmax);
 		}
 	} else {
-		draw(T*s);
+		draw(T.tran*T.border);
 	}
 }
 
@@ -54,20 +74,18 @@ transform[] subTiling={};
 loop(s,identity,T,n,nmax);
 */
 
-path s=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
+path c=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
-Tile s=Tile(s,red);
-s.name="square";
 
-string name="chair";
+Tile2 T1=Tile2(scale(1/2),c);
+Tile2 T2=Tile2(shift(1/2,1/2)*scale(1/2),c);
+Tile2 T3=Tile2(shift(2,0)*rotate(90)*scale(1/2),c);
+Tile2 T4=Tile2(shift(0,2)*rotate(270)*scale(1/2),c);
 
-Tile2 T1=Tile2(scale(1/2),name);
-Tile2 T2=Tile2(shift(1/2,1/2)*scale(1/2),name);
-Tile2 T3=Tile2(shift(2,0)*rotate(90)*scale(1/2),name);
-Tile2 T4=Tile2(shift(0,2)*rotate(270)*scale(1/2),name);
+int n=2;
+Tile2[] Ts={T1,T2,T3,T4};
 
-int n=3;
-Tile2[] T={T1,T2,T3,T4};
+Tiling T=Tiling(Ts);
 transform[] subTiling={};
 
-loop(s,Tile2(identity,name),T,0,n);
+loop(T,Tile2(identity,c),0,n);
