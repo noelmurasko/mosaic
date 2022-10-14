@@ -1,29 +1,24 @@
+
 settings.outformat="pdf";
 int pix=300;
 size(pix);
 settings.render=16;
 
 import mosaic;
+import gargoyle;
 
 struct Tile2 {
 	transform tran;
 	path domain;
 	path range;
+	pen colour;
 
-	void operator init(transform tran, path domain, path range) {
+	void operator init(transform tran, path domain, path range, pen colour=invisible) {
     this.tran=tran;
     this.domain=domain;
+    // Note: tiles obtained through multiplication don't have domains...
     this.range=range;
-  }
-}
-
-struct Border {
-	path border;
-	string name;
-
-	void operator init(path border, string name) {
-    this.border=border;
-    this.name=name;
+    this.colour=colour;
   }
 }
 
@@ -39,6 +34,7 @@ Tile2 operator *(Tile2 t1, Tile2 t2) {
 	Tile2 t3;
 	t3.tran=t1.tran*t2.tran;
 	t3.range=t2.range;
+	t3.colour=t2.colour;
 	return t3;
 }
 
@@ -56,7 +52,7 @@ void loop(Tile2[] Ts, Tile2 T, int n, int nmax) {
 				loop(Ts, T*Ts[i], n+1, nmax);
 		}
 	} else {
-		draw(T.tran*T.range);
+		filldraw(T.tran*T.range,T.colour,black);
 	}
 }
 
@@ -94,17 +90,17 @@ path chair=(0,0)--(2,0)--(2,2)--(1,2)--(1,1)--(0,1)--cycle;
 path rect=(0,0)--(3,0)--(3,1)--(0,1)--cycle;
 
 // chair transforms
-Tile2 C1=Tile2(shift(1,1)*rotate(180)*scale(1/2),chair,chair);
-Tile2 C2=Tile2(shift(1,1/2)*scale(1/2),chair,chair);
-Tile2 C3=Tile2(shift(1,1)*shift(1,1)*rotate(180)*scale(1/2),chair,chair);
-Tile2 C4=Tile2(shift(2,0)*scale(1/2),rect,chair);
-Tile2 C5=Tile2(shift(1,1)*rotate(180)*scale(1/2),rect,chair);
+Tile2 C1=Tile2(shift(1,1)*rotate(180)*scale(1/2),chair,chair,yellow);
+Tile2 C2=Tile2(shift(1,1/2)*scale(1/2),chair,chair,yellow);
+Tile2 C3=Tile2(shift(1,1)*shift(1,1)*rotate(180)*scale(1/2),chair,chair,yellow);
+Tile2 C4=Tile2(shift(2,0)*scale(1/2),rect,chair,yellow);
+Tile2 C5=Tile2(shift(1,1)*rotate(180)*scale(1/2),rect,chair,yellow);
 
 // rectangle transforms
-Tile2 R1=Tile2(shift(1/2,0)*scale(1/2),chair,rect);
-Tile2 R2=Tile2(shift(1/2,0)*scale(1/2),rect,rect);
-Tile2 R3=Tile2(shift(1/2,1/2)*shift(1/2,0)*scale(1/2),rect,rect);
+Tile2 R1=Tile2(shift(1/2,0)*scale(1/2),chair,rect,red);
+Tile2 R2=Tile2(shift(1/2,0)*scale(1/2),rect,rect,red);
+Tile2 R3=Tile2(shift(1/2,1/2)*shift(1/2,0)*scale(1/2),rect,rect,red);
 
-int n=2;
+int n=3;
 Tile2[] Ts={C1,C2,C3,C4,C5,R1,R2,R3};
-loop(Ts,Tile2(identity,rect,rect),0,n);
+loop(Ts,Tile2(identity,chair,chair),0,n);
