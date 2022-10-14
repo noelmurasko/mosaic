@@ -1,6 +1,8 @@
 struct Tile {
 	path[] border;
 	pen[] colour;
+	transform T;
+	string name;
 	colour.cyclic=true;
 
 	void operator init(path[] border, pen colour) {
