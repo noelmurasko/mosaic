@@ -1,4 +1,3 @@
-
 settings.outformat="pdf";
 int pix=300;
 size(pix);
@@ -52,7 +51,7 @@ void loop(Tile2[] Ts, Tile2 T, int n, int nmax) {
 				loop(Ts, T*Ts[i], n+1, nmax);
 		}
 	} else {
-		filldraw(T.tran*T.range,T.colour,black);
+		filldraw(T.tran*T.range,T.colour,black+linewidth(0.5/(2^n)));
 	}
 }
 
@@ -101,6 +100,6 @@ Tile2 R1=Tile2(shift(1/2,0)*scale(1/2),chair,rect,red);
 Tile2 R2=Tile2(shift(1/2,0)*scale(1/2),rect,rect,red);
 Tile2 R3=Tile2(shift(1/2,1/2)*shift(1/2,0)*scale(1/2),rect,rect,red);
 
-int n=3;
+int n=5;
 Tile2[] Ts={C1,C2,C3,C4,C5,R1,R2,R3};
 loop(Ts,Tile2(identity,chair,chair),0,n);
