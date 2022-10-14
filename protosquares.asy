@@ -7,11 +7,13 @@ import mosaic;
 
 struct Tile2 {
 	transform tran;
-	path border;
+	path domain;
+	path range;
 
-	void operator init(transform tran, path border) {
+	void operator init(transform tran, path domain, path range) {
     this.tran=tran;
-    this.border=border;
+    this.domain=domain;
+    this.range=range;
   }
 }
 
@@ -33,11 +35,10 @@ struct Tiling {
   }
 }
 
-
 Tile2 operator *(Tile2 t1, Tile2 t2) {
 	Tile2 t3;
 	t3.tran=t1.tran*t2.tran;
-	t3.border=t2.border;
+	t3.range=t2.range;
 	return t3;
 }
 
@@ -46,16 +47,16 @@ Tile operator *(Tile2 t1, Tile t2) {
 	return t3;
 }
 
-void loop(Tiling Ts, Tile2 T, int n, int nmax) {
+void loop(Tile2[] Ts, Tile2 T, int n, int nmax) {
 	if(n < nmax) {
-		Tile2[] tiles=Ts.tiles;
-		int imax=tiles.length;
+		int imax=Ts.length;
 		for(int i; i < imax; ++i) {
-			Tile2 TTi=T*tiles[i];
-			loop(Ts, TTi, n+1, nmax);
+			Tile2 Ti=Ts[i];
+			if(Ti.domain == T.range)
+				loop(Ts, T*Ts[i], n+1, nmax);
 		}
 	} else {
-		draw(T.tran*T.border);
+		draw(T.tran*T.range);
 	}
 }
 
@@ -72,10 +73,8 @@ int n=0;
 transform[] T={T1,T2,T3,T4};
 transform[] subTiling={};
 loop(s,identity,T,n,nmax);
-*/
 
 path c=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
-
 
 Tile2 T1=Tile2(scale(1/2),c);
 Tile2 T2=Tile2(shift(1/2,1/2)*scale(1/2),c);
@@ -89,3 +88,23 @@ Tiling T=Tiling(Ts);
 transform[] subTiling={};
 
 loop(T,Tile2(identity,c),0,n);
+*/
+
+path chair=(0,0)--(2,0)--(2,2)--(1,2)--(1,1)--(0,1)--cycle;
+path rect=(0,0)--(3,0)--(3,1)--(0,1)--cycle;
+
+// chair transforms
+Tile2 C1=Tile2(shift(1,1)*rotate(180)*scale(1/2),chair,chair);
+Tile2 C2=Tile2(shift(1,1/2)*scale(1/2),chair,chair);
+Tile2 C3=Tile2(shift(1,1)*shift(1,1)*rotate(180)*scale(1/2),chair,chair);
+Tile2 C4=Tile2(shift(2,0)*scale(1/2),rect,chair);
+Tile2 C5=Tile2(shift(1,1)*rotate(180)*scale(1/2),rect,chair);
+
+// rectangle transforms
+Tile2 R1=Tile2(shift(1/2,0)*scale(1/2),chair,rect);
+Tile2 R2=Tile2(shift(1/2,0)*scale(1/2),rect,rect);
+Tile2 R3=Tile2(shift(1/2,1/2)*shift(1/2,0)*scale(1/2),rect,rect);
+
+int n=2;
+Tile2[] Ts={C1,C2,C3,C4,C5,R1,R2,R3};
+loop(Ts,Tile2(identity,rect,rect),0,n);
