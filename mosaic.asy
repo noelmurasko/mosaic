@@ -15,7 +15,6 @@ struct Tile {
   void operator init(transform tran=identity, path range, pen colour=invisible) {
     this.tran=tran;
     this.domain=range;
-    // Note: tiles obtained through multiplication don't have domains...
     this.range=range;
     this.colour=colour;
   }
