@@ -6,6 +6,7 @@ settings.render=16;
 import mosaic;
 
 pen[] colours={paleyellow,paleyellow,heavyred,paleblue,brown};
+
 path[] pinwheel=(0,0)--(2,0)--(2,1)--cycle;
 
 Tile protoTile=Tile(pinwheel,colours);

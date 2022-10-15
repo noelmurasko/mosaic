@@ -1,21 +1,64 @@
+struct Region {
+	path[] domain;
+
+	void operator init(path[] domain) {
+    this.domain=domain;
+  }
+
+  void operator init(path domain) {
+  	path[] domain={domain};
+    this.domain=domain;
+  }
+}
+
+bool operator ==(Region D1, Region D2) {
+	path[] P1=D1.domain;
+	int L=P1.length;
+	path[] P2=D2.domain;
+	if(P2.length != L) {
+		return false;
+	} else {
+		for(int i=0; i < L; ++i) {
+			if(P1[i] != P2[i])
+				return false;
+		}
+	}
+	return true;
+}
+
 struct Tile {
 	transform tran;
-	path domain;
-	path range;
+	Region domain;
+	Region range;
 	pen colour;
 
 	void operator init(transform tran=identity, path domain, path range, pen colour=invisible) {
     this.tran=tran;
-    this.domain=domain;
+    this.domain=Region(domain);
     // Note: tiles obtained through multiplication don't have domains...
-    this.range=range;
+    this.range=Region(range);
     this.colour=colour;
   }
 
   void operator init(transform tran=identity, path range, pen colour=invisible) {
     this.tran=tran;
-    this.domain=range;
-    this.range=range;
+    this.domain=Region(range);
+    this.range=this.domain;
+    this.colour=colour;
+  }
+
+  void operator init(transform tran=identity, path[] domain, path[] range, pen colour=invisible) {
+    this.tran=tran;
+    this.domain=Region(domain);
+    // Note: tiles obtained through multiplication don't have domains...
+    this.range=Region(range);
+    this.colour=colour;
+  }
+
+  void operator init(transform tran=identity, path[] range, pen colour=invisible) {
+    this.tran=tran;
+    this.domain=Region(range);
+    this.range=this.domain;
     this.colour=colour;
   }
 }
@@ -48,9 +91,16 @@ Tile[] subTile(Tile[] Ts, path T, int nmax, int n=0) {
 	return tiles;
 }
 
+Tile[] subTile(Tile[] Ts, path[] T, int nmax, int n=0) {
+	Tile[] tiles;
+	if(n < nmax)
+		loop(Ts,Tile(T),nmax,n,tiles);
+	return tiles;
+}
+
 void drawTiling(picture pic=currentpicture, Tile[] T,
 	        pen p=currentpen) {
 	picture pict=pic;
 	for(int k=0; k < T.length; ++k)
-		filldraw(T[k].tran*T[k].range, T[k].colour, p, pic=pict);
+		filldraw(T[k].tran*T[k].range.domain, T[k].colour, p, pic=pict);
 }
