@@ -1,27 +1,16 @@
 settings.outformat="pdf";
-int pix=300;
-size(pix,IgnoreAspect);
-settings.render=16;
+size(300);
 
 import mosaic;
 
-pen[] colours={purple,yellow};
-Tile protoTile=Tile(box((0,0),(1,1)),colours);
+path square=box((0,0),(1,1));
 
-Tile[] rule(Tile B) {
-	Tile b1=scale(1/2)*B;
-	Tile b2=shift(1/2,0)*b1;
-  Tile b3=shift(1/2,1/2)*b1;
-	Tile b4=shift(0,1/2)*b1;
-	Tile[] A={b1,b2,b3,b4};
-	return A;
-}
+Tile S1=Tile(scale(1/2),square,white);
+Tile S2=Tile(shift(1/2,0)*scale(1/2),square,red);
+Tile S3=Tile(shift(1/2,1/2)*scale(1/2),square,white);
+Tile S4=Tile(shift(0,1/2)*scale(1/2),square,red);
 
-int N=3;
-real lambda=2;    // expansion constant
-real w=0.5/lambda^(N-1);    // scaled linewidth
-
-Tile B=subTile(protoTile, rule, N);
-B.fillColour();
-
-draw(B, linewidth(w));
+int n=5;
+Tile[] Ts={S1,S2,S3,S4};
+Tile[] b=subTile(Ts,square,n);
+drawTiling(b);
