@@ -3,7 +3,7 @@ size(300);
 
 import mosaic;
 
-path chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
+path[] chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle^^shift(2/5,2/5)*scale(1/5)*unitcircle;
 
 Tile C1=Tile(scale(1/2),chair,white);
 Tile C2=Tile(shift(1/2,1/2)*scale(1/2),chair,orange);
