@@ -26,6 +26,44 @@ bool operator ==(Region D1, Region D2) {
 	return true;
 }
 
+bool operator !=(Region D1, Region D2) {
+	if(!(D1 == D2))
+		return false;
+	return true;
+}
+
+bool operator ==(Region D1, path[] P2) {
+	path[] P1=D1.domain;
+	int L=P1.length;
+	if(P2.length != L) {
+		return false;
+	} else {
+		for(int i=0; i < L; ++i) {
+			if(P1[i] != P2[i])
+				return false;
+		}
+	}
+	return true;
+}
+
+bool operator !=(Region D1, path[] P2) {
+	if(!(D1 == P2))
+		return false;
+	return true;
+}
+
+bool operator ==(path[] P2, Region D1) {
+	if(D1 != P2)
+		return false;
+	return true;
+}
+
+bool operator !=(path[] P2, Region D1) {
+	if(D1 != P2)
+		return true;
+	return false;
+}
+
 struct Tile {
 	transform tran;
 	Region domain;
@@ -84,18 +122,25 @@ void loop(Tile[] Ts, Tile T, int nmax, int n, Tile[] tiles) {
 	}
 }
 
-Tile[] subTile(Tile[] Ts, path T, int nmax, int n=0) {
+Tile[] subTile(Tile[] Ts, path[] T, int nmax, int n=0) {
 	Tile[] tiles;
+	if(nmax == 0) {
+		for(int i=0; i < Ts.length; ++i) {
+			Tile Ti=Ts[i];
+			if(Ti.range == T) {
+				tiles.push(Tile(identity,T,Ti.colour));
+				break;
+			}
+		}
+	}
 	if(n < nmax)
 		loop(Ts,Tile(T),nmax,n,tiles);
 	return tiles;
 }
 
-Tile[] subTile(Tile[] Ts, path[] T, int nmax, int n=0) {
-	Tile[] tiles;
-	if(n < nmax)
-		loop(Ts,Tile(T),nmax,n,tiles);
-	return tiles;
+Tile[] subTile(Tile[] Ts, path T, int nmax, int n=0) {
+	path[] pT={T};
+	return subTile(Ts,pT,nmax,n);
 }
 
 void drawTiling(picture pic=currentpicture, Tile[] T,

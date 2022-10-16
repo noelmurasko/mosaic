@@ -46,20 +46,9 @@ Tile[] kiteDartRule={D1,D2,D3,K1,K2,K3,K4};
 Tile[] rhombRule={R1,R2,R3,R4,R5,S1,S2,S3,S4};
 
 
-int nmax=7;
+int nmax=6;
 Tile[] kiteDart=subTile(kiteDartRule,kite,nmax);
-Tile[] rhomb=subTile(rhombRule,rhomb1,nmax);
+Tile[] rhomb=subTile(rhombRule,rhomb2,nmax);
 
 //drawTiling(kiteDart);
 drawTiling(rhomb);
-
-
-
-
-
-
-
-
-
-
-
