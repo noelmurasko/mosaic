@@ -16,4 +16,4 @@ mtile P5=mtile(T*shift(4/sqrt(5),2/sqrt(5))*rotate(-90)*scale(sf),pinwheel,brown
 int n=3;
 mtile[] Ts={P1,P2,P3,P4,P5};
 mtile[] b=substitute(Ts,pinwheel,n);
-drawTiling(b);
+draw(b);

@@ -13,4 +13,4 @@ mtile C4=mtile(shift(0,2)*rotate(270)*scale(1/2),chair,blue);
 int n=5;
 mtile[] Ts={C1,C2,C3,C4};
 mtile[] b=substitute(Ts,chair,n);
-drawTiling(b);
+draw(b);

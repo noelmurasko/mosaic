@@ -142,9 +142,13 @@ mtile[] substitute(mtile[] Ts, path T, int nmax, int n=0) {
 	return substitute(Ts,pT,nmax,n);
 }
 
-void drawTiling(picture pic=currentpicture, mtile[] T,
-	        pen p=currentpen) {
-	picture pict=pic;
+void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
+	path[] Td=T.tran*T.range.domain; // .range.domain is pretty awful
+	fill(pic, Td, T.colour);
+	draw(pic,Td,p);
+}
+
+void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
 	for(int k=0; k < T.length; ++k)
-		filldraw(T[k].tran*T[k].range.domain, T[k].colour, p, pic=pict);
+		draw(pic, T[k], p);
 }

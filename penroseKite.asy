@@ -28,4 +28,4 @@ mtile[] kiteDartRule={D1,D2,D3,K1,K2,K3,K4};
 
 int nmax=3;
 mtile[] kiteDart=substitute(kiteDartRule,kite,nmax);
-drawTiling(kiteDart);
+draw(kiteDart);

@@ -31,4 +31,4 @@ mtile[] rhombRule={R1,R2,R3,R4,R5,S1,S2,S3,S4};
 
 int nmax=7;
 mtile[] rhomb=substitute(rhombRule,rhomb2,nmax);
-drawTiling(rhomb);
+draw(rhomb);

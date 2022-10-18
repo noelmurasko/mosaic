@@ -12,4 +12,4 @@ mtile T3=mtile(shift(1,0)*scale(1/2),triangle,black);
 int n=5;
 mtile[] Ts={T1,T2,T3};
 mtile[] b=substitute(Ts,triangle,n);
-drawTiling(b);
+draw(b);

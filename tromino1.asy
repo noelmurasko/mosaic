@@ -21,4 +21,4 @@ mtile R4=mtile(shift(1/2,1/2)*shift(1/2,0)*scale(1/2),rect,red);
 int nmax=5;
 mtile[] Ts={C1,C2,C3,C4,R1,R2,R3,R4};
 mtile[] b=substitute(Ts,rect,nmax);
-drawTiling(b);
+draw(b);

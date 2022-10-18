@@ -13,4 +13,4 @@ mtile S4=mtile(shift(0,1/2)*scale(1/2),square,red);
 int n=5;
 mtile[] Ts={S1,S2,S3,S4};
 mtile[] b=substitute(Ts,square,n);
-drawTiling(b);
+draw(b);
