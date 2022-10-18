@@ -110,6 +110,12 @@ mtile operator *(mtile t1, mtile t2) {
 	return t3;
 }
 
+mtile operator *(transform T, mtile t1) {
+	mtile t2=t1;
+	t2.tran=T*t2.tran;
+	return t2;
+}
+
 void loop(mtile[] Ts, mtile T, int nmax, int n, mtile[] tiles) {
 	if(n < nmax) {
 		int imax=Ts.length;
@@ -120,7 +126,7 @@ void loop(mtile[] Ts, mtile T, int nmax, int n, mtile[] tiles) {
 			}
 		}
 	} else {
-		tiles.push(T);
+		tiles.push(scale(inflation)^n*T);
 	}
 }
 
@@ -138,10 +144,8 @@ mtile[] substitute(mtile[] Ts, path[] T, int nmax, int n=0) {
 	if(n < nmax) {
 		mtile[] Ts2=copy(Ts);
 		real deflation=1/inflation;
-		for(int i; i < Ts2.length; ++i) {
+		for(int i; i < Ts2.length; ++i)
 			Ts2[i].tran=(shiftless(Ts[i].tran)+scale(deflation)*shift(Ts[i].tran))*scale(deflation);
-			write(Ts2[i].tran);
-		}
 		loop(Ts2,mtile(T),nmax,n,tiles);
 	}
 	return tiles;
