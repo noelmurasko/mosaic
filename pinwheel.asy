@@ -17,5 +17,5 @@ mtile P5=mtile(T*shift(4,2)*rotate(-90),pinwheel,brown);
 
 int n=5;
 mtile[] Ts={P1,P2,P3,P4,P5};
-mtile[] b=substitute(Ts,pinwheel,n);
-draw(b);
+mosaic M=mosaic(Ts,pinwheel,n);
+draw(M);

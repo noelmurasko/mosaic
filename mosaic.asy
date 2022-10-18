@@ -130,7 +130,7 @@ void loop(mtile[] Ts, mtile T, int nmax, int n, mtile[] tiles) {
 	}
 }
 
-mtile[] substitute(mtile[] Ts, path[] T, int nmax, int n=0) {
+mtile[] substitute(mtile[] Ts, path[] T, int nmax) {
 	mtile[] tiles;
 	if(nmax == 0) {
 		for(int i=0; i < Ts.length; ++i) {
@@ -140,21 +140,40 @@ mtile[] substitute(mtile[] Ts, path[] T, int nmax, int n=0) {
 				break;
 			}
 		}
-	}
-	if(n < nmax) {
+	} else {
 		mtile[] Ts2=copy(Ts);
 		real deflation=1/inflation;
 		for(int i; i < Ts2.length; ++i)
 			Ts2[i].tran=(shiftless(Ts[i].tran)+scale(deflation)*shift(Ts[i].tran))*scale(deflation);
-		loop(Ts2,mtile(T),nmax,n,tiles);
+		loop(Ts2,mtile(T),nmax,0,tiles);
 	}
 	return tiles;
 }
 
-mtile[] substitute(mtile[] Ts, path T, int nmax, int n=0) {
+mtile[] substitute(mtile[] Ts, path T, int nmax) {
 	path[] pT={T};
-	return substitute(Ts,pT,nmax,n);
+	return substitute(Ts,pT,nmax);
 }
+
+struct mosaic {
+	mtile[] tiles;
+	path[] supertile;
+	int n;
+
+	void operator init(mtile[] rule, path[] supertile, int n=0) {
+		this.n=n;
+		this.supertile=supertile;
+		this.tiles=substitute(rule,supertile,n);
+	}
+
+	void operator init(mtile[] rule, path supertile, int n=0) {
+		this.n=n;
+		this.supertile=supertile;
+		this.tiles=substitute(rule,supertile,n);
+	}
+
+}
+
 
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
 	path[] Td=T.tran*T.range.domain; // .range.domain is pretty awful
@@ -165,4 +184,8 @@ void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
 void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
 	for(int k=0; k < T.length; ++k)
 		draw(pic, T[k], p);
+}
+
+void draw(picture pic=currentpicture, mosaic M, pen p=currentpen) {
+	draw(pic, M.tiles, p);
 }
