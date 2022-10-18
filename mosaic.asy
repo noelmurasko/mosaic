@@ -64,7 +64,7 @@ bool operator !=(path[] P2, region D1) {
 	return false;
 }
 
-struct Tile {
+struct mtile {
 	transform tran;
 	region domain;
 	region range;
@@ -88,7 +88,6 @@ struct Tile {
   void operator init(transform tran=identity, path[] domain, path[] range, pen colour=invisible) {
     this.tran=tran;
     this.domain=region(domain);
-    // Note: tiles obtained through multiplication don't have domains...
     this.range=region(range);
     this.colour=colour;
   }
@@ -101,19 +100,19 @@ struct Tile {
   }
 }
 
-Tile operator *(Tile t1, Tile t2) {
-	Tile t3;
+mtile operator *(mtile t1, mtile t2) {
+	mtile t3;
 	t3.tran=t1.tran*t2.tran;
 	t3.range=t2.range;
 	t3.colour=t2.colour;
 	return t3;
 }
 
-void loop(Tile[] Ts, Tile T, int nmax, int n, Tile[] tiles) {
+void loop(mtile[] Ts, mtile T, int nmax, int n, mtile[] tiles) {
 	if(n < nmax) {
 		int imax=Ts.length;
 		for(int i; i < imax; ++i) {
-			Tile Ti=Ts[i];
+			mtile Ti=Ts[i];
 			if(Ti.domain == T.range)
 				loop(Ts, T*Ts[i], nmax, n+1,tiles);
 		}
@@ -122,28 +121,28 @@ void loop(Tile[] Ts, Tile T, int nmax, int n, Tile[] tiles) {
 	}
 }
 
-Tile[] subTile(Tile[] Ts, path[] T, int nmax, int n=0) {
-	Tile[] tiles;
+mtile[] substitute(mtile[] Ts, path[] T, int nmax, int n=0) {
+	mtile[] tiles;
 	if(nmax == 0) {
 		for(int i=0; i < Ts.length; ++i) {
-			Tile Ti=Ts[i];
+			mtile Ti=Ts[i];
 			if(Ti.range == T) {
-				tiles.push(Tile(identity,T,Ti.colour));
+				tiles.push(mtile(identity,T,Ti.colour));
 				break;
 			}
 		}
 	}
 	if(n < nmax)
-		loop(Ts,Tile(T),nmax,n,tiles);
+		loop(Ts,mtile(T),nmax,n,tiles);
 	return tiles;
 }
 
-Tile[] subTile(Tile[] Ts, path T, int nmax, int n=0) {
+mtile[] substitute(mtile[] Ts, path T, int nmax, int n=0) {
 	path[] pT={T};
-	return subTile(Ts,pT,nmax,n);
+	return substitute(Ts,pT,nmax,n);
 }
 
-void drawTiling(picture pic=currentpicture, Tile[] T,
+void drawTiling(picture pic=currentpicture, mtile[] T,
 	        pen p=currentpen) {
 	picture pict=pic;
 	for(int k=0; k < T.length; ++k)
