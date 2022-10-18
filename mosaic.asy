@@ -1,3 +1,5 @@
+real inflation=1;
+
 struct region {
 	path[] domain;
 
@@ -112,9 +114,10 @@ void loop(mtile[] Ts, mtile T, int nmax, int n, mtile[] tiles) {
 	if(n < nmax) {
 		int imax=Ts.length;
 		for(int i; i < imax; ++i) {
-			mtile Ti=Ts[i];
-			if(Ti.domain == T.range)
-				loop(Ts, T*Ts[i], nmax, n+1,tiles);
+			mtile Tsi=Ts[i];
+			if(Tsi.domain == T.range) {
+				loop(Ts, T*Tsi, nmax, n+1,tiles);
+			}
 		}
 	} else {
 		tiles.push(T);
@@ -132,8 +135,15 @@ mtile[] substitute(mtile[] Ts, path[] T, int nmax, int n=0) {
 			}
 		}
 	}
-	if(n < nmax)
-		loop(Ts,mtile(T),nmax,n,tiles);
+	if(n < nmax) {
+		mtile[] Ts2=copy(Ts);
+		real deflation=1/inflation;
+		for(int i; i < Ts2.length; ++i) {
+			Ts2[i].tran=(shiftless(Ts[i].tran)+scale(deflation)*shift(Ts[i].tran))*scale(deflation);
+			write(Ts2[i].tran);
+		}
+		loop(Ts2,mtile(T),nmax,n,tiles);
+	}
 	return tiles;
 }
 
