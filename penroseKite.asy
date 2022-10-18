@@ -26,7 +26,6 @@ Tile K4=Tile(shift(-b,b*c)*rotate(-108)*scale(1/tau),kite,lightyellow);
 
 Tile[] kiteDartRule={D1,D2,D3,K1,K2,K3,K4};
 
-int nmax=8;
+int nmax=3;
 Tile[] kiteDart=subTile(kiteDartRule,kite,nmax);
 drawTiling(kiteDart);
-

@@ -1,4 +1,4 @@
-struct Region {
+struct region {
 	path[] domain;
 
 	void operator init(path[] domain) {
@@ -11,7 +11,7 @@ struct Region {
   }
 }
 
-bool operator ==(Region D1, Region D2) {
+bool operator ==(region D1, region D2) {
 	path[] P1=D1.domain;
 	int L=P1.length;
 	path[] P2=D2.domain;
@@ -26,13 +26,13 @@ bool operator ==(Region D1, Region D2) {
 	return true;
 }
 
-bool operator !=(Region D1, Region D2) {
+bool operator !=(region D1, region D2) {
 	if(!(D1 == D2))
 		return false;
 	return true;
 }
 
-bool operator ==(Region D1, path[] P2) {
+bool operator ==(region D1, path[] P2) {
 	path[] P1=D1.domain;
 	int L=P1.length;
 	if(P2.length != L) {
@@ -46,19 +46,19 @@ bool operator ==(Region D1, path[] P2) {
 	return true;
 }
 
-bool operator !=(Region D1, path[] P2) {
+bool operator !=(region D1, path[] P2) {
 	if(!(D1 == P2))
 		return false;
 	return true;
 }
 
-bool operator ==(path[] P2, Region D1) {
+bool operator ==(path[] P2, region D1) {
 	if(D1 != P2)
 		return false;
 	return true;
 }
 
-bool operator !=(path[] P2, Region D1) {
+bool operator !=(path[] P2, region D1) {
 	if(D1 != P2)
 		return true;
 	return false;
@@ -66,36 +66,36 @@ bool operator !=(path[] P2, Region D1) {
 
 struct Tile {
 	transform tran;
-	Region domain;
-	Region range;
+	region domain;
+	region range;
 	pen colour;
 
 	void operator init(transform tran=identity, path domain, path range, pen colour=invisible) {
     this.tran=tran;
-    this.domain=Region(domain);
+    this.domain=region(domain);
     // Note: tiles obtained through multiplication don't have domains...
-    this.range=Region(range);
+    this.range=region(range);
     this.colour=colour;
   }
 
   void operator init(transform tran=identity, path range, pen colour=invisible) {
     this.tran=tran;
-    this.domain=Region(range);
+    this.domain=region(range);
     this.range=this.domain;
     this.colour=colour;
   }
 
   void operator init(transform tran=identity, path[] domain, path[] range, pen colour=invisible) {
     this.tran=tran;
-    this.domain=Region(domain);
+    this.domain=region(domain);
     // Note: tiles obtained through multiplication don't have domains...
-    this.range=Region(range);
+    this.range=region(range);
     this.colour=colour;
   }
 
   void operator init(transform tran=identity, path[] range, pen colour=invisible) {
     this.tran=tran;
-    this.domain=Region(range);
+    this.domain=region(range);
     this.range=this.domain;
     this.colour=colour;
   }
