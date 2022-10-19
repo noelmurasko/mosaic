@@ -184,6 +184,8 @@ void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
 		draw(pic, T[k], p);
 }
 
-void draw(picture pic=currentpicture, mosaic M, pen p=currentpen) {
-	draw(pic, M.tiles, p);
+void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
+				  bool scalelinewidth=true) {
+	real scaling=scalelinewidth ? 0.5/(inflation)^M.n : linewidth(p);
+	draw(pic, M.tiles, p+scaling);
 }
