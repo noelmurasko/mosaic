@@ -160,20 +160,18 @@ struct mosaic {
 	path[] supertile;
 	int n;
 
-	void operator init(mtile[] rule, path[] supertile, int n=0) {
+	void operator init(path[] supertile, int n=0 ...mtile[] rule) {
 		this.n=n;
 		this.supertile=supertile;
 		this.tiles=substitute(rule,supertile,n);
 	}
 
-	void operator init(mtile[] rule, path supertile, int n=0) {
+	void operator init(path[] supertile, int n=0, mtile[] rule) {
 		this.n=n;
 		this.supertile=supertile;
 		this.tiles=substitute(rule,supertile,n);
 	}
-
 }
-
 
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
 	path[] Td=T.tran*T.range.domain; // .range.domain is pretty awful
