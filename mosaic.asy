@@ -116,7 +116,8 @@ mtile operator *(transform T, mtile t1) {
 	return t2;
 }
 
-void loop(mtile[] Ts, mtile T, int nmax, int n, mtile[] tiles) {
+void loop(mtile[] Ts, mtile T, int nmax, int n, mtile[] tiles,
+					real inflation=inflation) {
 	if(n < nmax) {
 		int imax=Ts.length;
 		for(int i; i < imax; ++i) {
@@ -130,7 +131,7 @@ void loop(mtile[] Ts, mtile T, int nmax, int n, mtile[] tiles) {
 	}
 }
 
-mtile[] substitute(mtile[] Ts, path[] T, int nmax) {
+mtile[] substitute(mtile[] Ts, path[] T, int nmax, real inflation=inflation) {
 	mtile[] tiles;
 	if(nmax == 0) {
 		for(int i=0; i < Ts.length; ++i) {
@@ -145,12 +146,12 @@ mtile[] substitute(mtile[] Ts, path[] T, int nmax) {
 		real deflation=1/inflation;
 		for(int i; i < Ts2.length; ++i)
 			Ts2[i].tran=(shiftless(Ts[i].tran)+scale(deflation)*shift(Ts[i].tran))*scale(deflation);
-		loop(Ts2,mtile(T),nmax,0,tiles);
+		loop(Ts2,mtile(T),nmax,0,tiles,inflation);
 	}
 	return tiles;
 }
 
-mtile[] substitute(mtile[] Ts, path T, int nmax) {
+mtile[] substitute(mtile[] Ts, path T, int nmax, real inflation=inflation) {
 	path[] pT={T};
 	return substitute(Ts,pT,nmax);
 }
@@ -160,16 +161,16 @@ struct mosaic {
 	path[] supertile;
 	int n;
 
-	void operator init(path[] supertile, int n=0 ...mtile[] rule) {
+	void operator init(path[] supertile, int n=0, real inflation=inflation ...mtile[] rule) {
 		this.n=n;
 		this.supertile=supertile;
-		this.tiles=substitute(rule,supertile,n);
+		this.tiles=substitute(rule,supertile,n,inflation);
 	}
 
-	void operator init(path[] supertile, int n=0, mtile[] rule) {
+	void operator init(path[] supertile, int n=0, real inflation=inflation, mtile[] rule) {
 		this.n=n;
 		this.supertile=supertile;
-		this.tiles=substitute(rule,supertile,n);
+		this.tiles=substitute(rule,supertile,n,inflation);
 	}
 }
 
@@ -185,7 +186,7 @@ void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
 }
 
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
-				  bool scalelinewidth=true) {
+				  bool scalelinewidth=true, real inflation=inflation) {
 	real scaling=scalelinewidth ? 0.5/(inflation)^M.n : linewidth(p);
 	draw(pic, M.tiles, p+scaling);
 }
