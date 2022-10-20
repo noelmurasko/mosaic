@@ -5,12 +5,12 @@ import mosaic;
 
 path square=box((0,0),(1,1));
 
-Tile S1=Tile(scale(1/2),square,white);
-Tile S2=Tile(shift(1/2,0)*scale(1/2),square,red);
-Tile S3=Tile(shift(1/2,1/2)*scale(1/2),square,white);
-Tile S4=Tile(shift(0,1/2)*scale(1/2),square,red);
+mtile S1=mtile(scale(1/2),square,white);
+mtile S2=mtile(shift(1/2,0)*scale(1/2),square,red);
+mtile S3=mtile(shift(1/2,1/2)*scale(1/2),square,white);
+mtile S4=mtile(shift(0,1/2)*scale(1/2),square,red);
 
 int n=5;
-Tile[] Ts={S1,S2,S3,S4};
-Tile[] b=subTile(Ts,square,n);
-drawTiling(b);
+mtile[] Ts={S1,S2,S3,S4};
+mtile[] b=substitute(Ts,square,n);
+draw(b);

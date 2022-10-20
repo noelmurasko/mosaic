@@ -1,20 +1,19 @@
-struct Region {
-	path[] domain;
+real inflation=1;
 
-	void operator init(path[] domain) {
-    this.domain=domain;
-  }
+struct region {
+	path[] outline;
+	int length;
 
-  void operator init(path domain) {
-  	path[] domain={domain};
-    this.domain=domain;
+	void operator init(path[] outline) {
+    this.outline=outline;
+    this.length=outline.length;
   }
 }
 
-bool operator ==(Region D1, Region D2) {
-	path[] P1=D1.domain;
+bool operator ==(region D1, region D2) {
+	path[] P1=D1.outline;
 	int L=P1.length;
-	path[] P2=D2.domain;
+	path[] P2=D2.outline;
 	if(P2.length != L) {
 		return false;
 	} else {
@@ -26,14 +25,14 @@ bool operator ==(Region D1, Region D2) {
 	return true;
 }
 
-bool operator !=(Region D1, Region D2) {
+bool operator !=(region D1, region D2) {
 	if(!(D1 == D2))
 		return false;
 	return true;
 }
 
-bool operator ==(Region D1, path[] P2) {
-	path[] P1=D1.domain;
+bool operator ==(region D1, path[] P2) {
+	path[] P1=D1.outline;
 	int L=P1.length;
 	if(P2.length != L) {
 		return false;
@@ -46,106 +45,150 @@ bool operator ==(Region D1, path[] P2) {
 	return true;
 }
 
-bool operator !=(Region D1, path[] P2) {
+bool operator !=(region D1, path[] P2) {
 	if(!(D1 == P2))
 		return false;
 	return true;
 }
 
-bool operator ==(path[] P2, Region D1) {
+bool operator ==(path[] P2, region D1) {
 	if(D1 != P2)
 		return false;
 	return true;
 }
 
-bool operator !=(path[] P2, Region D1) {
+bool operator !=(path[] P2, region D1) {
 	if(D1 != P2)
 		return true;
 	return false;
 }
 
-struct Tile {
+region operator *(transform T, region R1) {
+	region R2=R1;
+	R2.outline=T*R2.outline;
+	return R2;
+}
+
+struct mtile {
 	transform tran;
-	Region domain;
-	Region range;
+	region domain;
+	region range;
 	pen colour;
-
-	void operator init(transform tran=identity, path domain, path range, pen colour=invisible) {
-    this.tran=tran;
-    this.domain=Region(domain);
-    // Note: tiles obtained through multiplication don't have domains...
-    this.range=Region(range);
-    this.colour=colour;
-  }
-
-  void operator init(transform tran=identity, path range, pen colour=invisible) {
-    this.tran=tran;
-    this.domain=Region(range);
-    this.range=this.domain;
-    this.colour=colour;
-  }
 
   void operator init(transform tran=identity, path[] domain, path[] range, pen colour=invisible) {
     this.tran=tran;
-    this.domain=Region(domain);
-    // Note: tiles obtained through multiplication don't have domains...
-    this.range=Region(range);
+    this.domain=region(domain);
+    this.range=region(range);
     this.colour=colour;
   }
 
-  void operator init(transform tran=identity, path[] range, pen colour=invisible) {
+  void operator init(transform tran=identity, path[] range={}, pen colour=invisible) {
     this.tran=tran;
-    this.domain=Region(range);
+    this.domain=region(range);
     this.range=this.domain;
     this.colour=colour;
   }
 }
 
-Tile operator *(Tile t1, Tile t2) {
-	Tile t3;
+mtile operator *(mtile t1, mtile t2) {
+	mtile t3;
 	t3.tran=t1.tran*t2.tran;
 	t3.range=t2.range;
 	t3.colour=t2.colour;
 	return t3;
 }
 
-void loop(Tile[] Ts, Tile T, int nmax, int n, Tile[] tiles) {
-	if(n < nmax) {
+mtile operator *(transform T, mtile t1) {
+	mtile t2=t1;
+	t2.tran=T*t2.tran;
+	return t2;
+}
+
+void loop(mtile[] Ts, mtile T, int n, int k, mtile[] tiles,
+					real inflation=inflation) {
+	if(k < n) {
 		int imax=Ts.length;
 		for(int i; i < imax; ++i) {
-			Tile Ti=Ts[i];
-			if(Ti.domain == T.range)
-				loop(Ts, T*Ts[i], nmax, n+1,tiles);
+			mtile Tsi=Ts[i];
+			if(Tsi.domain == T.range) {
+				loop(Ts, T*Tsi, n, k+1,tiles);
+			}
 		}
 	} else {
-		tiles.push(T);
+		tiles.push(scale(inflation)^n*T);
 	}
 }
 
-Tile[] subTile(Tile[] Ts, path[] T, int nmax, int n=0) {
-	Tile[] tiles;
-	if(nmax == 0) {
+mtile[] substitute(mtile[] Ts, path[] T, int n, real inflation=inflation) {
+	mtile[] tiles;
+	if(n == 0) {
 		for(int i=0; i < Ts.length; ++i) {
-			Tile Ti=Ts[i];
+			mtile Ti=Ts[i];
 			if(Ti.range == T) {
-				tiles.push(Tile(identity,T,Ti.colour));
+				tiles.push(mtile(identity,T,Ti.colour));
 				break;
 			}
 		}
+	} else {
+		mtile[] Ts2=copy(Ts);
+		real deflation=1/inflation;
+		for(int i=0; i < Ts2.length; ++i) {
+			mtile Tsi=Ts[i];
+			Ts2[i].tran=(shiftless(Tsi.tran)+scale(deflation)*shift(Tsi.tran))*scale(deflation);
+		}
+		loop(Ts2,mtile(T),n,0,tiles,inflation);
 	}
-	if(n < nmax)
-		loop(Ts,Tile(T),nmax,n,tiles);
 	return tiles;
 }
 
-Tile[] subTile(Tile[] Ts, path T, int nmax, int n=0) {
+mtile[] substitute(mtile[] Ts, path T, int n, real inflation=inflation) {
 	path[] pT={T};
-	return subTile(Ts,pT,nmax,n);
+	return substitute(Ts,pT,n);
 }
 
-void drawTiling(picture pic=currentpicture, Tile[] T,
-	        pen p=currentpen) {
-	picture pict=pic;
+struct mosaic {
+	mtile[] tiles;
+	path[] supertile;
+	int n;
+
+	void operator init(path[] supertile, int n=0, real inflation=inflation ...mtile[] rule) {
+		this.n=n;
+		this.supertile=supertile;
+		for(int i=0; i < rule.length; ++i) {
+			mtile T=rule[i];
+			if(T.domain.length == 0 && T.range.length == 0) {
+				T.domain=region(supertile);
+				T.range=region(supertile);
+			}
+		}
+		this.tiles=substitute(rule,supertile,n,inflation);
+	}
+
+	void operator init(path[] supertile, int n=0, real inflation=inflation, mtile[] rule) {
+		this.n=n;
+		this.supertile=supertile;
+		this.tiles=substitute(rule,supertile,n,inflation);
+	}
+}
+
+path[] getpath(mtile T) {
+	path[] P=T.tran*T.range.outline;
+	return P;
+}
+
+void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
+	path[] Td=getpath(T);
+	fill(pic, Td, T.colour);
+	draw(pic,Td,p);
+}
+
+void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
 	for(int k=0; k < T.length; ++k)
-		filldraw(T[k].tran*T[k].range.domain, T[k].colour, p, pic=pict);
+		draw(pic, T[k], p);
+}
+
+void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
+				  bool scalelinewidth=true, real inflation=inflation) {
+	real scaling=scalelinewidth ? 0.5/(inflation)^(M.n-1) : linewidth(p);
+	draw(pic, M.tiles, p+scaling);
 }

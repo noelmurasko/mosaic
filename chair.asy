@@ -3,14 +3,15 @@ size(300);
 
 import mosaic;
 
+inflation=2;
+
 path chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
-Tile C1=Tile(scale(1/2),chair,white);
-Tile C2=Tile(shift(1/2,1/2)*scale(1/2),chair,orange);
-Tile C3=Tile(shift(2,0)*rotate(90)*scale(1/2),chair,blue);
-Tile C4=Tile(shift(0,2)*rotate(270)*scale(1/2),chair,blue);
+mtile C1=mtile(white);
+mtile C2=mtile(shift(1,1),orange);
+mtile C3=mtile(shift(4,0)*rotate(90),blue);
+mtile C4=mtile(shift(0,4)*rotate(270),blue);
 
-int n=5;
-Tile[] Ts={C1,C2,C3,C4};
-Tile[] b=subTile(Ts,chair,n);
-drawTiling(b);
+int n=4;
+mosaic M=mosaic(chair,n,C1,C2,C3,C4);
+draw(M);
