@@ -30,5 +30,5 @@ mtile S4=mtile(shift(b,a)*rotate(108)*scale(1/tau),rhomb2,rhomb1,lightyellow);
 mtile[] rhombRule={R1,R2,R3,R4,R5,S1,S2,S3,S4};
 
 int nmax=7;
-mtile[] rhomb=substitute(rhombRule,rhomb2,nmax);
-draw(rhomb);
+mosaic M=mosaic(rhomb2,nmax,rhombRule);
+draw(M);
