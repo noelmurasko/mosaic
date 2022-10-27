@@ -27,6 +27,6 @@ mtile K2=mtile(rotate(-36),kite,dart,red);
 mtile K3=mtile(shift(A,A*c)*rotate(108),kite,lightyellow);
 mtile K4=mtile(shift(-A,A*c)*rotate(-108),kite,lightyellow);
 
-int n=7;
+int n=2;
 mosaic M=mosaic(kite,n,D1,D2,D3,K1,K2,K3,K4);
 draw(M);
