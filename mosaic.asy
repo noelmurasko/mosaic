@@ -106,17 +106,14 @@ mtile operator *(transform T, mtile t1) {
 
 void loop(mtile[] Ts, mtile T, int n, int k, mtile[] tiles,
 					real inflation=inflation) {
-	if(k < n) {
-		int imax=Ts.length;
-		for(int i; i < imax; ++i) {
+	if(k < n)
+		for(int i; i < Ts.length; ++i) {
 			mtile Tsi=Ts[i];
-			if(Tsi.domain == T.range) {
+			if(Tsi.domain == T.range)
 				loop(Ts, T*Tsi, n, k+1,tiles);
-			}
 		}
-	} else {
+ else
 		tiles.push(scale(inflation)^n*T);
-	}
 }
 
 mtile[] substitute(mtile[] Ts, path[] T, int n, real inflation=inflation) {
