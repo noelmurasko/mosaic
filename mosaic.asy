@@ -1,20 +1,20 @@
 real inflation=1;
 
 struct mtile {
-	transform tran;
+	transform transform;
 	path[] domain;
 	path[] range;
 	pen colour;
 
-  void operator init(transform tran=identity, path[] domain, path[] range, pen colour=invisible) {
-    this.tran=tran;
+  void operator init(transform transform=identity, path[] domain, path[] range, pen colour=invisible) {
+    this.transform=transform;
     this.domain=domain;
     this.range=range;
     this.colour=colour;
   }
 
-  void operator init(transform tran=identity, path[] range={}, pen colour=invisible) {
-    this.tran=tran;
+  void operator init(transform transform=identity, path[] range={}, pen colour=invisible) {
+    this.transform=transform;
     this.domain=range;
     this.range=this.domain;
     this.colour=colour;
@@ -23,7 +23,7 @@ struct mtile {
 
 mtile operator *(mtile t1, mtile t2) {
 	mtile t3;
-	t3.tran=t1.tran*t2.tran;
+	t3.transform=t1.transform*t2.transform;
 	t3.range=t2.range;
 	t3.colour=t2.colour;
 	return t3;
@@ -31,7 +31,7 @@ mtile operator *(mtile t1, mtile t2) {
 
 mtile operator *(transform T, mtile t1) {
 	mtile t2=t1;
-	t2.tran=T*t2.tran;
+	t2.transform=T*t2.transform;
 	return t2;
 }
 
@@ -75,7 +75,7 @@ mtile[] substitute(mtile[] Ts, path[] T, int n, real inflation=inflation) {
 		real deflation=1/inflation;
 		for(int i=0; i < Ts2.length; ++i) {
 			mtile Tsi=Ts[i];
-			Ts2[i].tran=(shiftless(Tsi.tran)+scale(deflation)*shift(Tsi.tran))*scale(deflation);
+			Ts2[i].transform=(shiftless(Tsi.transform)+scale(deflation)*shift(Tsi.transform))*scale(deflation);
 		}
 		loop(Ts2,mtile(T),n,0,tiles,inflation);
 	}
@@ -113,7 +113,7 @@ struct mosaic {
 }
 
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
-	path[] Td=T.tran*T.range;
+	path[] Td=T.transform*T.range;
 	fill(pic, Td, T.colour);
 	draw(pic,Td,p);
 }
