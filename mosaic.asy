@@ -35,6 +35,10 @@ mtile operator *(transform T, mtile t1) {
 	return t2;
 }
 
+mtile copy(mtile T) {
+	return mtile(T.transform, copy(T.domain), copy(T.range), T.colour);
+}
+
 bool samepath(path[] P1, path[] P2) {
 	int L=P1.length;
 	if(P2.length != L) {
@@ -72,11 +76,14 @@ mtile[] substitute(mtile[] rule, path[] supertile, int n, real inflation=inflati
 			}
 		}
 	} else {
-		mtile[] rulecopy=copy(rule);
+		int L=rule.length;
+		mtile[] rulecopy=new mtile[L];
 		real deflation=1/inflation;
-		for(int i=0; i < rule.length; ++i) {
+		for(int i=0; i < L; ++i) {
 			transform Ti=rule[i].transform;
-			rulecopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+			mtile rci=copy(rule[i]);
+			rci.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+			rulecopy[i]=rci;
 		}
 		loop(rulecopy,mtile(supertile),n,0,tiles,inflation);
 	}
