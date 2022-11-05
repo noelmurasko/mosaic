@@ -60,31 +60,27 @@ void loop(mtile[] Ts, mtile T, int n, int k, mtile[] tiles,
 		tiles.push(scale(inflation)^n*T);
 }
 
-mtile[] substitute(mtile[] Ts, path[] T, int n, real inflation=inflation) {
+mtile[] substitute(mtile[] rule, path[] supertile, int n, real inflation=inflation) {
 	mtile[] tiles;
 	if(n == 0) {
-		for(int i=0; i < Ts.length; ++i) {
-			mtile Ti=Ts[i];
-			if(samepath(Ti.range,T)) {
-				tiles.push(mtile(identity,T,Ti.colour));
+		// Draw a tile when no iterations are asked for.
+		for(int i=0; i < rule.length; ++i) {
+			mtile Ti=rule[i];
+			if(samepath(Ti.range,supertile)) {
+				tiles.push(mtile(identity,supertile,Ti.colour));
 				break;
 			}
 		}
 	} else {
-		mtile[] Ts2=copy(Ts);
+		mtile[] rulecopy=copy(rule);
 		real deflation=1/inflation;
-		for(int i=0; i < Ts2.length; ++i) {
-			mtile Tsi=Ts[i];
-			Ts2[i].transform=(shiftless(Tsi.transform)+scale(deflation)*shift(Tsi.transform))*scale(deflation);
+		for(int i=0; i < rule.length; ++i) {
+			transform Ti=rule[i].transform;
+			rulecopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
 		}
-		loop(Ts2,mtile(T),n,0,tiles,inflation);
+		loop(rulecopy,mtile(supertile),n,0,tiles,inflation);
 	}
 	return tiles;
-}
-
-mtile[] substitute(mtile[] Ts, path T, int n, real inflation=inflation) {
-	path[] pT={T};
-	return substitute(Ts,pT,n);
 }
 
 struct mosaic {
