@@ -52,13 +52,12 @@ bool samepath(path[] P1, path[] P2) {
 	return true;
 }
 
-void loop(mtile[] Ts, mtile T, int n, int k, mtile[] tiles,
-					real inflation=inflation) {
+void loop(mtile[] rule, mtile T, int n, int k, mtile[] tiles, real inflation=inflation) {
 	if(k < n)
-		for(int i; i < Ts.length; ++i) {
-			mtile Tsi=Ts[i];
-			if(samepath(Tsi.domain,T.range))
-				loop(Ts, T*Tsi, n, k+1,tiles);
+		for(int i; i < rule.length; ++i) {
+			mtile rulei=rule[i];
+			if(samepath(rulei.domain,T.range))
+				loop(rule, T*rulei, n, k+1,tiles);
 		}
  else
 		tiles.push(scale(inflation)^n*T);
