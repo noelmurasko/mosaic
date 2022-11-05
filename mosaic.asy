@@ -97,7 +97,7 @@ struct mosaic {
 		this.supertile=supertile;
 		for(int i=0; i < rule.length; ++i) {
 			mtile T=rule[i];
-			if(T.domain.length == 0 && T.range.length == 0) {
+			if(T.range.length == 0) {
 				T.domain=supertile;
 				T.range=supertile;
 			}
@@ -108,6 +108,13 @@ struct mosaic {
 	void operator init(path[] supertile, int n=0, real inflation=inflation, mtile[] rule) {
 		this.n=n;
 		this.supertile=supertile;
+		for(int i=0; i < rule.length; ++i) {
+			mtile T=rule[i];
+			if(T.range.length == 0) {
+				T.domain=supertile;
+				T.range=supertile;
+			}
+		}
 		this.tiles=substitute(rule,supertile,n,inflation);
 	}
 }
