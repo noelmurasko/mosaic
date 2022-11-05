@@ -65,6 +65,13 @@ void loop(mtile[] rule, mtile T, int n, int k, mtile[] tiles, real inflation=inf
 
 mtile[] substitute(mtile[] rule, path[] supertile, int n, real inflation=inflation) {
 	mtile[] tiles;
+	for(int i=0; i < rule.length; ++i) {
+		mtile T=rule[i];
+		if(T.range.length == 0) {
+			T.domain=supertile;
+			T.range=supertile;
+		}
+	}
 	if(n == 0) {
 		// Draw a tile when no iterations are asked for.
 		for(int i=0; i < rule.length; ++i) {
@@ -98,26 +105,12 @@ struct mosaic {
 	void operator init(path[] supertile, int n=0, real inflation=inflation ...mtile[] rule) {
 		this.n=n;
 		this.supertile=supertile;
-		for(int i=0; i < rule.length; ++i) {
-			mtile T=rule[i];
-			if(T.range.length == 0) {
-				T.domain=supertile;
-				T.range=supertile;
-			}
-		}
 		this.tiles=substitute(rule,supertile,n,inflation);
 	}
 
 	void operator init(path[] supertile, int n=0, real inflation=inflation, mtile[] rule) {
 		this.n=n;
 		this.supertile=supertile;
-		for(int i=0; i < rule.length; ++i) {
-			mtile T=rule[i];
-			if(T.range.length == 0) {
-				T.domain=supertile;
-				T.range=supertile;
-			}
-		}
 		this.tiles=substitute(rule,supertile,n,inflation);
 	}
 }
