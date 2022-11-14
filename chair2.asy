@@ -5,7 +5,8 @@ import mosaic;
 
 inflation=2;
 
-path[] chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle^^shift(2/5,2/5)*scale(1/5)*unitcircle;
+path[] chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--
+              cycle^^shift(2/5,2/5)*scale(1/5)*unitcircle;
 
 mtile C1=mtile(white);
 mtile C2=mtile(shift(1,1),orange);
