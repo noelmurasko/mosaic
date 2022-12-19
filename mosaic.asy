@@ -62,11 +62,11 @@ void loop(mtile[] rule, mtile T, int n, int k, mtile[] tiles,
       if(samepath(rulei.domain,T.range))
         loop(rule, T*rulei, n, k+1,tiles);
     }
- else
+  else
     tiles.push(scale(inflation)^n*T);
 }
 
-mtile[] substitute(mtile[] rule, path[] supertile, int n,
+mtile[] substitute(mtile[] rule, path[] supertile, mtile[] startTiles={}, int n,
                    real inflation=inflation) {
   mtile[] tiles;
   for(int i=0; i < rule.length; ++i) {
@@ -96,7 +96,12 @@ mtile[] substitute(mtile[] rule, path[] supertile, int n,
       rci.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
       rulecopy[i]=rci;
     }
-    loop(rulecopy,mtile(supertile),n,0,tiles,inflation);
+    int sTL=startTiles.length;
+    if(sTL == 0)
+      loop(rulecopy,mtile(supertile),n,0,tiles,inflation);
+    else
+      for(int i=0; i < sTL; ++i)
+        loop(rulecopy,startTiles[i],n,0,tiles,inflation);
   }
   return tiles;
 }
@@ -127,8 +132,20 @@ struct mosaic {
 }
 
 mosaic substitute(mosaic M, int n, real inflation=inflation) {
-  mosaic M2=mosaic(M.supertile,n,inflation,M.rule);
-  return M2;
+  int Mn=M.n;
+  if(n > Mn) {
+    mosaic M2;
+    M2.n=Mn;
+    M2.supertile=M.supertile;
+    M2.rule=M.rule;
+    M2.tiles=substitute(M2.rule,M2.supertile,M.tiles,n-Mn,inflation);
+    return M2;
+  } else if(n < Mn) {
+    mosaic M2=mosaic(M.supertile,n,inflation,M.rule);
+    return M2;
+  } else {
+    return M;
+  }
 }
 
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
