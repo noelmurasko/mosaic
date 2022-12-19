@@ -87,29 +87,33 @@ mtile[] substitute(mtile[] rule, path[] supertile, int n,
     }
   } else {
     int L=rule.length;
+    mtile[] rulecopy=new mtile[L];
     real deflation=1/inflation;
     for(int i=0; i < L; ++i) {
       // Inflate transforms (without changing user data).
       transform Ti=rule[i].transform;
       mtile rci=copy(rule[i]);
       rci.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
-      rule[i]=rci;
+      rulecopy[i]=rci;
     }
-    loop(rule,mtile(supertile),n,0,tiles,inflation);
+    loop(rulecopy,mtile(supertile),n,0,tiles,inflation);
   }
   return tiles;
 }
+
 
 struct mosaic {
   // Normal entry point.
   mtile[] tiles;
   path[] supertile;
   int n;
+  mtile[] rule;
 
   void operator init(path[] supertile, int n=0, real inflation=inflation
                      ...mtile[] rule) {
     this.n=n;
     this.supertile=supertile;
+    this.rule=rule;
     this.tiles=substitute(rule,supertile,n,inflation);
   }
 
@@ -117,8 +121,14 @@ struct mosaic {
                      mtile[] rule) {
     this.n=n;
     this.supertile=supertile;
+    this.rule=rule;
     this.tiles=substitute(rule,supertile,n,inflation);
   }
+}
+
+mosaic substitute(mosaic M, int n, real inflation=inflation) {
+  mosaic M2=mosaic(M.supertile,n,inflation,M.rule);
+  return M2;
 }
 
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
