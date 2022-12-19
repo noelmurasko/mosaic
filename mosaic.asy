@@ -37,6 +37,14 @@ mtile operator *(transform T, mtile t1) {
   return t2;
 }
 
+mtile[] operator *(transform T, mtile[] t1) {
+  int L=t1.length;
+  mtile[] t2=new mtile[L];
+  for(int i=0; i < t1.length; ++i)
+    t2[i]=T*t1[i];
+  return t2;
+}
+
 mtile copy(mtile T) {
   return mtile(T.transform, copy(T.domain), copy(T.range), T.colour);
 }
@@ -146,6 +154,12 @@ mosaic substitute(mosaic M, int n, real inflation=inflation) {
   } else {
     return M;
   }
+}
+
+mosaic operator *(transform T, mosaic M) {
+  mosaic M2=M;
+  M2.tiles=T*M2.tiles;
+  return M2;
 }
 
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
