@@ -3,7 +3,7 @@ size(300);
 
 import mosaic;
 
-path pinwheel=(0,0)--(2,0)--(2,1)--cycle;
+path triangle=(0,0)--(2,0)--(2,1)--cycle;
 
 inflation=sqrt(5);
 
@@ -16,5 +16,5 @@ mtile P4=mtile(T*reflect((0,1),(1,1))*shift(2,1),paleblue);
 mtile P5=mtile(T*shift(4,2)*rotate(-90),brown);
 
 int n=5;
-mosaic M=mosaic(pinwheel,n,P1,P2,P3,P4,P5);
+mosaic M=mosaic(triangle,n,P1,P2,P3,P4,P5);
 draw(M);
