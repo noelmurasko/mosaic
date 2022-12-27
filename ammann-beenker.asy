@@ -23,7 +23,6 @@ mtile SR2=mtile(rotate(-45),square,rhombus,deepblue);
 mtile SR3=mtile(shift(-1-sqrt(2),1+sqrt(2))*rotate(-90),square,rhombus,deepblue);
 mtile SR4=mtile(shift(0,2+sqrt(2))*rotate(-135),square,rhombus,deepblue);
 mtile SS1=mtile(shift(0,2+sqrt(2))*rotate(180),square,yellow);
-mtile SS2=mtile(shift(0,0)*rotate(-135),square,yellow);
 mtile SS2=mtile(shift(-1-sqrt(2),1+sqrt(2))*rotate(-135),square,yellow);
 mtile SS3=mtile(shift(1+sqrt(2),1+sqrt(2))*rotate(135),square,yellow);
 mtile SS4=mtile(shift(0,2+2*sqrt(2))*rotate(135),square,yellow);
