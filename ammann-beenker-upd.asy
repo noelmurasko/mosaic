@@ -1,7 +1,7 @@
 settings.outformat="pdf";
 size(300);
 
-import mosaic-upd;
+import mosaic;
 
 // prototiles
 path rhombus=(0,0)--(-1,1)--(-1,1+sqrt(2))--(0,sqrt(2))--cycle;

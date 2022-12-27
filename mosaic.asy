@@ -1,6 +1,6 @@
 real inflation=1;
 
-path[] prototiles={};
+//path[] prototiles;
 
 struct ptransform {
   path prototile;
@@ -13,30 +13,6 @@ struct ptransform {
     this.colour=colour;
   }
 }
-
-struct mrule {
-  path prototile;
-  ptransform[] ptransforms;
-  mtransform[] mtransforms;
-
-  void operator init(path prototile, ptransform[] ptransforms) {
-
-    this.prototile=prototile;
-    this.ptransforms=ptransforms;
-
-    int L=ptransforms.length;
-
-    for(int i=0; i < L; ++i) {
-      ptransform ptransform=ptransforms[i];
-      transform transform=ptransform.transform;
-      path[] domain=this.prototile;
-      path[] range=ptransform.prototile;
-      pen colour=ptransform.colour;
-      this.mtransforms[i]=mtransform(transform,domain,range,colour);
-    }
-  }
-}
-
 
 struct mtransform {
   transform transform;
@@ -58,6 +34,29 @@ struct mtransform {
     this.domain=range;
     this.range=this.domain;
     this.colour=colour;
+  }
+}
+
+struct mrule {
+  path prototile;
+  ptransform[] ptransforms;
+  mtransform[] mtransforms;
+
+  void operator init(path prototile ...ptransform[] ptransforms) {
+
+    this.prototile=prototile;
+    this.ptransforms=ptransforms;
+
+    int L=ptransforms.length;
+
+    for(int i=0; i < L; ++i) {
+      ptransform ptransform=ptransforms[i];
+      transform transform=ptransform.transform;
+      path[] domain=this.prototile;
+      path[] range=ptransform.prototile;
+      pen colour=ptransform.colour;
+      this.mtransforms[i]=mtransform(transform,domain,range,colour);
+    }
   }
 }
 
