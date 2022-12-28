@@ -4,7 +4,6 @@ size(300);
 import mosaic;
 
 path triangle=(0,0)--(1,sqrt(3))--(2,0)--cycle;
-path[] prototiles={triangle};
 
 inflation=2;
 
