@@ -1,17 +1,16 @@
 real inflation=1;
 
-//path[] prototiles;
-
 struct ptransform {
-  path prototile;
+  path[] prototile;
   transform transform;
   pen colour;
 
-  void operator init(transform transform=identity, path prototile, pen colour=invisible) {
+  void operator init(transform transform=identity, path[] prototile={}, pen colour=invisible) {
     this.prototile=prototile;
     this.transform=transform;
     this.colour=colour;
   }
+
 }
 
 struct mtransform {
@@ -38,11 +37,11 @@ struct mtransform {
 }
 
 struct mrule {
-  path prototile;
+  path[] prototile;
   ptransform[] ptransforms;
   mtransform[] mtransforms;
 
-  void operator init(path prototile ...ptransform[] ptransforms) {
+  void operator init(path[] prototile={} ...ptransform[] ptransforms) {
 
     this.prototile=prototile;
     this.ptransforms=ptransforms;
