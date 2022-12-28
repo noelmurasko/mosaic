@@ -7,12 +7,12 @@ path triangle=(0,0)--(1,sqrt(3))--(2,0)--cycle;
 
 inflation=2;
 
-ptransform T1=ptransform(triangle,black);
-ptransform T2=ptransform(shift(1,sqrt(3)),triangle,black);
-ptransform T3=ptransform(shift(2,0),triangle,black);
+ptransform T1=ptransform(black);
+ptransform T2=ptransform(shift(1,sqrt(3)),black);
+ptransform T3=ptransform(shift(2,0),black);
 
-mrule triangleRule=mrule(triangle,T1,T2,T3);
+mrule ifs=mrule(T1,T2,T3);
 
 int n=5;
-mosaic M=mosaic(triangle,n,triangleRule);
+mosaic M=mosaic(triangle,n,ifs);
 draw(M);
