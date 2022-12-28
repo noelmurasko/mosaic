@@ -50,5 +50,5 @@ mrule squareRule=mrule(square,SR1,SR2,SR3,SR4,SS1,SS2,SS3,SS4,SS5); // square su
 //mrule[] subRule={rhombusRule,squareRule}; // mosaic substitution rule
 
 int n=5;
-mosaic M=mosaic(rhombus, n,rhombusRule,squareRule);
+mosaic M=mosaic(rhombus,n,rhombusRule,squareRule);
 draw(M,white);
