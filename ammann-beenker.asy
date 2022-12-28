@@ -13,18 +13,20 @@ path[] prototiles={rhombus,square};
 
 inflation=sr;  // inflation factor
 
+transform R45=rotate(45);
+
 // rhombus substitution rule ===
 
 // rhombi
 ptransform RR1=ptransform(rhombus,deepblue);
-ptransform RR2=ptransform(shift(-sr,sr)*rotate(-90),rhombus,deepblue);
+ptransform RR2=ptransform(shift(-sr,sr)*R45^6,rhombus,deepblue);
 ptransform RR3=ptransform(shift(-sqrt2,2+sqrt2),rhombus,deepblue);
 
-// squares
+// squares 
 ptransform RS1=ptransform(shift(-sr,sr),square,yellow);
-ptransform RS2=ptransform(shift(-sr,sr)*rotate(-135),square,yellow);
-ptransform RS3=ptransform(shift(0,2+sqrt2)*rotate(180),square,yellow);
-ptransform RS4=ptransform(shift(0,2+sqrt2)*rotate(45),square,yellow);
+ptransform RS2=ptransform(shift(-sr,sr)*R45^5,square,yellow);
+ptransform RS3=ptransform(shift(0,2+sqrt2)*R45^4,square,yellow);
+ptransform RS4=ptransform(shift(0,2+sqrt2)*R45,square,yellow);
 
 mrule rhombusRule=mrule(rhombus,RR1,RR2,RR3,RS1,RS2,RS3,RS4); // rhombus substitution rule
 
@@ -32,22 +34,20 @@ mrule rhombusRule=mrule(rhombus,RR1,RR2,RR3,RS1,RS2,RS3,RS4); // rhombus substit
 
 // rhombi
 ptransform SR1=ptransform(rhombus,deepblue);
-ptransform SR2=ptransform(rotate(-45),rhombus,deepblue);
-ptransform SR3=ptransform(shift(-sr,sr)*rotate(-90),rhombus,deepblue);
-ptransform SR4=ptransform(shift(0,2+sqrt2)*rotate(-135),rhombus,deepblue);
+ptransform SR2=ptransform(R45^7,rhombus,deepblue);
+ptransform SR3=ptransform(shift(-sr,sr)*R45^6,rhombus,deepblue);
+ptransform SR4=ptransform(shift(0,2+sqrt2)*R45^5,rhombus,deepblue);
 
 //squares
-ptransform SS1=ptransform(shift(0,2+sqrt2)*rotate(180),square,yellow);
-ptransform SS2=ptransform(shift(-sr,sr)*rotate(-135),square,yellow);
-ptransform SS3=ptransform(shift(sr,sr)*rotate(135),square,yellow);
-ptransform SS4=ptransform(shift(0,2sr)*rotate(135),square,yellow);
-ptransform SS5=ptransform(shift(0,2sr)*rotate(-135),square,yellow);
+ptransform SS1=ptransform(shift(0,2+sqrt2)*R45^4,square,yellow);
+ptransform SS2=ptransform(shift(-sr,sr)*R45^5,square,yellow);
+ptransform SS3=ptransform(shift(sr,sr)*R45^3,square,yellow);
+ptransform SS4=ptransform(shift(0,2sr)*R45^3,square,yellow);
+ptransform SS5=ptransform(shift(0,2sr)*R45^5,square,yellow);
 
 mrule squareRule=mrule(square,SR1,SR2,SR3,SR4,SS1,SS2,SS3,SS4,SS5); // square substitution rule
 
 // the mosaic ===
-
-//mrule[] subRule={rhombusRule,squareRule}; // mosaic substitution rule
 
 int n=5;
 mosaic M=mosaic(rhombus,n,rhombusRule,squareRule);
