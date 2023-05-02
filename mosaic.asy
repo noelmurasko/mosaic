@@ -1,17 +1,5 @@
 real inflation=1;
 
-struct ptransform {
-  path[] prototile;
-  transform transform;
-  pen colour;
-
-  void operator init(transform transform=identity, path[] prototile={}, pen colour=invisible) {
-    this.transform=transform;
-    this.prototile=prototile;
-    this.colour=colour;
-  }
-}
-
 struct mtile {
   transform transform;
   path[] supertile;
@@ -36,24 +24,15 @@ struct mtile {
 }
 
 struct mrule {
-  path[] prototile;
-  ptransform[] ptransforms;
+  path[] supertile;
   mtile[] patch;
 
-  void operator init(path[] prototile={} ...ptransform[] ptransforms) {
-
-    this.prototile=prototile;
-    this.ptransforms=ptransforms;
-
-    int L=ptransforms.length;
-
+  void operator init(path[] supertile={} ...mtile[] patch) {
+    this.supertile=supertile;
+    this.patch=patch;
+    int L=patch.length;
     for(int i=0; i < L; ++i) {
-      ptransform ptransform=ptransforms[i];
-      transform transform=ptransform.transform;
-      path[] supertile=this.prototile;
-      path[] prototile=ptransform.prototile;
-      pen colour=ptransform.colour;
-      this.patch[i]=mtile(transform,supertile,prototile,colour);
+      this.patch[i].supertile=supertile;
     }
   }
 }

@@ -11,9 +11,9 @@ inflation=sqrt3;
 
 transform R30=rotate(30);
 
-ptransform H1=ptransform(R30,heavygray);
-ptransform H2=ptransform(shift(sqrt3/2,1/2)*R30,heavygray);
-ptransform H3=ptransform(shift(sqrt3/2,-1/2)*R30,heavygray);
+mtile H1=mtile(R30,heavygray);
+mtile H2=mtile(shift(sqrt3/2,1/2)*R30,heavygray);
+mtile H3=mtile(shift(sqrt3/2,-1/2)*R30,heavygray);
 
 mrule ifs=mrule(H1,H2,H3);
 
