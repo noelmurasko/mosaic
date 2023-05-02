@@ -24,6 +24,6 @@ ptransform R5=ptransform(shift(2,1),rect,heavygreen);
 
 mrule rectRule=mrule(rect,R1,R2,R3,R4,R5);
 
-int n=7;
+int n=2;
 mosaic M=mosaic(rect,n,squareRule,rectRule);
 draw(M);
