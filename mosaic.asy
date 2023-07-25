@@ -1,88 +1,66 @@
 real inflation=1;
 
-struct ptransform {
+struct mtile {
+  transform transform;
+  path[] supertile;
   path[] prototile;
-  transform transform;
   pen colour;
 
-  void operator init(transform transform=identity, path[] prototile={}, pen colour=invisible) {
+  void operator init(transform transform=identity, path[] supertile, path[] prototile,
+                     pen colour=invisible) {
+    this.transform=transform;
+    this.supertile=supertile;
     this.prototile=prototile;
-    this.transform=transform;
     this.colour=colour;
   }
 
-}
-
-struct mtransform {
-  transform transform;
-  path[] domain;
-  path[] range;
-  pen colour;
-
-  void operator init(transform transform=identity, path[] domain, path[] range,
+  void operator init(transform transform=identity, path[] prototile={},
                      pen colour=invisible) {
     this.transform=transform;
-    this.domain=domain;
-    this.range=range;
-    this.colour=colour;
-  }
-
-  void operator init(transform transform=identity, path[] range={},
-                     pen colour=invisible) {
-    this.transform=transform;
-    this.domain=range;
-    this.range=this.domain;
+    this.supertile=prototile;
+    this.prototile=this.supertile;
     this.colour=colour;
   }
 }
 
 struct mrule {
-  path[] prototile;
-  ptransform[] ptransforms;
-  mtransform[] mtransforms;
+  path[] supertile;
+  mtile[] patch;
 
-  void operator init(path[] prototile={} ...ptransform[] ptransforms) {
-
-    this.prototile=prototile;
-    this.ptransforms=ptransforms;
-
-    int L=ptransforms.length;
-
+  void operator init(path[] supertile={} ...mtile[] patch) {
+    this.supertile=supertile;
+    this.patch=patch;
+    int L=patch.length;
     for(int i=0; i < L; ++i) {
-      ptransform ptransform=ptransforms[i];
-      transform transform=ptransform.transform;
-      path[] domain=this.prototile;
-      path[] range=ptransform.prototile;
-      pen colour=ptransform.colour;
-      this.mtransforms[i]=mtransform(transform,domain,range,colour);
+      this.patch[i].supertile=supertile;
     }
   }
 }
 
-mtransform operator *(mtransform t1, mtransform t2) {
-  mtransform t3;
+mtile operator *(mtile t1, mtile t2) {
+  mtile t3;
   t3.transform=t1.transform*t2.transform;
-  t3.range=t2.range;
+  t3.prototile=t2.prototile;
   t3.colour=t2.colour;
   return t3;
 }
 
-mtransform operator *(transform T, mtransform t1) {
-  mtransform t2=t1;
+mtile operator *(transform T, mtile t1) {
+  mtile t2=t1;
   t2.transform=T*t2.transform;
   return t2;
 }
 
-mtransform[] operator *(transform T, mtransform[] t1) {
+mtile[] operator *(transform T, mtile[] t1) {
   int L=t1.length;
-  mtransform[] t2=new mtransform[L];
+  mtile[] t2=new mtile[L];
   for(int i=0; i < t1.length; ++i)
     t2[i]=T*t1[i];
   return t2;
 }
 
-mtransform copy(mtransform T) {
-  return mtransform(T.transform, copy(T.domain), copy(T.range), T.colour);
+mtile copy(mtile T) {
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.colour);
 }
 
 bool samepath(path[] P1, path[] P2) {
@@ -98,51 +76,51 @@ bool samepath(path[] P1, path[] P2) {
   return true;
 }
 
-void loop(mtransform[] rule, mtransform T, int n, int k, mtransform[] tiles,
+void loop(mtile[] rule, mtile T, int n, int k, mtile[] tiles,
           real inflation=inflation) {
   if(k < n)
     for(int i; i < rule.length; ++i) {
-      mtransform rulei=rule[i];
-      if(samepath(rulei.domain,T.range))
+      mtile rulei=rule[i];
+      if(samepath(rulei.supertile,T.prototile))
         loop(rule, T*rulei, n, k+1,tiles);
     }
   else
     tiles.push(scale(inflation)^n*T);
 }
 
-mtransform[] substitute(mtransform[] rule, path[] supertile, mtransform[] startTiles={}, int n,
+mtile[] substitute(mtile[] rule, path[] supertile, mtile[] startTiles={}, int n,
                    real inflation=inflation) {
-  mtransform[] tiles;
+  mtile[] tiles;
   for(int i=0; i < rule.length; ++i) {
-    mtransform T=rule[i];
-    if(T.range.length == 0) {
-      T.domain=supertile;
-      T.range=supertile;
+    mtile T=rule[i];
+    if(T.prototile.length == 0) {
+      T.supertile=supertile;
+      T.prototile=supertile;
     }
   }
   if(n == 0) {
     // Draw a tile when no iterations are asked for.
     for(int i=0; i < rule.length; ++i) {
-      mtransform Ti=rule[i];
-      if(samepath(Ti.range,supertile)) {
-        tiles.push(mtransform(identity,supertile,Ti.colour));
+      mtile Ti=rule[i];
+      if(samepath(Ti.prototile,supertile)) {
+        tiles.push(mtile(identity,supertile,Ti.colour));
         break;
       }
     }
   } else {
     int L=rule.length;
-    mtransform[] rulecopy=new mtransform[L];
+    mtile[] rulecopy=new mtile[L];
     real deflation=1/inflation;
     for(int i=0; i < L; ++i) {
       // Inflate transforms (without changing user data).
       transform Ti=rule[i].transform;
-      mtransform rci=copy(rule[i]);
+      mtile rci=copy(rule[i]);
       rci.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
       rulecopy[i]=rci;
     }
     int sTL=startTiles.length;
     if(sTL == 0)
-      loop(rulecopy,mtransform(supertile),n,0,tiles,inflation);
+      loop(rulecopy,mtile(supertile),n,0,tiles,inflation);
     else
       for(int i=0; i < sTL; ++i)
         loop(rulecopy,startTiles[i],n,0,tiles,inflation);
@@ -153,11 +131,11 @@ mtransform[] substitute(mtransform[] rule, path[] supertile, mtransform[] startT
 
 struct mosaic {
   // Normal entry point.
-  mtransform[] tiles;
+  mtile[] tiles;
   path[] supertile;
   int n;
   mrule[] rules;
-  mtransform[] mtransforms;
+  mtile[] patch;
 
   void operator init(path[] supertile, int n=0, real inflation=inflation ...mrule[] rules) {
     this.n=n;
@@ -165,13 +143,13 @@ struct mosaic {
     this.rules=rules;
     int L=rules.length;
     for(int i=0; i < L; ++i)
-      mtransforms.append(rules[i].mtransforms);
-    this.tiles=substitute(mtransforms,supertile,n,inflation);
+      patch.append(rules[i].patch);
+    this.tiles=substitute(patch,supertile,n,inflation);
 
   }
   /*
   void operator init(path[] supertile, int n=0, real inflation=inflation
-                     ...mtransform[] rule) {
+                     ...mtile[] rule) {
     this.n=n;
     this.supertile=supertile;
     this.rule=rule;
@@ -179,7 +157,7 @@ struct mosaic {
   }
 
   void operator init(path[] supertile, int n=0, real inflation=inflation,
-                     mtransform[] rule) {
+                     mtile[] rule) {
     this.n=n;
     this.supertile=supertile;
     this.rule=rule;
@@ -211,13 +189,13 @@ mosaic operator *(transform T, mosaic M) {
   return M2;
 }
 
-void draw(picture pic=currentpicture, mtransform T, pen p=currentpen) {
-  path[] Td=T.transform*T.range;
+void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
+  path[] Td=T.transform*T.prototile;
   fill(pic, Td, T.colour);
   draw(pic,Td,p);
 }
 
-void draw(picture pic=currentpicture, mtransform[] T, pen p=currentpen) {
+void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
   for(int k=0; k < T.length; ++k)
     draw(pic, T[k], p);
 }
