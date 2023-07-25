@@ -13,6 +13,8 @@ mtile C2=mtile(shift(1,1),orange);
 mtile C3=mtile(shift(4,0)*rotate(90),blue);
 mtile C4=mtile(shift(0,4)*rotate(270),blue);
 
+mrule chairRule=mrule(C1,C2,C3,C4);
+
 int n=4;
-mosaic M=mosaic(chair,n,C1,C2,C3,C4);
+mosaic M=mosaic(chair,n,chairRule);
 draw(M);
