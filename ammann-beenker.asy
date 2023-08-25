@@ -5,15 +5,15 @@ import mosaic;
 
 real sqrt2=sqrt(2);
 real sr=1+sqrt2; // silver ratio
+transform R45=rotate(45);
+
+inflation=sr;  // inflation factor
 
 // prototiles
 path rhombus=(0,0)--(-1,1)--(-1,sr)--(0,sqrt2)--cycle;
 path square=(0,0)--(-1,1)--(0,2)--(1,1)--cycle;
 path[] prototiles={rhombus,square};
 
-inflation=sr;  // inflation factor
-
-transform R45=rotate(45);
 
 // rhombus substitution rule ===
 
