@@ -19,9 +19,19 @@ penroseRhomb - v2.pdf
 ammann-beenker.pdf
 ammann-beenker.asy.bak
 ammann-beenker-upd.asy.bak
+<<<<<<< Updated upstream
 mosaic - upd.asy.bak
 mosaic-upd.asy.bak
 SierpinskiGasket.pdf
 SierpinskiGasket.asy.bak
 fudgeflake.pdf
+=======
+>>>>>>> Stashed changes
 fudgeflake.asy.bak
+mosaic.asy.bak
+*.bak
+*.pdf
+colours.png
+Ideas.md
+Questions.md
+Tasks.md
