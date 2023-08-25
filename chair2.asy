@@ -19,6 +19,8 @@ int n=4;
 mosaic M=mosaic(chair,n,chairRule);
 draw(M);
 
+// decoration ===
+
 path[] dot=shift(2/5,2/5)*scale(1/5)*unitcircle;
 
 mtile D1=mtile(blue);
