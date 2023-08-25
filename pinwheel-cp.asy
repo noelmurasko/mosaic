@@ -10,7 +10,7 @@ inflation=sqrt(5);
 int n=0;
 
 transform T=reflect((0,0),(0,1))*rotate(90+aTan(2));
-//transform reorient=rotate(-90-inflation^(n)*atan(1/2)-0.67);
+//transform reorient=rotate(-90-aTan(1/2));
 
 mtile P1=mtile(T);
 mtile P2=mtile(T*shift(2,1));
