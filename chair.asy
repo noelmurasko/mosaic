@@ -5,15 +5,18 @@ import mosaic;
 
 inflation=2;
 
+// prototile
 path chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
+// chair substitution tiles
 mtile C1=mtile(white);
 mtile C2=mtile(shift(1,1),orange);
-mtile C3=mtile(shift(4,0)*rotate(90),blue);
-mtile C4=mtile(shift(0,4)*rotate(270),blue);
+mtile C3=mtile(shift(4,0)*rotate(90),lightblue);
+mtile C4=mtile(shift(0,4)*rotate(270),lightblue);
 
-mrule chairRule=mrule(C1,C2,C3,C4);
+mrule chairRule=mrule(C1,C2,C3,C4); // chair substitution rule
 
-int n=4;
+// draw patch
+int n=6;
 mosaic M=mosaic(chair,n,chairRule);
 draw(M);

@@ -29,10 +29,9 @@ mosaic M=mosaic(triangle,n,pinRule);
 //M = reorient*M;
 draw(M);
 
-// decoration ===
-
+// decoration 
 pair CP=(u+2*v+w)/4;  // control point
-path[] dot=shift(CP)*scale(1/20)*unitcircle;
+path dot=shift(CP)*scale(1/20)*unitcircle;
 
 mtile P1=mtile(T, black);
 mtile P2=mtile(T*shift(2,1), black);
