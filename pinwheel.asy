@@ -9,11 +9,11 @@ inflation=sqrt(5);
 
 transform T=reflect((0,0),(0,1))*rotate(90+aTan(2));
 
-ptransform P1=ptransform(T);
-ptransform P2=ptransform(T*shift(2,1));
-ptransform P3=ptransform(T*reflect((2,0),(2,1)));
-ptransform P4=ptransform(T*reflect((0,1),(1,1))*shift(2,1));
-ptransform P5=ptransform(T*shift(4,2)*rotate(-90));
+mtile P1=mtile(T, paleyellow);
+mtile P2=mtile(T*shift(2,1), paleyellow);
+mtile P3=mtile(T*reflect((2,0),(2,1)), lightred);
+mtile P4=mtile(T*reflect((0,1),(1,1))*shift(2,1),paleblue);
+mtile P5=mtile(T*shift(4,2)*rotate(-90),heavyred);
 
 mrule pinRule=mrule(P1,P2,P3,P4,P5);
 
