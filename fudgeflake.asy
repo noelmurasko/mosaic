@@ -11,11 +11,11 @@ inflation=sqrt3;
 
 transform R30=rotate(30);
 
-mtile H1=mtile(R30,heavygray);
-mtile H2=mtile(shift(sqrt3/2,1/2)*R30,heavygray);
-mtile H3=mtile(shift(sqrt3/2,-1/2)*R30,heavygray);
+mrule ifs=mrule(hexagon);
 
-mrule ifs=mrule(H1,H2,H3);
+ifs.addtile(R30,heavygray);
+ifs.addtile(shift(sqrt3/2,1/2)*R30,heavygray);
+ifs.addtile(shift(sqrt3/2,-1/2)*R30,heavygray);
 
 int n=3;
 mosaic M=mosaic(hexagon,n,ifs);

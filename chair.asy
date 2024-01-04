@@ -8,15 +8,14 @@ inflation=2;
 // prototile
 path chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
-// chair substitution tiles
-mtile C1=mtile(white);
-mtile C2=mtile(shift(1,1),orange);
-mtile C3=mtile(shift(4,0)*rotate(90),lightblue);
-mtile C4=mtile(shift(0,4)*rotate(270),lightblue);
+mrule chairRule=mrule(chair); // chair substitution rule
 
-mrule chairRule=mrule(C1,C2,C3,C4); // chair substitution rule
+chairRule.addtile(white);
+chairRule.addtile(shift(1,1),orange);
+chairRule.addtile(shift(4,0)*rotate(90),lightblue);
+chairRule.addtile(shift(0,4)*rotate(270),lightblue);
 
 // draw patch
-int n=3;
-mosaic M=mosaic(chair,n,chairRule);
+int n=4;
+mosaic M=mosaic(n,chairRule);
 draw(M);

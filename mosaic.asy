@@ -18,15 +18,20 @@ struct mtile {
                      pen colour=invisible) {
     this.transform=transform;
     this.supertile=prototile;
-    this.prototile=this.supertile;
+    this.prototile=prototile;
     this.colour=colour;
   }
+
 }
 
 struct mrule {
   path[] supertile;
   mtile[] patch;
 
+  void operator init(path[] supertile={}) {
+    this.supertile=supertile;
+  }
+  /*
   void operator init(path[] supertile={} ...mtile[] patch) {
     this.supertile=supertile;
     this.patch=copy(patch);
@@ -36,6 +41,16 @@ struct mrule {
       if(this.patch[i].prototile.length == 0)
         this.patch[i].prototile=supertile;
     }
+  }
+  */
+  void addtile(transform transform=identity, path[] prototile={},
+                     pen colour=invisible) {
+    mtile m;
+    if(prototile.length == 0)
+      m=mtile(transform,this.supertile,colour);
+    else
+      m=mtile(transform,this.supertile,prototile,colour);
+    this.patch.push(m);
   }
 }
 
@@ -133,23 +148,26 @@ mtile[] substitute(mtile[] patch, path[] supertile, mtile[] startTiles={}, int n
   return tiles;
 }
 
-
 struct mosaic {
-  // Normal entry point.
   mtile[] tiles;
   path[] supertile;
   int n;
   mrule[] rules;
   mtile[] patch;
 
-  void operator init(path[] supertile, int n=0, real inflation=inflation ...mrule[] rules) {
+  void operator init(path[] supertile={}, int n=0, real inflation=inflation ...mrule[] rules) {
+    // If supertile is not specified, use supertile from first specified rule.
+    if(supertile.length == 0)
+      this.supertile=rules[0].supertile;
+    else
+      this.supertile=supertile;
+
     this.n=n;
-    this.supertile=supertile;
     this.rules=rules;
     int L=rules.length;
     for(int i=0; i < L; ++i)
       this.patch.append(rules[i].patch);
-    this.tiles=substitute(this.patch,supertile,n,inflation);
+    this.tiles=substitute(this.patch,this.supertile,n,inflation);
   }
 }
 
