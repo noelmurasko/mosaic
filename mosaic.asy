@@ -155,6 +155,7 @@ struct mosaic {
 mosaic substitute(mosaic M, int n, real inflation=inflation) {
   if(n > M.n)
     M.tiles=substitute(M.patch,M.supertile,M.tiles,n-M.n,inflation);
+    M.n=n;
   return M;
 }
 
