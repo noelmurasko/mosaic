@@ -30,6 +30,6 @@ dotRule.addtile(shift(1,1),white);
 dotRule.addtile(shift(4,0)*rotate(90),orange);
 dotRule.addtile(shift(0,4)*rotate(270),orange);
 
-mosaic M=mosaic(dot,n,dotRule);
+mosaic M=mosaic(n,dotRule);
 
 draw(M);
