@@ -31,6 +31,6 @@ mtile K4=mtile(shift(-A,A*c)*rotate(-108),kite,lightyellow);
 
 mrule kiteRule=mrule(kite,K1,K2,K3,K4);  // dart substitution rule
 
-int n=6;
+int n=3;
 mosaic M=mosaic(kite,n,dartRule,kiteRule);
 draw(M);
