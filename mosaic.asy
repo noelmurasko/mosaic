@@ -21,7 +21,6 @@ struct mtile {
     this.prototile=prototile;
     this.colour=colour;
   }
-
 }
 
 struct mrule {
@@ -31,18 +30,7 @@ struct mrule {
   void operator init(path[] supertile={}) {
     this.supertile=supertile;
   }
-  /*
-  void operator init(path[] supertile={} ...mtile[] patch) {
-    this.supertile=supertile;
-    this.patch=copy(patch);
-    int L=patch.length;
-    for(int i=0; i < L; ++i) {
-      this.patch[i].supertile=supertile;
-      if(this.patch[i].prototile.length == 0)
-        this.patch[i].prototile=supertile;
-    }
-  }
-  */
+
   void addtile(transform transform=identity, path[] prototile={},
                      pen colour=invisible) {
     mtile m;
@@ -198,6 +186,5 @@ void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? 0.5/(inflation)^(M.n-1) : linewidth(p);
-  //real scaling=0.25;
   draw(pic, M.tiles, p+scaling);
 }
