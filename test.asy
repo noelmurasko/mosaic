@@ -9,7 +9,7 @@ mtile S=mtile(purple);
 mtile T=mtile(shift(1,0),pink);
 
 mrule sRule1=mrule(S,T);
-int n=2;
+int n=3;
 mosaic M=mosaic(square,n,sRule1);
 
 mrule sRule2=mrule(S,T);

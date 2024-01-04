@@ -76,28 +76,28 @@ bool samepath(path[] P1, path[] P2) {
   return true;
 }
 
-void loop(mtile[] rule, mtile T, int n, int k, mtile[] tiles,
+void loop(mtile[] patch, mtile T, int n, int k, mtile[] tiles,
           real inflation=inflation) {
   if(k < n)
-    for(int i; i < rule.length; ++i) {
-      mtile rulei=rule[i];
-      if(samepath(rulei.supertile,T.prototile))
-        loop(rule, T*rulei, n, k+1,tiles);
+    for(int i; i < patch.length; ++i) {
+      mtile patchi=patch[i];
+      if(samepath(patchi.supertile,T.prototile))
+        loop(patch, T*patchi, n, k+1,tiles);
     }
   else
     tiles.push(scale(inflation)^n*T);
 }
 
-mtile[] substitute(mtile[] rule, path[] supertile, mtile[] startTiles={}, int n,
+mtile[] substitute(mtile[] patch, path[] supertile, mtile[] startTiles={}, int n,
                    real inflation=inflation) {
-  int L=rule.length;
-  mtile[] rulecopy=new mtile[L];
+  int L=patch.length;
+  mtile[] patchcopy=new mtile[L];
   for(int i=0; i < L; ++i) {
-    rulecopy[i]=copy(rule[i]);
+    patchcopy[i]=copy(patch[i]);
   }
   mtile[] tiles;
   for(int i=0; i < L; ++i) {
-    mtile T=rulecopy[i];
+    mtile T=patchcopy[i];
     if(T.prototile.length == 0) {
       T.prototile=supertile;
     }
@@ -108,7 +108,7 @@ mtile[] substitute(mtile[] rule, path[] supertile, mtile[] startTiles={}, int n,
   if(n == 0) {
     // Draw a tile when no iterations are asked for.
     for(int i=0; i < L; ++i) {
-      mtile Ti=rulecopy[i];
+      mtile Ti=patchcopy[i];
       if(samepath(Ti.prototile,supertile)) {
         tiles.push(mtile(identity,supertile,Ti.colour));
         break;
@@ -118,15 +118,15 @@ mtile[] substitute(mtile[] rule, path[] supertile, mtile[] startTiles={}, int n,
     real deflation=1/inflation;
     for(int i=0; i < L; ++i) {
       // Inflate transforms (without changing user data).
-      transform Ti=rulecopy[i].transform;
-      rulecopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+      transform Ti=patchcopy[i].transform;
+      patchcopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
     }
     int sTL=startTiles.length;
     if(sTL == 0)
-      loop(rulecopy,mtile(supertile),n,0,tiles,inflation);
+      loop(patchcopy,mtile(supertile),n,0,tiles,inflation);
     else
       for(int i=0; i < sTL; ++i)
-        loop(rulecopy,startTiles[i],n,0,tiles,inflation);
+        loop(patchcopy,startTiles[i],n,0,tiles,inflation);
   }
   return tiles;
 }
