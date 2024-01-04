@@ -203,5 +203,6 @@ void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? 0.5/(inflation)^(M.n-1) : linewidth(p);
+  //real scaling=0.25;
   draw(pic, M.tiles, p+scaling);
 }
