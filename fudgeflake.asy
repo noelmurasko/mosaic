@@ -17,6 +17,6 @@ mtile H3=mtile(shift(sqrt3/2,-1/2)*R30,heavygray);
 
 mrule ifs=mrule(H1,H2,H3);
 
-int n=7;
+int n=3;
 mosaic M=mosaic(hexagon,n,ifs);
 draw(M,white);
