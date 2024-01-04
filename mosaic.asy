@@ -29,10 +29,12 @@ struct mrule {
 
   void operator init(path[] supertile={} ...mtile[] patch) {
     this.supertile=supertile;
-    this.patch=patch;
+    this.patch=copy(patch);
     int L=patch.length;
     for(int i=0; i < L; ++i) {
       this.patch[i].supertile=supertile;
+      if(this.patch[i].prototile.length == 0)
+        this.patch[i].prototile=supertile;
     }
   }
 }
@@ -148,7 +150,6 @@ struct mosaic {
     for(int i=0; i < L; ++i)
       this.patch.append(rules[i].patch);
     this.tiles=substitute(this.patch,supertile,n,inflation);
-
   }
 }
 

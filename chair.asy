@@ -17,6 +17,6 @@ mtile C4=mtile(shift(0,4)*rotate(270),lightblue);
 mrule chairRule=mrule(C1,C2,C3,C4); // chair substitution rule
 
 // draw patch
-int n=6;
+int n=3;
 mosaic M=mosaic(chair,n,chairRule);
 draw(M);
