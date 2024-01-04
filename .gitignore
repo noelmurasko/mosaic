@@ -1,21 +1,12 @@
-chair.pdf
-chair.asy.bak
-pinwheel.asy.bak
-pinwheel.pdf
-boxRect.asy.bak
-boxRect.pdf
-penrose.pdf
-penrose.asy.bak
-tromino1.asy
 asy.exe.stackdump
-penroseKite.asy.bak
-penroseKite.pdf
-penroseRhomb.asy.bak
-penroseRhomb.pdf
 from Franz/
 Play/
 penroseRhomb - v2.asy.bak
 penroseRhomb - v2.pdf
-ammann-beenker.pdf
-ammann-beenker.asy.bak
-ammann-beenker-upd.asy.bak
+mosaic - upd.asy.bak
+*.bak
+*.pdf
+colours.png
+Ideas.md
+Questions.md
+Tasks.md
