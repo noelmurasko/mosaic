@@ -90,33 +90,36 @@ void loop(mtile[] rule, mtile T, int n, int k, mtile[] tiles,
 
 mtile[] substitute(mtile[] rule, path[] supertile, mtile[] startTiles={}, int n,
                    real inflation=inflation) {
+  int L=rule.length;
+  mtile[] rulecopy=new mtile[L];
+  for(int i=0; i < L; ++i) {
+    rulecopy[i]=copy(rule[i]);
+  }
   mtile[] tiles;
-  for(int i=0; i < rule.length; ++i) {
-    mtile T=rule[i];
+  for(int i=0; i < L; ++i) {
+    mtile T=rulecopy[i];
     if(T.prototile.length == 0) {
-      T.supertile=supertile;
       T.prototile=supertile;
+    }
+    if(T.supertile.length == 0) {
+      T.supertile=supertile;
     }
   }
   if(n == 0) {
     // Draw a tile when no iterations are asked for.
-    for(int i=0; i < rule.length; ++i) {
-      mtile Ti=rule[i];
+    for(int i=0; i < L; ++i) {
+      mtile Ti=rulecopy[i];
       if(samepath(Ti.prototile,supertile)) {
         tiles.push(mtile(identity,supertile,Ti.colour));
         break;
       }
     }
   } else {
-    int L=rule.length;
-    mtile[] rulecopy=new mtile[L];
     real deflation=1/inflation;
     for(int i=0; i < L; ++i) {
       // Inflate transforms (without changing user data).
-      transform Ti=rule[i].transform;
-      mtile rci=copy(rule[i]);
-      rci.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
-      rulecopy[i]=rci;
+      transform Ti=rulecopy[i].transform;
+      rulecopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
     }
     int sTL=startTiles.length;
     if(sTL == 0)
@@ -143,8 +146,8 @@ struct mosaic {
     this.rules=rules;
     int L=rules.length;
     for(int i=0; i < L; ++i)
-      patch.append(rules[i].patch);
-    this.tiles=substitute(patch,supertile,n,inflation);
+      this.patch.append(rules[i].patch);
+    this.tiles=substitute(this.patch,supertile,n,inflation);
 
   }
   /*

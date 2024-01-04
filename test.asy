@@ -8,9 +8,9 @@ path square=(0,0)--(0,1)--(1,1)--(1,0)--cycle;
 mtile S=mtile(purple);
 mtile T=mtile(shift(1,0),pink);
 
-mrule sRule1=mrule(S,T);  
+mrule sRule1=mrule(S,T);
 int n=2;
-mosaic M=mosaic(square,n,sRule1);  
+mosaic M=mosaic(square,n,sRule1);
 
 mrule sRule2=mrule(S,T);
 //mosaic M=mosaic(square,n,sRule1);
