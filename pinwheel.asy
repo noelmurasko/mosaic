@@ -10,7 +10,7 @@ inflation=sqrt(5);
 transform T=reflect((0,0),(0,1))*rotate(90+aTan(2));
 //transform reorient=rotate(-90-aTan(1/2));
 
-// pinwheel substitution tiles 
+// pinwheel substitution tiles
 mtile P1=mtile(T, paleyellow);
 mtile P2=mtile(T*shift(2,1), paleyellow);
 mtile P3=mtile(T*reflect((2,0),(2,1)), lightred);

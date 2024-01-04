@@ -150,42 +150,14 @@ struct mosaic {
     this.tiles=substitute(this.patch,supertile,n,inflation);
 
   }
-  /*
-  void operator init(path[] supertile, int n=0, real inflation=inflation
-                     ...mtile[] rule) {
-    this.n=n;
-    this.supertile=supertile;
-    this.rule=rule;
-    this.tiles=substitute(rule,supertile,n,inflation);
-  }
+}
 
-  void operator init(path[] supertile, int n=0, real inflation=inflation,
-                     mtile[] rule) {
-    this.n=n;
-    this.supertile=supertile;
-    this.rule=rule;
-    this.tiles=substitute(rule,supertile,n,inflation);
-  }
-  */
-}
-/*
 mosaic substitute(mosaic M, int n, real inflation=inflation) {
-  int Mn=M.n;
-  if(n > Mn) {
-    mosaic M2;
-    M2.n=Mn;
-    M2.supertile=M.supertile;
-    M2.rule=M.rule;
-    M2.tiles=substitute(M2.rule,M2.supertile,M.tiles,n-Mn,inflation);
-    return M2;
-  } else if(n < Mn) {
-    mosaic M2=mosaic(M.supertile,n,inflation,M.rule);
-    return M2;
-  } else {
-    return M;
-  }
+  if(n > M.n)
+    M.tiles=substitute(M.patch,M.supertile,M.tiles,n-M.n,inflation);
+  return M;
 }
-*/
+
 mosaic operator *(transform T, mosaic M) {
   mosaic M2=M;
   M2.tiles=T*M2.tiles;
