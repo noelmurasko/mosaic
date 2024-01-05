@@ -5,21 +5,24 @@ struct mtile {
   path[] supertile;
   path[] prototile;
   pen colour;
+  string id;
 
   void operator init(transform transform=identity, path[] supertile, path[] prototile,
-                     pen colour=invisible) {
+                     pen colour=invisible, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile=prototile;
     this.colour=colour;
+    this.id=id;
   }
 
   void operator init(transform transform=identity, path[] prototile={},
-                     pen colour=invisible) {
+                     pen colour=invisible, string id="") {
     this.transform=transform;
     this.supertile=prototile;
     this.prototile=prototile;
     this.colour=colour;
+    this.id=id;
   }
 }
 
@@ -32,14 +35,18 @@ struct mrule {
   }
 
   void addtile(transform transform=identity, path[] prototile={},
-                     pen colour=invisible) {
+                     pen colour=invisible, string id="") {
     mtile m;
     if(prototile.length == 0)
-      m=mtile(transform,this.supertile,colour);
+      m=mtile(transform,this.supertile,colour,id);
     else
-      m=mtile(transform,this.supertile,prototile,colour);
+      m=mtile(transform,this.supertile,prototile,colour,id);
     this.patch.push(m);
   }
+}
+
+mtile copy(mtile T) {
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.colour, T.id);
 }
 
 mtile operator *(mtile t1, mtile t2) {
@@ -47,6 +54,7 @@ mtile operator *(mtile t1, mtile t2) {
   t3.transform=t1.transform*t2.transform;
   t3.prototile=t2.prototile;
   t3.colour=t2.colour;
+  t3.id=t2.id;
   return t3;
 }
 
@@ -64,9 +72,7 @@ mtile[] operator *(transform T, mtile[] t1) {
   return t2;
 }
 
-mtile copy(mtile T) {
-  return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.colour);
-}
+
 
 bool samepath(path[] P1, path[] P2) {
   int L=P1.length;
@@ -115,7 +121,7 @@ mtile[] substitute(mtile[] patch, path[] supertile, mtile[] startTiles={}, int n
     for(int i=0; i < L; ++i) {
       mtile Ti=patchcopy[i];
       if(samepath(Ti.prototile,supertile)) {
-        tiles.push(mtile(identity,supertile,Ti.colour));
+        tiles.push(mtile(identity,supertile,Ti.colour,Ti.id));
         break;
       }
     }
@@ -156,6 +162,13 @@ struct mosaic {
     for(int i=0; i < L; ++i)
       this.patch.append(rules[i].patch);
     this.tiles=substitute(this.patch,this.supertile,n,inflation);
+  }
+
+  void updateColour(string id, pen colour) {
+    for(int i=0; i < tiles.length; ++i) {
+      if(tiles[i].id == id)
+        tiles[i].colour = colour;
+    }
   }
 }
 

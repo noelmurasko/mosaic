@@ -10,14 +10,15 @@ path chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
 mrule chairRule=mrule(chair); // chair substitution rule
 
-chairRule.addtile(white);
-chairRule.addtile(shift(1,1),orange);
-chairRule.addtile(shift(4,0)*rotate(90),lightblue);
-chairRule.addtile(shift(0,4)*rotate(270),lightblue);
+chairRule.addtile(white,id="A");
+chairRule.addtile(shift(1,1),orange,id="B");
+chairRule.addtile(shift(4,0)*rotate(90),lightblue,id="C");
+chairRule.addtile(shift(0,4)*rotate(270),lightblue,id="D");
 
 // draw patch
 int n=5;
 mosaic M=mosaic(chair,n,chairRule);
+M.updateColour("A", red);
 draw(M);
 
 // decoration
