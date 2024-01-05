@@ -10,26 +10,26 @@ path chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
 mrule chairRule=mrule(chair); // chair substitution rule
 
-chairRule.addtile(white);
-chairRule.addtile(shift(1,1),orange);
-chairRule.addtile(shift(4,0)*rotate(90),lightblue);
-chairRule.addtile(shift(0,4)*rotate(270),lightblue);
+chairRule.addtile(white,id="A");
+chairRule.addtile(shift(1,1),orange,id="B");
+chairRule.addtile(shift(4,0)*rotate(90),lightblue,id="C");
+chairRule.addtile(shift(0,4)*rotate(270),lightblue,id="D");
 
-// draw patch
-int n=5;
+int n=4;
 mosaic M=mosaic(chair,n,chairRule);
 draw(M);
 
-// decoration
-path dot=shift(2/5,2/5)*scale(1/5)*unitcircle;
+// Add black dot
+pair dot=(1/2,1/2);
+M.set(dot);
+draw(M,black+10);
 
-mrule dotRule=mrule(dot); // chair substitution rule
+// Add more complicated decorations
+path pentagon=shift(7/5,1/2)*rotate(30)*scale(1/5)*polygon(5);
+path hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);
+path[] decorate=pentagon^^hexagon;
 
-dotRule.addtile(lightblue);
-dotRule.addtile(shift(1,1),white);
-dotRule.addtile(shift(4,0)*rotate(90),orange);
-dotRule.addtile(shift(0,4)*rotate(270),orange);
-
-mosaic M=mosaic(n,dotRule);
-
+M.set(decorate,lightblue,"A");
+M.set(decorate,white,"B");
+M.set(decorate,orange,"C","D");
 draw(M);
