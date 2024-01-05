@@ -25,14 +25,15 @@ pinRule.addtile(T*shift(4,2)*rotate(-90));
 int n=6;  
 
 // options
+bool drawTriangles=true;  // draw the tiles
 bool drawCPs=true;  // draw critical points in each triangle
 bool drawFP=true;  // draw the fixed point of the tiling
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each time
 bool clipPatch=true;  // clip the patch with a box
 
 // pen settings
-pen CP_pen=black+0.05;  // pen for drawing critical points
-pen FP_pen=heavymagenta+5;  // pen for drawing the fixed point
+pen CP_pen=black+60;  // pen for drawing critical points
+pen FP_pen=heavymagenta+4;  // pen for drawing the fixed point
 
 // clip settings (rectangle centered at the fixed point)
 real boxW=inflation^(max(n-2,0));  // clip box width
@@ -47,27 +48,18 @@ mosaic M=mosaic(n,pinRule);
 transform R90=rotate(-90);
 transform phi=rotate(aTan(-1/2));
 transform R=(phi^n)*R90;
-if(rotatePatch) M = R*M;
+if(rotatePatch) M=R*M;
 
 // draw patch
-draw(M);  
+if(drawTriangles) draw(M);  
 
-// build control points
-pair CP=(u+2*v+w)/4;  // control point
-path CP_dot=shift(CP)*scale(linewidth(CP_pen))*unitcircle;
-mrule CP_rule=mrule(CP_dot);
-CP_rule.addtile(T,CP_pen);
-CP_rule.addtile(T*shift(2,1),CP_pen);
-CP_rule.addtile(T*reflect((2,0),(2,1)),CP_pen);
-CP_rule.addtile(T*reflect((0,1),(1,1))*shift(2,1),CP_pen);
-CP_rule.addtile(T*shift(4,2)*rotate(-90),CP_pen);
-mosaic CPs=mosaic(n,CP_rule);
-if(rotatePatch) CPs = R*CPs;  
+// draw control points
+pair CP=(u+2*v+w)/4;  
+M.set(CP);
+if(drawCPs) draw(M, CP_pen);
 
-// add critical points to patch
-if(drawCPs) draw(CPs, scalelinewidth=false); 
 
-// add fixed point to patch
+// draw fixed point
 pair FP=(inflation^n)*CP;
 if(rotatePatch) FP=R*FP;
 if(drawFP) draw(FP,p=FP_pen); 
