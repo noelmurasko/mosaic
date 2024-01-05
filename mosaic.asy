@@ -167,17 +167,45 @@ struct mosaic {
     this.tiles=substitute(this.patch,this.supertile,n,inflation);
   }
 
-  void updateColour(pen colour,string id) {
+  void update(pen colour, path[] tesserae, string id) {
+    for(int i=0; i < tiles.length; ++i) {
+      if(this.tiles[i].id == id) {
+        this.tiles[i].colour = colour;
+        this.tiles[i].tesserae = tesserae;
+      }
+    }
+  }
+
+  void update(pen colour, path[] tesserae) {
+    for(int i=0; i < tiles.length; ++i) {
+      this.tiles[i].colour = colour;
+      this.tiles[i].tesserae = tesserae;
+    }
+  }
+
+  void update(pen colour, string id) {
     for(int i=0; i < tiles.length; ++i) {
       if(this.tiles[i].id == id)
         this.tiles[i].colour = colour;
     }
   }
 
-  void updateTesserae(path[] tesserae,string id) {
+  void update(pen colour) {
+    for(int i=0; i < tiles.length; ++i) {
+      this.tiles[i].colour = colour;
+    }
+  }
+
+  void update(path[] tesserae, string id) {
     for(int i=0; i < tiles.length; ++i) {
       if(this.tiles[i].id == id)
         this.tiles[i].tesserae = tesserae;
+    }
+  }
+
+  void update(path[] tesserae) {
+    for(int i=0; i < tiles.length; ++i) {
+      this.tiles[i].tesserae = tesserae;
     }
   }
 }
