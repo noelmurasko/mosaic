@@ -167,7 +167,7 @@ struct mosaic {
     this.tiles=substitute(this.patch,this.supertile,n,inflation);
   }
 
-  void update(pen colour, path[] tesserae ...string[] id) {
+  void update(path[] tesserae, pen colour ...string[] id) {
     if(id.length == 0)
       for(int i=0; i < tiles.length; ++i) {
         this.tiles[i].colour = colour;
@@ -233,7 +233,8 @@ mosaic operator *(transform T, mosaic M) {
 
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
   path[] Td=T.transform*T.tesserae;
-  fill(pic, Td, T.colour);
+  for(int i=0; i < Td.length; ++i)
+    if(cyclic(Td[i]) == true) fill(pic, Td[i], T.colour);
   draw(pic,Td,p);
 }
 
