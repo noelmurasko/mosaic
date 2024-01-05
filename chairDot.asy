@@ -24,7 +24,6 @@ path dot=shift(2/5,2/5)*scale(1/5)*unitcircle;
 
 M.update(lightblue,dot,"A");
 M.update(white,dot,"B");
-M.update(orange,dot,"C");
-M.update(orange,dot,"D");
+M.update(orange,dot,"C","D");
 
 draw(M);

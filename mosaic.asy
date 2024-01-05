@@ -167,46 +167,54 @@ struct mosaic {
     this.tiles=substitute(this.patch,this.supertile,n,inflation);
   }
 
-  void update(pen colour, path[] tesserae, string id) {
-    for(int i=0; i < tiles.length; ++i) {
-      if(this.tiles[i].id == id) {
+  void update(pen colour, path[] tesserae ...string[] id) {
+    if(id.length == 0)
+      for(int i=0; i < tiles.length; ++i) {
         this.tiles[i].colour = colour;
         this.tiles[i].tesserae = tesserae;
       }
-    }
+    else
+      for(int i=0; i < tiles.length; ++i) {
+        for(int j=0; j < id.length; ++j) {
+          if(this.tiles[i].id == id[j]) {
+            this.tiles[i].colour = colour;
+            this.tiles[i].tesserae = tesserae;
+            break;
+          }
+        }
+      }
   }
 
-  void update(pen colour, path[] tesserae) {
-    for(int i=0; i < tiles.length; ++i) {
-      this.tiles[i].colour = colour;
-      this.tiles[i].tesserae = tesserae;
-    }
-  }
-
-  void update(pen colour, string id) {
-    for(int i=0; i < tiles.length; ++i) {
-      if(this.tiles[i].id == id)
+  void update(pen colour ...string[] id) {
+    if(id.length == 0)
+      for(int i=0; i < tiles.length; ++i) {
         this.tiles[i].colour = colour;
-    }
+      }
+    else
+      for(int i=0; i < tiles.length; ++i) {
+        for(int j=0; j < id.length; ++j) {
+          if(this.tiles[i].id == id[j]) {
+            this.tiles[i].colour = colour;
+            break;
+          }
+        }
+      }
   }
 
-  void update(pen colour) {
-    for(int i=0; i < tiles.length; ++i) {
-      this.tiles[i].colour = colour;
-    }
-  }
-
-  void update(path[] tesserae, string id) {
-    for(int i=0; i < tiles.length; ++i) {
-      if(this.tiles[i].id == id)
+  void update(path[] tesserae ...string[] id) {
+    if(id.length == 0)
+      for(int i=0; i < tiles.length; ++i) {
         this.tiles[i].tesserae = tesserae;
-    }
-  }
-
-  void update(path[] tesserae) {
-    for(int i=0; i < tiles.length; ++i) {
-      this.tiles[i].tesserae = tesserae;
-    }
+      }
+    else
+      for(int i=0; i < tiles.length; ++i) {
+        for(int j=0; j < id.length; ++j) {
+          if(this.tiles[i].id == id[j]) {
+            this.tiles[i].tesserae = tesserae;
+            break;
+          }
+        }
+      }
   }
 }
 
