@@ -17,6 +17,17 @@ struct mtile {
     this.colour=colour;
     this.id=id;
   }
+
+  void operator init(transform transform=identity, path[] supertile, path[] prototile={},
+                     pair tesserae, pen colour=invisible, string id="") {
+    this.transform=transform;
+    this.supertile=supertile;
+    this.prototile = prototile.length == 0 ? supertile : prototile;
+    path tesseraeP = tesserae;
+    this.tesserae = tesseraeP;
+    this.colour=colour;
+    this.id=id;
+  }
 /*
   void operator init(transform transform=identity, path[] prototile={}, path[] tesserae={},
                      pen colour=invisible, string id="") {
@@ -39,6 +50,16 @@ struct mrule {
   }
 
   void addtile(transform transform=identity, path[] prototile={}, path[] tesserae={},
+                     pen colour=invisible, string id="") {
+    mtile m;
+    if(prototile.length == 0)
+      m=mtile(transform,this.supertile,tesserae=tesserae,colour,id);
+    else
+      m=mtile(transform,this.supertile,prototile,tesserae,colour,id);
+    this.patch.push(m);
+  }
+
+  void addtile(transform transform=identity, path[] prototile={}, pair tesserae,
                      pen colour=invisible, string id="") {
     mtile m;
     if(prototile.length == 0)
@@ -167,50 +188,37 @@ struct mosaic {
     this.tiles=substitute(this.patch,this.supertile,n,inflation);
   }
 
-  void update(path[] tesserae, pen colour ...string[] id) {
+  void update(path[] tesserae={}, pen colour=nullpen ...string[] id) {
     if(id.length == 0)
       for(int i=0; i < tiles.length; ++i) {
-        this.tiles[i].colour = colour;
-        this.tiles[i].tesserae = tesserae;
+        if(colour != nullpen) this.tiles[i].colour = colour;
+        if(tesserae.length != 0) this.tiles[i].tesserae = tesserae;
       }
     else
       for(int i=0; i < tiles.length; ++i) {
         for(int j=0; j < id.length; ++j) {
           if(this.tiles[i].id == id[j]) {
-            this.tiles[i].colour = colour;
-            this.tiles[i].tesserae = tesserae;
+            if(colour != nullpen) this.tiles[i].colour = colour;
+            if(tesserae.length != 0) this.tiles[i].tesserae = tesserae;
             break;
           }
         }
       }
   }
 
-  void update(pen colour ...string[] id) {
+   void update(pair tesserae, pen colour=nullpen ...string[] id) {
+    path tesseraeP=tesserae;
     if(id.length == 0)
       for(int i=0; i < tiles.length; ++i) {
-        this.tiles[i].colour = colour;
+        if(colour != nullpen) this.tiles[i].colour = colour;
+        this.tiles[i].tesserae = tesseraeP;
       }
     else
       for(int i=0; i < tiles.length; ++i) {
         for(int j=0; j < id.length; ++j) {
           if(this.tiles[i].id == id[j]) {
-            this.tiles[i].colour = colour;
-            break;
-          }
-        }
-      }
-  }
-
-  void update(path[] tesserae ...string[] id) {
-    if(id.length == 0)
-      for(int i=0; i < tiles.length; ++i) {
-        this.tiles[i].tesserae = tesserae;
-      }
-    else
-      for(int i=0; i < tiles.length; ++i) {
-        for(int j=0; j < id.length; ++j) {
-          if(this.tiles[i].id == id[j]) {
-            this.tiles[i].tesserae = tesserae;
+            if(colour != nullpen) this.tiles[i].colour = colour;
+            this.tiles[i].tesserae = tesseraeP;
             break;
           }
         }

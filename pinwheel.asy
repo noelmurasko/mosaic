@@ -19,6 +19,6 @@ pinRule.addtile(T*reflect((2,0),(2,1)), lightred);
 pinRule.addtile(T*reflect((0,1),(1,1))*shift(2,1),paleblue);
 pinRule.addtile(T*shift(4,2)*rotate(-90),heavyred);
 
-int n=5;
+int n=6;
 mosaic M=mosaic(triangle,n,pinRule);
 draw(M);
