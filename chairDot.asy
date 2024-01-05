@@ -15,14 +15,14 @@ chairRule.addtile(shift(1,1),orange,id="B");
 chairRule.addtile(shift(4,0)*rotate(90),lightblue,id="C");
 chairRule.addtile(shift(0,4)*rotate(270),lightblue,id="D");
 
-int n=1;
+int n=4;
 mosaic M=mosaic(chair,n,chairRule);
 draw(M);
 
 // Add black dot
 pair dot=(1/2,1/2);
 M.update(dot);
-//draw(M,black+10);
+draw(M,black+10);
 
 // Add more complicated decorations
 path pentagon=shift(7/5,1/2)*rotate(30)*scale(1/5)*polygon(5);
@@ -32,4 +32,4 @@ path[] decorate=pentagon^^hexagon;
 M.update(decorate,lightblue,"A");
 M.update(decorate,white,"B");
 M.update(decorate,orange,"C","D");
-//draw(M);
+draw(M);
