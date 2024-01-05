@@ -37,6 +37,6 @@ squareRule.addtile(shift(0,2sr)*R45^3,square,yellow);
 squareRule.addtile(shift(0,2sr)*R45^5,square,yellow);
 
 // draw patch
-int n=5;
+int n=4;
 mosaic M=mosaic(rhombus,n,rhombusRule,squareRule);
 draw(M);

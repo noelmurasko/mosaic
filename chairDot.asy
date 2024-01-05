@@ -18,12 +18,15 @@ chairRule.addtile(shift(0,4)*rotate(270),lightblue,id="D");
 // draw patch
 int n=5;
 mosaic M=mosaic(chair,n,chairRule);
-M.updateColour("A", red);
+draw(M);
+
+path dot=shift(2/5,2/5)*scale(1/5)*unitcircle;
+M.updateTesserae(dot,"B");
+M.updateColour(lightblue,"B");
 draw(M);
 
 // decoration
-path dot=shift(2/5,2/5)*scale(1/5)*unitcircle;
-
+/*
 mrule dotRule=mrule(dot); // chair substitution rule
 
 dotRule.addtile(lightblue);
@@ -34,3 +37,4 @@ dotRule.addtile(shift(0,4)*rotate(270),orange);
 mosaic M=mosaic(n,dotRule);
 
 draw(M);
+*/
