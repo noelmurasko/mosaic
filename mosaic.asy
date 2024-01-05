@@ -188,7 +188,7 @@ struct mosaic {
     this.tiles=substitute(this.patch,this.supertile,n,inflation);
   }
 
-  void update(path[] tesserae={}, pen colour=nullpen ...string[] id) {
+  void set(path[] tesserae={}, pen colour=nullpen ...string[] id) {
     if(id.length == 0)
       for(int i=0; i < tiles.length; ++i) {
         if(colour != nullpen) this.tiles[i].colour = colour;
@@ -206,7 +206,7 @@ struct mosaic {
       }
   }
 
-   void update(pair tesserae, pen colour=nullpen ...string[] id) {
+   void set(pair tesserae, pen colour=nullpen ...string[] id) {
     path tesseraeP=tesserae;
     if(id.length == 0)
       for(int i=0; i < tiles.length; ++i) {
