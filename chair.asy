@@ -8,7 +8,7 @@ inflation=2;
 // prototile
 path chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
-mrule chairRule=mrule(chair); // chair substitution rule
+substitution chairRule=substitution(chair); // chair substitution rule
 
 chairRule.addtile(white);
 chairRule.addtile(shift(1,1),orange);

@@ -8,7 +8,7 @@ inflation=2;
 // starting set
 path triangle=(0,0)--(1,sqrt(3))--(2,0)--cycle;
 
-mrule ifs=mrule(triangle); // ifs substitution rule
+substitution ifs=substitution(triangle); // ifs substitution rule
 
 ifs.addtile(black);
 ifs.addtile(shift(1,sqrt(3)),black);

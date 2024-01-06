@@ -41,7 +41,7 @@ struct mtile {
   */
 }
 
-struct mrule {
+struct substitution {
   path[] supertile;
   mtile[] patch;
 
@@ -170,10 +170,10 @@ struct mosaic {
   mtile[] tiles;
   path[] supertile;
   int n;
-  mrule[] rules;
+  substitution[] rules;
   mtile[] patch;
 
-  void operator init(path[] supertile={}, int n=0, real inflation=inflation ...mrule[] rules) {
+  void operator init(path[] supertile={}, int n=0, real inflation=inflation ...substitution[] rules) {
     // If supertile is not specified, use supertile from first specified rule.
     if(supertile.length == 0)
       this.supertile=rules[0].supertile;

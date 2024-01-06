@@ -15,7 +15,7 @@ path rhomb2=(0,0)--(b,a)--(0,2*a)--(-b,a)--cycle;
 
 a*=inflation; b*=inflation; c*=inflation; d*=inflation;
 
-mrule rhomb1Rule=mrule(rhomb1);  // rhomb1 substitution rule
+substitution rhomb1Rule=substitution(rhomb1);  // rhomb1 substitution rule
 
 rhomb1Rule.addtile(shift(0,2*d)*rotate(180),rhomb1,lightyellow);
 rhomb1Rule.addtile(shift(-c,d)*rotate(216),rhomb1,lightyellow);
@@ -23,7 +23,7 @@ rhomb1Rule.addtile(shift(c,d)*rotate(144),rhomb1,lightyellow);
 rhomb1Rule.addtile(shift(-c,d)*rotate(-36),rhomb2,heavyblue);
 rhomb1Rule.addtile(shift(c,d)*rotate(36),rhomb2,heavyblue);
 
-mrule rhomb2Rule=mrule(rhomb2);  // rhomb2 substitution rule
+substitution rhomb2Rule=substitution(rhomb2);  // rhomb2 substitution rule
 
 rhomb2Rule.addtile(shift(0,2*a)*rotate(108),rhomb2,heavyblue);
 rhomb2Rule.addtile(shift(0,2*a)*rotate(-108),rhomb2,heavyblue);

@@ -16,13 +16,13 @@ path kite=(0,0)--(b,b*c)--(0,b*c+a)--(-b,b*c)--cycle;
 real A=b*tau;
 real B=(1+a)*tau;
 
-mrule dartRule=mrule(dart); // dart substitution rule
+substitution dartRule=substitution(dart); // dart substitution rule
 
 dartRule.addtile(shift(A,B)*rotate(144),dart,red);
 dartRule.addtile(shift(-A,B)*rotate(-144),dart,red);
 dartRule.addtile(kite,lightyellow);
 
-mrule kiteRule=mrule(kite); // kite substitution rule
+substitution kiteRule=substitution(kite); // kite substitution rule
 
 kiteRule.addtile(rotate(36),dart,red);
 kiteRule.addtile(rotate(-36),dart,red);

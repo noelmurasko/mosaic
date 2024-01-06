@@ -10,13 +10,13 @@ path square=box((0,0),(1,1));
 path rect=box((0,0),(2,1));
 
 
-mrule squareRule=mrule(square);  // square substitution rule
+substitution squareRule=substitution(square);  // square substitution rule
 
 squareRule.addtile(shift(0,1),square,pink);
 squareRule.addtile(shift(1,1),square,pink);
 squareRule.addtile(rect,heavygreen);
 
-mrule rectRule=mrule(rect);  // rectangle substitution rule
+substitution rectRule=substitution(rect);  // rectangle substitution rule
 
 rectRule.addtile(shift(1,1),square,pink);
 rectRule.addtile(shift(3,0),square,pink);

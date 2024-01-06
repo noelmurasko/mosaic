@@ -11,7 +11,7 @@ inflation=sqrt3;
 
 transform R30=rotate(30);
 
-mrule ifs=mrule(hexagon);
+substitution ifs=substitution(hexagon);
 
 ifs.addtile(R30,heavygray);
 ifs.addtile(shift(sqrt3/2,1/2)*R30,heavygray);

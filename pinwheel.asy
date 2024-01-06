@@ -11,7 +11,7 @@ transform T=reflect((0,0),(0,1))*rotate(90+aTan(2));
 //transform reorient=rotate(-90-aTan(1/2));
 
 // pinwheel substitution tiles
-mrule pinRule=mrule(triangle);
+substitution pinRule=substitution(triangle);
 
 pinRule.addtile(T, paleyellow);
 pinRule.addtile(T*shift(2,1), paleyellow);
