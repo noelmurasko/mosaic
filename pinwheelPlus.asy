@@ -4,17 +4,17 @@ size(300);
 import mosaic;
 
 // prototile
-pair u=(2,0); 
-pair v=(2,1); 
-pair w=(0,0); 
+pair u=(2,0);
+pair v=(2,1);
+pair w=(0,0);
 path triangle=u--v--w--cycle;
 
 // inflation factor
-inflation=sqrt(5);  
+inflation=sqrt(5);
 
 // substitution rule
 transform T=reflect((0,0),(0,1))*rotate(90+aTan(2));
-mrule pinRule=mrule(triangle);
+substitution pinRule=substitution(triangle);
 pinRule.addtile(T);
 pinRule.addtile(T*shift(2,1));
 pinRule.addtile(T*reflect((2,0),(2,1)));
@@ -22,7 +22,7 @@ pinRule.addtile(T*reflect((0,1),(1,1))*shift(2,1));
 pinRule.addtile(T*shift(4,2)*rotate(-90));
 
 // number of iterations
-int n=6;  
+int n=6;
 
 // options
 bool drawTriangles=true;  // draw the tiles
@@ -37,7 +37,7 @@ pen FP_pen=heavymagenta+4;  // pen for drawing the fixed point
 
 // clip settings (rectangle centered at the fixed point)
 real boxW=inflation^(max(n-2,0));  // clip box width
-real boxL=boxW;  // clip box length 
+real boxL=boxW;  // clip box length
 real boxShiftX=0;  // shift clip box horizontally
 real boxShiftY=0;  // shift clip box vertically
 
@@ -51,10 +51,10 @@ transform R=(phi^n)*R90;
 if(rotatePatch) M=R*M;
 
 // draw patch
-if(drawTriangles) draw(M);  
+if(drawTriangles) draw(M);
 
 // draw control points
-pair CP=(u+2*v+w)/4;  
+pair CP=(u+2*v+w)/4;
 M.set(CP);
 if(drawCPs) draw(M, CP_pen);
 
@@ -62,7 +62,7 @@ if(drawCPs) draw(M, CP_pen);
 // draw fixed point
 pair FP=(inflation^n)*CP;
 if(rotatePatch) FP=R*FP;
-if(drawFP) draw(FP,p=FP_pen); 
+if(drawFP) draw(FP,p=FP_pen);
 
 // clip the patch
 pair boxShift=(boxShiftX,boxShiftY);
@@ -72,5 +72,3 @@ pair topRight=(FP.x+boxL/2,FP.y+boxW/2)+boxShift;
 pair topLeft=(FP.x-boxL/2,FP.y+boxW/2)+boxShift;
 path box=bottomLeft--bottomRight--topRight--topLeft--cycle;
 if(clipPatch) clip(g=box);
-
-
