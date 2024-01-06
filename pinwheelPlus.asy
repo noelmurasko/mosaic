@@ -3,37 +3,34 @@ size(300);
 
 import mosaic;
 
-// prototile
+// pinwheel triangle
 pair u=(2,0);
 pair v=(2,1);
 pair w=(0,0);
-path triangle=u--v--w--cycle;
+path tri=u--v--w--cycle;
 
 // inflation factor
 inflation=sqrt(5);
 
-// substitution rule
-transform T=reflect((0,0),(0,1))*rotate(90+aTan(2));
-substitution pinRule=substitution(triangle);
-pinRule.addtile(T);
-pinRule.addtile(T*shift(2,1));
-pinRule.addtile(T*reflect((2,0),(2,1)));
-pinRule.addtile(T*reflect((0,1),(1,1))*shift(2,1));
-pinRule.addtile(T*shift(4,2)*rotate(-90));
-
 // number of iterations
-int n=6;
+int n=4;
 
 // options
-bool drawTriangles=true;  // draw the tiles
-bool drawCPs=true;  // draw critical points in each triangle
-bool drawFP=true;  // draw the fixed point of the tiling
-bool rotatePatch=true; // rotate the patch by arctan(1/2) each time
-bool clipPatch=true;  // clip the patch with a box
+bool drawTiles=true;  // draw the tiles
+bool drawCPs=false;  // draw critical points in each triangle
+bool drawFP=false;  // draw the fixed point of the tiling
+bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
+bool reorientPatch=true;  // rotate the final patch by 90 degrees
+bool overlaySupertiles=true;  // overlay supertiles 
+bool clipPatch=false;  // clip the patch with a box
 
-// pen settings
-pen CP_pen=black+60;  // pen for drawing critical points
-pen FP_pen=heavymagenta+4;  // pen for drawing the fixed point
+// dot size/colour settings
+pen CP_pen=black+5;  // critical points
+pen FP_pen=heavymagenta+4;  // fixed point
+
+// supertile settings
+int k=1;  // overlay level n-k supertiles
+pen overlayLine=black+2;
 
 // clip settings (rectangle centered at the fixed point)
 real boxW=inflation^(max(n-2,0));  // clip box width
@@ -41,17 +38,29 @@ real boxL=boxW;  // clip box length
 real boxShiftX=0;  // shift clip box horizontally
 real boxShiftY=0;  // shift clip box vertically
 
-// build patch
-mosaic M=mosaic(n,pinRule);
+// initialize a substitution rule 
+substitution pinSub=substitution(tri);
 
-// rotate patch
-transform R90=rotate(-90);
-transform phi=rotate(aTan(-1/2));
-transform R=(phi^n)*R90;
-if(rotatePatch) M=R*M;
+// define the substitution rule 
+real varphi=aTan(1/2);
+transform T=reflect((0,0),(0,1))*rotate(180-varphi);
+pinSub.addtile(T, paleyellow, id="1");
+pinSub.addtile(T*shift(2,1), paleyellow, id="2");  
+pinSub.addtile(T*reflect((2,0),(2,1)), paleblue, id="3");  
+pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), paleblue, id="4");  
+pinSub.addtile(T*shift(4,2)*rotate(-90), paleyellow, id="5");  
+
+// build patch
+mosaic M=mosaic(n,pinSub);
+
+// rotate/reorient patch
+transform RotVarphi=rotate(-varphi)^n;
+transform Rot90=rotate(-90);
+if(rotatePatch) M=RotVarphi*M;
+if(reorientPatch) M=Rot90*M;
 
 // draw patch
-if(drawTriangles) draw(M);
+if(drawTiles) draw(M);
 
 // draw control points
 pair CP=(u+2*v+w)/4;
@@ -61,9 +70,19 @@ if(drawCPs) draw(M, CP_pen);
 
 // draw fixed point
 pair FP=(inflation^n)*CP;
-if(rotatePatch) FP=R*FP;
-if(drawFP) draw(FP,p=FP_pen);
+if(rotatePatch) FP=RotVarphi*FP;
+if(reorientPatch) FP=Rot90*FP;
+if(drawFP) draw(FP, p=FP_pen);
 
+// overlay level n-k supertiles
+mosaic superM=mosaic(max(n-k,0),pinSub);
+superM.set(invisible);
+superM=scale(inflation^k)*superM;
+if(rotatePatch) superM=RotVarphi*superM;
+if(reorientPatch) superM=Rot90*superM;
+if(overlaySupertiles && n>=k) draw(superM,p=overlayLine);
+	
+	
 // clip the patch
 pair boxShift=(boxShiftX,boxShiftY);
 pair bottomLeft=(FP.x-boxL/2,FP.y-boxW/2)+boxShift;
@@ -72,3 +91,4 @@ pair topRight=(FP.x+boxL/2,FP.y+boxW/2)+boxShift;
 pair topLeft=(FP.x-boxL/2,FP.y+boxW/2)+boxShift;
 path box=bottomLeft--bottomRight--topRight--topLeft--cycle;
 if(clipPatch) clip(g=box);
+
