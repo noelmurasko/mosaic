@@ -28,17 +28,6 @@ struct mtile {
     this.colour=colour;
     this.id=id;
   }
-/*
-  void operator init(transform transform=identity, path[] prototile={}, path[] tesserae={},
-                     pen colour=invisible, string id="") {
-    this.transform=transform;
-    this.supertile=prototile;
-    this.prototile=prototile;
-    this.tesserae = tesserae.length == 0 ? prototile : tesserae;
-    this.colour=colour;
-    this.id=id;
-  }
-  */
 }
 
 struct substitution {
