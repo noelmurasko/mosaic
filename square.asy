@@ -17,6 +17,6 @@ mtile S4=mtile(shift(0,1),square,yellow);
 substitution squareRule=substitution(square,S1,S2,S3,S4); // substitution rule
 
 // draw patch
-int n=6;
+int n=4;
 mosaic M=mosaic(square,n,squareRule);
 draw(M);

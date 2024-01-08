@@ -191,31 +191,28 @@ struct mosaic {
       }
   }
 
-   void set(pair tessera, pen colour=nullpen ...string[] id) {
-    path tesseraP=tessera;
-    if(id.length == 0)
-      for(int i=0; i < tiles.length; ++i) {
-        if(colour != nullpen) this.tiles[i].colour = colour;
-        this.tiles[i].tessera = tesseraP;
-      }
-    else
-      for(int i=0; i < tiles.length; ++i) {
-        for(int j=0; j < id.length; ++j) {
-          if(this.tiles[i].id == id[j]) {
-            if(colour != nullpen) this.tiles[i].colour = colour;
-            this.tiles[i].tessera = tesseraP;
-            break;
-          }
+ void set(pair tessera, pen colour=nullpen ...string[] id) {
+  path tesseraP=tessera;
+  if(id.length == 0)
+    for(int i=0; i < tiles.length; ++i) {
+      if(colour != nullpen) this.tiles[i].colour = colour;
+      this.tiles[i].tessera = tesseraP;
+    }
+  else
+    for(int i=0; i < tiles.length; ++i) {
+      for(int j=0; j < id.length; ++j) {
+        if(this.tiles[i].id == id[j]) {
+          if(colour != nullpen) this.tiles[i].colour = colour;
+          this.tiles[i].tessera = tesseraP;
+          break;
         }
       }
+    }
   }
-}
 
-mosaic substitute(mosaic M, int n, real inflation=inflation) {
-  if(n > M.n)
-    M.tiles=substitute(M.patch,M.supertile,M.tiles,n-M.n,inflation);
-    M.n=n;
-  return M;
+  void iterate(int n) {
+    this.tiles=substitute(this.patch,this.supertile,n+this.n,inflation);
+  }
 }
 
 mosaic operator *(transform T, mosaic M) {
