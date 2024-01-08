@@ -236,6 +236,11 @@ void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
     draw(pic, T[k], p);
 }
 
+void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
+  for(int k=0; k < s.patch.length; ++k)
+    draw(pic, s.patch[k], p);
+}
+
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=(scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1)*linewidth(p);
