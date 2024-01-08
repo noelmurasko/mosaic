@@ -96,82 +96,13 @@ bool samepath(path[] P1, path[] P2) {
   return true;
 }
 
-void loop(mtile[] patch, mtile T, int n, int k, mtile[] tiles,
-          real inflation=inflation) {
-  if(k < n)
-    for(int i; i < patch.length; ++i) {
-      mtile patchi=patch[i];
-      if(samepath(patchi.supertile,T.prototile))
-        loop(patch, T*patchi, n, k+1,tiles);
-    }
-  else
-    tiles.push(scale(inflation)^n*T);
-}
-
-mtile[] substitute(mtile[] patch, path[] supertile, mtile[] startTiles={}, int n,
-                   real inflation=inflation) {
-  int L=patch.length;
-  mtile[] patchcopy=new mtile[L];
-  for(int i=0; i < L; ++i) {
-    patchcopy[i]=copy(patch[i]);
-  }
-  mtile[] tiles;
-  for(int i=0; i < L; ++i) {
-    mtile T=patchcopy[i];
-    if(T.prototile.length == 0) {
-      T.prototile=supertile;
-    }
-    if(T.supertile.length == 0) {
-      T.supertile=supertile;
-    }
-  }
-  if(n == 0) {
-    // Draw a tile when no iterations are asked for.
-    for(int i=0; i < L; ++i) {
-      mtile Ti=patchcopy[i];
-      if(samepath(Ti.prototile,supertile)) {
-        tiles.push(mtile(identity,supertile,Ti.colour,Ti.id));
-        break;
-      }
-    }
-  } else {
-    real deflation=1/inflation;
-    for(int i=0; i < L; ++i) {
-      // Inflate transforms (without changing user data).
-      transform Ti=patchcopy[i].transform;
-      patchcopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
-    }
-    int sTL=startTiles.length;
-    if(sTL == 0)
-      loop(patchcopy,mtile(supertile),n,0,tiles,inflation);
-    else
-      for(int i=0; i < sTL; ++i)
-        loop(patchcopy,startTiles[i],n,0,tiles,inflation);
-  }
-  return tiles;
-}
 
 struct mosaic {
-  mtile[] tiles;
+  mtile[] tiles={};
   path[] supertile;
   int n;
   substitution[] rules;
   mtile[] patch;
-
-  void operator init(path[] supertile={}, int n=0, real inflation=inflation ...substitution[] rules) {
-    // If supertile is not specified, use supertile from first specified rule.
-    if(supertile.length == 0)
-      this.supertile=rules[0].supertile;
-    else
-      this.supertile=supertile;
-
-    this.n=n;
-    this.rules=rules;
-    int L=rules.length;
-    for(int i=0; i < L; ++i)
-      this.patch.append(rules[i].patch);
-    this.tiles=substitute(this.patch,this.supertile,n,inflation);
-  }
 
   void set(path[] tessera={}, pen colour=nullpen ...string[] id) {
     if(id.length == 0)
@@ -210,8 +141,73 @@ struct mosaic {
     }
   }
 
-  void iterate(int n) {
-    this.tiles=substitute(this.patch,this.supertile,n+this.n,inflation);
+  private void loop(mtile[] patch, mtile T, int n, int k, mtile[] tiles,
+          real inflation=inflation) {
+    if(k < n)
+      for(int i; i < patch.length; ++i) {
+        mtile patchi=patch[i];
+        if(samepath(patchi.supertile,T.prototile))
+          loop(patch, T*patchi, n, k+1,tiles);
+      }
+    else
+      tiles.push(scale(inflation)^n*T);
+  }
+
+  void substitute(int n) {
+    int L=this.patch.length;
+    mtile[] patchcopy=new mtile[L];
+    for(int i=0; i < L; ++i) {
+      patchcopy[i]=copy(this.patch[i]);
+    }
+    mtile[] tiles;
+    for(int i=0; i < L; ++i) {
+      mtile T=patchcopy[i];
+      if(T.prototile.length == 0) {
+        T.prototile=this.supertile;
+      }
+      if(T.supertile.length == 0) {
+        T.supertile=this.supertile;
+      }
+    }
+    if(n == 0) {
+      // Draw a tile when no iterations are asked for.
+      for(int i=0; i < L; ++i) {
+        mtile Ti=patchcopy[i];
+        if(samepath(Ti.prototile,this.supertile)) {
+          tiles.push(mtile(identity,this.supertile,Ti.colour,Ti.id));
+          break;
+        }
+      }
+    } else {
+      real deflation=1/inflation;
+      for(int i=0; i < L; ++i) {
+        // Inflate transforms (without changing user data).
+        transform Ti=patchcopy[i].transform;
+        patchcopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+      }
+      int sTL=this.tiles.length;
+      if(sTL == 0)
+        this.loop(patchcopy,mtile(this.supertile),n,0,tiles,inflation);
+      else
+        for(int i=0; i < sTL; ++i)
+          this.loop(patchcopy,this.tiles[i],n,0,tiles,inflation);
+    }
+    this.tiles=tiles;
+  }
+
+  void operator init(path[] supertile={}, int n=0, real inflation=inflation ...substitution[] rules) {
+    // If supertile is not specified, use supertile from first specified rule.
+    if(supertile.length == 0)
+      this.supertile=rules[0].supertile;
+    else
+      this.supertile=supertile;
+
+    this.n=n;
+    this.rules=rules;
+    int L=rules.length;
+    for(int i=0; i < L; ++i)
+      this.patch.append(rules[i].patch);
+    this.substitute(n);
   }
 }
 
