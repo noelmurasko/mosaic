@@ -49,7 +49,7 @@ struct substitution {
   }
 
   void addtile(transform transform=identity, path[] prototile={}, pair tessera,
-                     pen colour=invisible, string id="") {
+    pen colour=invisible, string id="") {
     mtile m;
     if(prototile.length == 0)
       m=mtile(transform,this.supertile,tessera=tessera,colour,id);
@@ -64,17 +64,13 @@ mtile copy(mtile T) {
 }
 
 mtile operator *(mtile t1, mtile t2) {
-  mtile t3;
+  mtile t3=copy(t2);
   t3.transform=t1.transform*t2.transform;
-  t3.prototile=t2.prototile;
-  t3.tessera=t2.tessera;
-  t3.colour=t2.colour;
-  t3.id=t2.id;
   return t3;
 }
 
 mtile operator *(transform T, mtile t1) {
-  mtile t2=t1;
+  mtile t2=copy(t1);
   t2.transform=T*t2.transform;
   return t2;
 }
