@@ -8,13 +8,13 @@ inflation=2;
 // prototile
 path square=box((0,0),(1,1));
 
-// substitution tiles
-mtile S1=mtile(square,red);
-mtile S2=mtile(shift(1,0),square,green);
-mtile S3=mtile(shift(1,1),square,blue);
-mtile S4=mtile(shift(0,1),square,yellow);
+substitution squareRule=substitution(square); // substitution rule
 
-substitution squareRule=substitution(square,S1,S2,S3,S4); // substitution rule
+// substitution tiles
+squareRule.addtile(square,red);
+squareRule.addtile(shift(1,0),square,green);
+squareRule.addtile(shift(1,1),square,blue);
+squareRule.addtile(shift(0,1),square,yellow);
 
 // draw patch
 int n=4;
