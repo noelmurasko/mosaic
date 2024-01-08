@@ -96,7 +96,6 @@ bool samepath(path[] P1, path[] P2) {
   return true;
 }
 
-
 struct mosaic {
   mtile[] tiles={};
   path[] supertile;
@@ -153,7 +152,7 @@ struct mosaic {
       tiles.push(scale(inflation)^n*T);
   }
 
-  void substitute(int n) {
+  void substitute(int n, real inflation=inflation) {
     int L=this.patch.length;
     mtile[] patchcopy=new mtile[L];
     for(int i=0; i < L; ++i) {
@@ -207,7 +206,7 @@ struct mosaic {
     int L=rules.length;
     for(int i=0; i < L; ++i)
       this.patch.append(rules[i].patch);
-    this.substitute(n);
+    this.substitute(n,inflation);
   }
 }
 
