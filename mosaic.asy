@@ -63,6 +63,12 @@ mtile copy(mtile T) {
   return mtile(T.transform, copy(T.supertile), copy(T.prototile), copy(T.tessera), T.colour, T.id);
 }
 
+substitution copy(substitution T) {
+  substitution T2=substitution(T.supertile);
+  T2.patch=T.patch;
+  return T2;
+}
+
 mtile operator *(mtile t1, mtile t2) {
   mtile t3=copy(t2);
   t3.transform=t1.transform*t2.transform;
@@ -210,8 +216,32 @@ struct mosaic {
   }
 }
 
+mosaic copy(mosaic M) {
+  mosaic M2;
+  int Lt=M.tiles.length;
+  mtile[] M2tiles=new mtile[Lt];
+  for(int i=0; i < Lt; ++i) {
+    M2tiles[i]=copy(M.tiles[i]);
+  }
+  M2.tiles=M2tiles;
+  M2.supertile=copy(M.supertile);
+  M2.n=M.n;
+  int Lr=M.rules.length;
+  substitution[] M2rules=new substitution[Lr];
+  for(int i=0; i < Lr; ++i) {
+    M2rules[i]=copy(M.rules[i]);
+  }
+  M2.rules=M2rules;
+  int Lp=M.patch.length;
+  mtile[] M2patch=new mtile[Lp];
+  for(int i=0; i < Lp; ++i) {
+    M2patch[i]=copy(M.patch[i]);
+  }
+  return M2;
+}
+
 mosaic operator *(transform T, mosaic M) {
-  mosaic M2=M;
+  mosaic M2=copy(M);
   M2.tiles=T*M2.tiles;
   return M2;
 }
