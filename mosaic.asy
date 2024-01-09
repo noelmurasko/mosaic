@@ -4,7 +4,7 @@ struct mtile {
   transform transform;
   path[] supertile;
   path[] prototile;
-  path[] drawtile;
+  path[][] drawtile={};
   pen fillpen;
   pen drawpen;
   string id;
@@ -14,7 +14,7 @@ struct mtile {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
-    this.drawtile = drawtile.length == 0 ? this.prototile : drawtile;
+    this.drawtile.push(drawtile.length == 0 ? this.prototile : drawtile);
     this.fillpen=fillpen;
     this.drawpen=drawpen;
     this.id=id;
@@ -26,7 +26,7 @@ struct mtile {
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
     path drawtileP = drawtile;
-    this.drawtile = drawtileP;
+    this.drawtile.push(drawtileP);
     this.fillpen=fillpen;
     this.drawpen=drawpen;
     this.id=id;
@@ -63,7 +63,21 @@ struct substitution {
 }
 
 mtile copy(mtile T) {
-  return mtile(T.transform, copy(T.supertile), copy(T.prototile), copy(T.drawtile), T.fillpen, T.drawpen, T.id);
+  mtile T2;
+  T2.transform=T.transform;
+  T2.supertile=copy(T.supertile);
+  T2.prototile=copy(T.prototile);
+  int L=T.drawtile.length;
+  for(int i=0; i < L; ++i) {
+    T2.drawtile.push(copy(T.drawtile[i]));
+  }
+  T2.fillpen=T.fillpen;
+  T2.drawpen=T.drawpen;
+  T2.id=T.id;
+  return T2;
+  //int L=T.drawtile.length;
+  //path[][] dtilecopy;
+  //return mtile(T.transform, copy(T.supertile), copy(T.prototile), copy(T.drawtile), T.fillpen, T.drawpen, T.id);
 }
 
 substitution copy(substitution T) {
@@ -116,14 +130,14 @@ struct mosaic {
     if(id.length == 0)
       for(int i=0; i < tiles.length; ++i) {
         if(fillpen != nullpen) this.tiles[i].fillpen = fillpen;
-        if(drawtile.length != 0) this.tiles[i].drawtile = drawtile;
+        //if(drawtile.length != 0) this.tiles[i].drawtile = drawtile;
       }
     else
       for(int i=0; i < tiles.length; ++i) {
         for(int j=0; j < id.length; ++j) {
           if(this.tiles[i].id == id[j]) {
             if(fillpen != nullpen) this.tiles[i].fillpen = fillpen;
-            if(drawtile.length != 0) this.tiles[i].drawtile = drawtile;
+            //if(drawtile.length != 0) this.tiles[i].drawtile = drawtile;
             break;
           }
         }
@@ -135,14 +149,14 @@ struct mosaic {
   if(id.length == 0)
     for(int i=0; i < tiles.length; ++i) {
       if(fillpen != nullpen) this.tiles[i].fillpen = fillpen;
-      this.tiles[i].drawtile = drawtileP;
+      //this.tiles[i].drawtile = drawtileP;
     }
   else
     for(int i=0; i < tiles.length; ++i) {
       for(int j=0; j < id.length; ++j) {
         if(this.tiles[i].id == id[j]) {
           if(fillpen != nullpen) this.tiles[i].fillpen = fillpen;
-          this.tiles[i].drawtile = drawtileP;
+          //this.tiles[i].drawtile = drawtileP;
           break;
         }
       }
@@ -250,13 +264,15 @@ mosaic operator *(transform T, mosaic M) {
 }
 
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
-  path[] Td=T.transform*T.drawtile;
-  for(int i=0; i < Td.length; ++i)
-    if(cyclic(Td[i]) == true) fill(pic, Td[i], T.fillpen);
-  if(T.drawpen != nullpen)
-    draw(pic,Td,T.drawpen);
-  else
-    draw(pic,Td,p);
+  for(int i=0; i < T.drawtile.length; ++i) {
+    path[] Td=T.transform*T.drawtile[i];
+    for(int i=0; i < Td.length; ++i)
+      if(cyclic(Td[i]) == true) fill(pic, Td[i], T.fillpen);
+    if(T.drawpen != nullpen)
+      draw(pic,Td,T.drawpen);
+    else
+      draw(pic,Td,p);
+  }
 }
 
 void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
