@@ -6,26 +6,29 @@ struct mtile {
   path[] prototile;
   path[] tessera;
   pen colour;
+  pen drawpen;
   string id;
 
   void operator init(transform transform=identity, path[] supertile, path[] prototile={},
-                     path[] tessera={}, pen colour=invisible, string id="") {
+                     path[] tessera={}, pen colour=invisible, pen drawpen=nullpen, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
     this.tessera = tessera.length == 0 ? this.prototile : tessera;
     this.colour=colour;
+    this.drawpen=drawpen;
     this.id=id;
   }
 
   void operator init(transform transform=identity, path[] supertile, path[] prototile={},
-                     pair tessera, pen colour=invisible, string id="") {
+                     pair tessera, pen colour=invisible, pen drawpen=nullpen, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
     path tesseraP = tessera;
     this.tessera = tesseraP;
     this.colour=colour;
+    this.drawpen=drawpen;
     this.id=id;
   }
 }
@@ -39,28 +42,28 @@ struct substitution {
   }
 
   void addtile(transform transform=identity, path[] prototile={}, path[] tessera={},
-                     pen colour=invisible, string id="") {
+                     pen colour=invisible, pen drawpen=nullpen, string id="") {
     mtile m;
     if(prototile.length == 0)
-      m=mtile(transform,this.supertile,tessera=tessera,colour,id);
+      m=mtile(transform,this.supertile,tessera=tessera,colour,drawpen,id);
     else
-      m=mtile(transform,this.supertile,prototile,tessera,colour,id);
+      m=mtile(transform,this.supertile,prototile,tessera,colour,drawpen,id);
     this.patch.push(m);
   }
 
   void addtile(transform transform=identity, path[] prototile={}, pair tessera,
-    pen colour=invisible, string id="") {
+    pen colour=invisible, pen drawpen=nullpen, string id="") {
     mtile m;
     if(prototile.length == 0)
-      m=mtile(transform,this.supertile,tessera=tessera,colour,id);
+      m=mtile(transform,this.supertile,tessera=tessera,colour,drawpen,id);
     else
-      m=mtile(transform,this.supertile,prototile,tessera,colour,id);
+      m=mtile(transform,this.supertile,prototile,tessera,colour,drawpen,id);
     this.patch.push(m);
   }
 }
 
 mtile copy(mtile T) {
-  return mtile(T.transform, copy(T.supertile), copy(T.prototile), copy(T.tessera), T.colour, T.id);
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), copy(T.tessera), T.colour, T.drawpen, T.id);
 }
 
 substitution copy(substitution T) {
@@ -250,7 +253,10 @@ void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
   path[] Td=T.transform*T.tessera;
   for(int i=0; i < Td.length; ++i)
     if(cyclic(Td[i]) == true) fill(pic, Td[i], T.colour);
-  draw(pic,Td,p);
+  if(T.drawpen != nullpen)
+    draw(pic,Td,T.drawpen);
+  else
+    draw(pic,Td,p);
 }
 
 void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
