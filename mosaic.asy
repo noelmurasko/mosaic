@@ -5,29 +5,29 @@ struct mtile {
   path[] supertile;
   path[] prototile;
   path[] tessera;
-  pen colour;
+  pen fillpen;
   pen drawpen;
   string id;
 
   void operator init(transform transform=identity, path[] supertile, path[] prototile={},
-                     path[] tessera={}, pen colour=invisible, pen drawpen=nullpen, string id="") {
+                     path[] tessera={}, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
     this.tessera = tessera.length == 0 ? this.prototile : tessera;
-    this.colour=colour;
+    this.fillpen=fillpen;
     this.drawpen=drawpen;
     this.id=id;
   }
 
   void operator init(transform transform=identity, path[] supertile, path[] prototile={},
-                     pair tessera, pen colour=invisible, pen drawpen=nullpen, string id="") {
+                     pair tessera, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
     path tesseraP = tessera;
     this.tessera = tesseraP;
-    this.colour=colour;
+    this.fillpen=fillpen;
     this.drawpen=drawpen;
     this.id=id;
   }
@@ -42,28 +42,28 @@ struct substitution {
   }
 
   void addtile(transform transform=identity, path[] prototile={}, path[] tessera={},
-                     pen colour=invisible, pen drawpen=nullpen, string id="") {
+                     pen fillpen=invisible, pen drawpen=nullpen, string id="") {
     mtile m;
     if(prototile.length == 0)
-      m=mtile(transform,this.supertile,tessera=tessera,colour,drawpen,id);
+      m=mtile(transform,this.supertile,tessera=tessera,fillpen,drawpen,id);
     else
-      m=mtile(transform,this.supertile,prototile,tessera,colour,drawpen,id);
+      m=mtile(transform,this.supertile,prototile,tessera,fillpen,drawpen,id);
     this.patch.push(m);
   }
 
   void addtile(transform transform=identity, path[] prototile={}, pair tessera,
-    pen colour=invisible, pen drawpen=nullpen, string id="") {
+    pen fillpen=invisible, pen drawpen=nullpen, string id="") {
     mtile m;
     if(prototile.length == 0)
-      m=mtile(transform,this.supertile,tessera=tessera,colour,drawpen,id);
+      m=mtile(transform,this.supertile,tessera=tessera,fillpen,drawpen,id);
     else
-      m=mtile(transform,this.supertile,prototile,tessera,colour,drawpen,id);
+      m=mtile(transform,this.supertile,prototile,tessera,fillpen,drawpen,id);
     this.patch.push(m);
   }
 }
 
 mtile copy(mtile T) {
-  return mtile(T.transform, copy(T.supertile), copy(T.prototile), copy(T.tessera), T.colour, T.drawpen, T.id);
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), copy(T.tessera), T.fillpen, T.drawpen, T.id);
 }
 
 substitution copy(substitution T) {
@@ -112,17 +112,17 @@ struct mosaic {
   substitution[] rules;
   mtile[] patch;
 
-  void set(path[] tessera={}, pen colour=nullpen ...string[] id) {
+  void set(path[] tessera={}, pen fillpen=nullpen ...string[] id) {
     if(id.length == 0)
       for(int i=0; i < tiles.length; ++i) {
-        if(colour != nullpen) this.tiles[i].colour = colour;
+        if(fillpen != nullpen) this.tiles[i].fillpen = fillpen;
         if(tessera.length != 0) this.tiles[i].tessera = tessera;
       }
     else
       for(int i=0; i < tiles.length; ++i) {
         for(int j=0; j < id.length; ++j) {
           if(this.tiles[i].id == id[j]) {
-            if(colour != nullpen) this.tiles[i].colour = colour;
+            if(fillpen != nullpen) this.tiles[i].fillpen = fillpen;
             if(tessera.length != 0) this.tiles[i].tessera = tessera;
             break;
           }
@@ -130,18 +130,18 @@ struct mosaic {
       }
   }
 
- void set(pair tessera, pen colour=nullpen ...string[] id) {
+ void set(pair tessera, pen fillpen=nullpen ...string[] id) {
   path tesseraP=tessera;
   if(id.length == 0)
     for(int i=0; i < tiles.length; ++i) {
-      if(colour != nullpen) this.tiles[i].colour = colour;
+      if(fillpen != nullpen) this.tiles[i].fillpen = fillpen;
       this.tiles[i].tessera = tesseraP;
     }
   else
     for(int i=0; i < tiles.length; ++i) {
       for(int j=0; j < id.length; ++j) {
         if(this.tiles[i].id == id[j]) {
-          if(colour != nullpen) this.tiles[i].colour = colour;
+          if(fillpen != nullpen) this.tiles[i].fillpen = fillpen;
           this.tiles[i].tessera = tesseraP;
           break;
         }
@@ -182,7 +182,7 @@ struct mosaic {
       for(int i=0; i < L; ++i) {
         mtile Ti=patchcopy[i];
         if(samepath(Ti.prototile,this.supertile)) {
-          tiles.push(mtile(identity,this.supertile,Ti.colour,Ti.id));
+          tiles.push(mtile(identity,this.supertile,Ti.fillpen,Ti.id));
           break;
         }
       }
@@ -252,7 +252,7 @@ mosaic operator *(transform T, mosaic M) {
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
   path[] Td=T.transform*T.tessera;
   for(int i=0; i < Td.length; ++i)
-    if(cyclic(Td[i]) == true) fill(pic, Td[i], T.colour);
+    if(cyclic(Td[i]) == true) fill(pic, Td[i], T.fillpen);
   if(T.drawpen != nullpen)
     draw(pic,Td,T.drawpen);
   else
