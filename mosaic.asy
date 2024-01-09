@@ -4,9 +4,13 @@ struct mtile {
   transform transform;
   path[] supertile;
   path[] prototile;
+
+  // restrict these variables
   path[][] drawtile={};
   pen[] fillpen;
   pen[] drawpen;
+  int layers;
+
   string id;
 
   void operator init(transform transform=identity, path[] supertile, path[] prototile={},
@@ -17,6 +21,7 @@ struct mtile {
     this.drawtile.push(drawtile.length == 0 ? this.prototile : drawtile);
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
+    this.layers=1;
     this.id=id;
   }
 
@@ -29,7 +34,15 @@ struct mtile {
     this.drawtile.push(drawtileP);
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
+    this.layers=1;
     this.id=id;
+  }
+
+  void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
+    this.drawtile.push(drawtile);
+    this.fillpen.push(fillpen);
+    this.drawpen.push(drawpen);
+    this.layers+=1;
   }
 }
 
@@ -59,6 +72,37 @@ struct substitution {
     else
       m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
     this.patch.push(m);
+  }
+
+  void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
+    int L=patch.length;
+    for(int i=0; i < L; ++i) {
+      patch[i].addlayer(drawtile,fillpen,drawpen);
+    }
+  }
+
+  void addlayer(path[] drawtile={}, pen fillpen) {
+    int L=patch.length;
+    for(int i=0; i < L; ++i) {
+      int l=patch[i].layers;
+      patch[i].addlayer(drawtile,fillpen, patch[i].drawpen[l-1]);
+    }
+  }
+
+  void addlayer(path[] drawtile={}, pen drawpen) {
+    int L=patch.length;
+    for(int i=0; i < L; ++i) {
+      int l=patch[i].layers;
+      patch[i].addlayer(drawtile,patch[i].fillpen[l-1], drawpen);
+    }
+  }
+
+  void addlayer(path[] drawtile={}) {
+    int L=patch.length;
+    for(int i=0; i < L; ++i) {
+      int l=patch[i].layers;
+      patch[i].addlayer(drawtile,patch[i].fillpen[l-1], patch[i].drawpen[l-1]);
+    }
   }
 }
 
