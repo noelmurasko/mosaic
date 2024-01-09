@@ -30,6 +30,6 @@ rhomb2Rule.addtile(shift(0,2*a)*rotate(-108),rhomb2,heavyblue);
 rhomb2Rule.addtile(shift(-b,a)*rotate(-108),rhomb1,lightyellow);
 rhomb2Rule.addtile(shift(b,a)*rotate(108),rhomb1,lightyellow);
 
-int n=1;
+int n=3;
 mosaic M=mosaic(rhomb1,n,rhomb1Rule,rhomb2Rule);
 draw(M);
