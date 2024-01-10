@@ -61,11 +61,9 @@ struct mtile {
 struct substitution {
   path[] supertile;
   mtile[] patch;
-  int layers;
 
   void operator init(path[] supertile={}) {
     this.supertile=supertile;
-    layers=1;
   }
 
   void addtile(transform transform=identity, path[] prototile={}, path[] drawtile={},
@@ -87,151 +85,6 @@ struct substitution {
       m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
     this.patch.push(m);
   }
-
-  // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
-  // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
-  // The drawtile can be a pair, in which only the drawpen can be passed.
-
-  void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
-    int L=patch.length;
-    int ind=layers-1;
-    for(int i=0; i < L; ++i) {
-      patch[i].addlayer(drawtile,fillpen,drawpen);
-    }
-    layers+=1;
-  }
-  void addlayer(path[] drawtile={}, pen p=nullpen) {
-    bool fillable=true;
-    for(int i=0; i < drawtile.length; ++i) {
-      if(cyclic(drawtile[i]) == false) fillable=false;
-      break;
-    }
-    if(fillable) this.addlayer(drawtile, p, nullpen);
-    else this.addlayer(drawtile, invisible, p);
-  }
-  void addlayer(pair drawtile, pen drawpen=nullpen) {
-    int L=patch.length;
-    int ind=layers-1;
-    for(int i=0; i < L; ++i) {
-      pen dp=drawpen;
-      //pen dp=drawpen == nullpen ? patch[i].drawpen[ind] : drawpen;
-      patch[i].addlayer((path) drawtile,invisible,dp);
-    }
-    layers+=1;
-  }
-
-  // set() sets the drawtile, fillpen, and/or drawpen for a layer l and tiles that have id in ids.
-  void set(path[] drawtile, int l=-1, string[] ids) {
-
-    int ind=l < 0 ? layers-1 : l;
-    if(ids.length == 0)
-      for(int i=0; i < patch.length; ++i) {
-        patch[i].drawtile[ind] = drawtile;
-      }
-    else
-      for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < ids.length; ++j) {
-          if(patch[i].id == ids[j]) {
-            patch[i].drawtile[ind] = drawtile;
-            break;
-          }
-        }
-      }
-  }
-
-  void set(path[] drawtile, int l=-1 ...string[] ids) {
-    set(drawtile, l, ids);
-  }
-
-  void set(pair drawtile, int l=-1, string[] ids) {
-    set((path[]) (path) drawtile, l,ids);
-  }
-
-  void set(pair drawtile, int l=-1 ...string[] ids) {
-    set((path[]) (path) drawtile, l,ids);
-  }
-
-  void set(pen fillpen, pen drawpen, int l=-1, string[] ids={}) {
-    int ind=l < 0 ? layers-1 : l;
-    if(ids.length == 0)
-      for(int i=0; i < patch.length; ++i) {
-        if(fillpen != nullpen) patch[i].fillpen[ind] = fillpen;
-        if(drawpen != nullpen) patch[i].drawpen[ind] = drawpen;
-      }
-    else
-      for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < ids.length; ++j) {
-          if(patch[i].id == ids[j]) {
-            if(fillpen != nullpen) patch[i].fillpen[ind] = fillpen;
-            if(drawpen != nullpen) patch[i].drawpen[ind] = drawpen;
-            break;
-          }
-        }
-      }
-  }
-
-  void set(pen fillpen, pen drawpen, int l=-1 ...string[] ids) {
-    set(fillpen,drawpen,l,ids);
-  }
-
-  void set(pen p, int l=-1, string[] ids) {
-    int ind=l < 0 ? layers-1 : l;
-    if(ids.length == 0)
-      for(int i=0; i < patch.length; ++i) {
-        bool fillable=true;
-        for(int n=0; n < patch[i].drawtile[ind].length; ++n) {
-          if(cyclic(patch[i].drawtile[ind][n]) == false) fillable=false;
-          break;
-        }
-        if(fillable) {
-          patch[i].fillpen[ind]=p;
-          patch[i].drawpen[ind]=patch[i].drawpen[ind];
-        } else {
-          patch[i].fillpen[ind]=patch[i].fillpen[ind];
-          patch[i].drawpen[ind]=p;
-        }
-      }
-    else
-      for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < ids.length; ++j) {
-          if(patch[i].id == ids[j]) {
-            bool fillable=true;
-            for(int n=0; n < patch[i].drawtile[ind].length; ++n) {
-              if(cyclic(patch[i].drawtile[ind][n]) == false) fillable=false;
-              break;
-            }
-            if(fillable) {
-              patch[i].fillpen[ind]=p;
-              patch[i].drawpen[ind]=patch[i].drawpen[ind];
-            } else {
-              patch[i].fillpen[ind]=patch[i].fillpen[ind];
-              patch[i].drawpen[ind]=p;
-            }
-            break;
-          }
-        }
-      }
-  }
-
-  void set(pen p, int l=-1 ...string[] id) {
-    set(p, l, id);
-  }
-
-  void set(path[] drawtile, pen fillpen, pen drawpen, int l=-1 ...string[] id) {
-    set(drawtile,l,id);
-    set(fillpen,drawpen,l,id);
-  }
-
-  void set(path[] drawtile, pen p, int l=-1 ...string[] id) {
-    set(drawtile,l,id);
-    set(p,l,id);
-  }
-
-  void set(pair drawtile, pen p, int l=-1 ...string[] id) {
-    set(drawtile,l,id);
-    set(p,l,id);
-  }
-
 }
 
 mtile copy(mtile T) {
@@ -288,6 +141,7 @@ struct mosaic {
   int n;
   substitution[] rules;
   mtile[] patch;
+  int layers;
 
   private void loop(mtile[] patch, mtile T, int n, int k, mtile[] tiles,
           real inflation=inflation) {
@@ -343,6 +197,151 @@ struct mosaic {
     this.tiles=tiles;
   }
 
+  // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
+  // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
+  // The drawtile can be a pair, in which only the drawpen can be passed.
+
+  void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
+    int L=tiles.length;
+    int ind=layers-1;
+    for(int i=0; i < L; ++i) {
+      tiles[i].addlayer(drawtile,fillpen,drawpen);
+    }
+    layers+=1;
+  }
+
+  void addlayer(path[] drawtile={}, pen p=nullpen) {
+    bool fillable=true;
+    for(int i=0; i < drawtile.length; ++i) {
+      if(cyclic(drawtile[i]) == false) fillable=false;
+      break;
+    }
+    if(fillable) this.addlayer(drawtile, p, nullpen);
+    else this.addlayer(drawtile, invisible, p);
+  }
+
+  void addlayer(pair drawtile, pen drawpen=nullpen) {
+    int L=tiles.length;
+    int ind=layers-1;
+    for(int i=0; i < L; ++i) {
+      pen dp=drawpen;
+      //pen dp=drawpen == nullpen ? patch[i].drawpen[ind] : drawpen;
+      tiles[i].addlayer((path) drawtile,invisible,dp);
+    }
+    layers+=1;
+  }
+
+  // set() sets the drawtile, fillpen, and/or drawpen for a layer l and tiles that have id in ids.
+  void set(path[] drawtile, int l=-1, string[] ids) {
+
+    int ind=l < 0 ? layers-1 : l;
+    if(ids.length == 0)
+      for(int i=0; i < tiles.length; ++i) {
+        tiles[i].drawtile[ind] = drawtile;
+      }
+    else
+      for(int i=0; i < tiles.length; ++i) {
+        for(int j=0; j < ids.length; ++j) {
+          if(tiles[i].id == ids[j]) {
+            tiles[i].drawtile[ind] = drawtile;
+            break;
+          }
+        }
+      }
+  }
+
+  void set(path[] drawtile, int l=-1 ...string[] ids) {
+    set(drawtile, l, ids);
+  }
+
+  void set(pair drawtile, int l=-1, string[] ids) {
+    set((path[]) (path) drawtile, l,ids);
+  }
+
+  void set(pair drawtile, int l=-1 ...string[] ids) {
+    set((path[]) (path) drawtile, l,ids);
+  }
+
+  void set(pen fillpen, pen drawpen, int l=-1, string[] ids={}) {
+    int ind=l < 0 ? layers-1 : l;
+    if(ids.length == 0)
+      for(int i=0; i < tiles.length; ++i) {
+        if(fillpen != nullpen) tiles[i].fillpen[ind] = fillpen;
+        if(drawpen != nullpen) tiles[i].drawpen[ind] = drawpen;
+      }
+    else
+      for(int i=0; i < tiles.length; ++i) {
+        for(int j=0; j < ids.length; ++j) {
+          if(tiles[i].id == ids[j]) {
+            if(fillpen != nullpen) tiles[i].fillpen[ind] = fillpen;
+            if(drawpen != nullpen) tiles[i].drawpen[ind] = drawpen;
+            break;
+          }
+        }
+      }
+  }
+
+  void set(pen fillpen, pen drawpen, int l=-1 ...string[] ids) {
+    set(fillpen,drawpen,l,ids);
+  }
+
+  void set(pen p, int l=-1, string[] ids) {
+    int ind=l < 0 ? layers-1 : l;
+    if(ids.length == 0)
+      for(int i=0; i < tiles.length; ++i) {
+        bool fillable=true;
+        for(int n=0; n < tiles[i].drawtile[ind].length; ++n) {
+          if(cyclic(tiles[i].drawtile[ind][n]) == false) fillable=false;
+          break;
+        }
+        if(fillable) {
+          tiles[i].fillpen[ind]=p;
+          tiles[i].drawpen[ind]=tiles[i].drawpen[ind];
+        } else {
+          tiles[i].fillpen[ind]=tiles[i].fillpen[ind];
+          tiles[i].drawpen[ind]=p;
+        }
+      }
+    else
+      for(int i=0; i < tiles.length; ++i) {
+        for(int j=0; j < ids.length; ++j) {
+          if(tiles[i].id == ids[j]) {
+            bool fillable=true;
+            for(int n=0; n < tiles[i].drawtile[ind].length; ++n) {
+              if(cyclic(tiles[i].drawtile[ind][n]) == false) fillable=false;
+              break;
+            }
+            if(fillable) {
+              tiles[i].fillpen[ind]=p;
+              tiles[i].drawpen[ind]=tiles[i].drawpen[ind];
+            } else {
+              tiles[i].fillpen[ind]=tiles[i].fillpen[ind];
+              tiles[i].drawpen[ind]=p;
+            }
+            break;
+          }
+        }
+      }
+  }
+
+  void set(pen p, int l=-1 ...string[] id) {
+    set(p, l, id);
+  }
+
+  void set(path[] drawtile, pen fillpen, pen drawpen, int l=-1 ...string[] id) {
+    set(drawtile,l,id);
+    set(fillpen,drawpen,l,id);
+  }
+
+  void set(path[] drawtile, pen p, int l=-1 ...string[] id) {
+    set(drawtile,l,id);
+    set(p,l,id);
+  }
+
+  void set(pair drawtile, pen p, int l=-1 ...string[] id) {
+    set(drawtile,l,id);
+    set(p,l,id);
+  }
   void operator init(path[] supertile={}, int n=0, real inflation=inflation ...substitution[] rules) {
     // If supertile is not specified, use supertile from first specified rule.
     if(supertile.length == 0)
@@ -357,6 +356,7 @@ struct mosaic {
       this.patch.append(rules[i].patch);
     }
     this.substitute(n,inflation);
+    this.layers=1;
   }
 }
 
@@ -390,32 +390,29 @@ mosaic operator *(transform T, mosaic M) {
   return M2;
 }
 
-void draw(picture pic=currentpicture, mtile T, pen p=currentpen,real scaling=1) {
-  for(int i=0; i < T.drawtile.length; ++i) {
-    path[] Td=T.transform*T.drawtile[i];
-    for(int j=0; j < Td.length; ++j) {
-      if(cyclic(Td[j]) == true) fill(pic, Td[j], T.fillpen[i]);
-    }
-    pen dpi=T.drawpen[i];
-    if(dpi != nullpen)
-      draw(pic,Td,dpi+scaling*linewidth(dpi));
-    else
-      draw(pic,Td,p+scaling*linewidth(p));
+void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
+  path[] Td=T.transform*T.drawtile[l];
+  for(int j=0; j < Td.length; ++j) {
+    if(cyclic(Td[j]) == true) fill(pic, Td[j], T.fillpen[l]);
   }
+  pen dpl=T.drawpen[l];
+  if(dpl != nullpen)
+    draw(pic,Td,dpl+scaling*linewidth(dpl));
+  else
+    draw(pic,Td,p+scaling*linewidth(p));
 }
 
-void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen, real scaling=1) {
-  for(int k=0; k < T.length; ++k)
-    draw(pic, T[k], p, scaling);
-}
 
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
   for(int k=0; k < s.patch.length; ++k)
-    draw(pic, s.patch[k], p);
+    draw(pic, s.patch[k], p, 1, 0);
 }
+
 
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
-  draw(pic, M.tiles, p, scaling);
+  for(int l=0; l < M.layers; ++l)
+    for(int k=0; k < M.tiles.length; ++k)
+      draw(pic, M.tiles[k], p, scaling, l);
 }
