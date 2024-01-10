@@ -81,9 +81,7 @@ struct substitution {
     int L=patch.length;
     int ind=layers-1;
     for(int i=0; i < L; ++i) {
-      pen fp=fillpen == nullpen ? patch[i].fillpen[ind] : fillpen;
-      pen dp=drawpen == nullpen ? patch[i].drawpen[ind] : drawpen;
-      patch[i].addlayer(drawtile,fp,dp);
+      patch[i].addlayer(drawtile,fillpen,drawpen);
     }
     layers+=1;
   }
@@ -96,7 +94,7 @@ struct substitution {
       break;
     }
     if(fillable) this.addlayer(drawtile, p, nullpen);
-    else this.addlayer(drawtile, nullpen, p);
+    else this.addlayer(drawtile, invisible, p);
   }
 
   // if passing a pair, only drawpen can be set
@@ -104,8 +102,9 @@ struct substitution {
     int L=patch.length;
     int ind=layers-1;
     for(int i=0; i < L; ++i) {
-      pen dp=drawpen == nullpen ? patch[i].drawpen[ind] : drawpen;
-      patch[i].addlayer((path) drawtile,nullpen,dp);
+      pen dp=drawpen;
+      //pen dp=drawpen == nullpen ? patch[i].drawpen[ind] : drawpen;
+      patch[i].addlayer((path) drawtile,invisible,dp);
     }
     layers+=1;
   }
@@ -387,20 +386,21 @@ mosaic operator *(transform T, mosaic M) {
   return M2;
 }
 
-void draw(picture pic=currentpicture, mtile T, pen p=currentpen) {
+void draw(picture pic=currentpicture, mtile T, pen p=currentpen,real scaling=1) {
   for(int i=0; i < T.drawtile.length; ++i) {
     path[] Td=T.transform*T.drawtile[i];
     for(int j=0; j < Td.length; ++j) {
       if(cyclic(Td[j]) == true) fill(pic, Td[j], T.fillpen[i]);
     }
-    if(T.drawpen[i] != nullpen)
-      draw(pic,Td,T.drawpen[i]);
+    pen dpi=T.drawpen[i];
+    if(dpi != nullpen)
+      draw(pic,Td,dpi+scaling*linewidth(dpi));
     else
-      draw(pic,Td,p);
+      draw(pic,Td,p+scaling*linewidth(p));
   }
 }
 
-void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen) {
+void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen, real scaling=1) {
   for(int k=0; k < T.length; ++k)
     draw(pic, T[k], p);
 }
@@ -412,6 +412,6 @@ void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
 
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
-  real scaling=(scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1)*linewidth(p);
-  draw(pic, M.tiles, p+scaling);
+  real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
+  draw(pic, M.tiles, p, scaling);
 }
