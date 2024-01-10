@@ -76,37 +76,37 @@ struct substitution {
     this.patch.push(m);
   }
 
+  // add layer with drawtile, fillpen and drawpen
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
     int L=patch.length;
+    int ind=layers-1;
     for(int i=0; i < L; ++i) {
-      patch[i].addlayer(drawtile,fillpen,drawpen);
+      pen fp=fillpen == nullpen ? patch[i].fillpen[ind] : fillpen;
+      pen dp=drawpen == nullpen ? patch[i].drawpen[ind] : drawpen;
+      patch[i].addlayer(drawtile,fp,dp);
     }
     layers+=1;
   }
 
-  void addlayer(path[] drawtile={}, pen fillpen) {
-    int L=patch.length;
-    for(int i=0; i < L; ++i) {
-      int l=patch[i].layers;
-      patch[i].addlayer(drawtile,fillpen, patch[i].drawpen[l-1]);
+  // if only 1 pen is specified it is the fillpen if the drawtile is fillable and the drawpen otherwise
+  void addlayer(path[] drawtile, pen p=nullpen) {
+    bool fillable=true;
+    for(int i=0; i < drawtile.length; ++i) {
+      if(cyclic(drawtile[i]) == false) fillable=false;
+      break;
     }
+    if(fillable) addlayer(drawtile, p, nullpen);
+    else addlayer(drawtile, nullpen, p);
     layers+=1;
   }
 
-  void addlayer(path[] drawtile={}, pen drawpen) {
+  // if passing a pair, only drawpen can be set
+  void addlayer(pair drawtile, pen drawpen=nullpen) {
     int L=patch.length;
+    int ind=layers-1;
     for(int i=0; i < L; ++i) {
-      int l=patch[i].layers;
-      patch[i].addlayer(drawtile,patch[i].fillpen[l-1], drawpen);
-    }
-    layers+=1;
-  }
-
-  void addlayer(path[] drawtile={}) {
-    int L=patch.length;
-    for(int i=0; i < L; ++i) {
-      int l=patch[i].layers;
-      patch[i].addlayer(drawtile,patch[i].fillpen[l-1], patch[i].drawpen[l-1]);
+      pen dp=drawpen == nullpen ? patch[i].drawpen[ind] : drawpen;
+      patch[i].addlayer((path) drawtile,nullpen,dp);
     }
     layers+=1;
   }

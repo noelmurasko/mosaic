@@ -15,9 +15,8 @@ chairRule.addtile(shift(1,1),orange);
 chairRule.addtile(shift(4,0)*rotate(90),lightblue);
 chairRule.addtile(shift(0,4)*rotate(270),lightblue);
 
-path dot=(1/2,1/2);
+pair dot=(1/2,1/2);
 chairRule.addlayer(dot,blue+2);
-chairRule.set();
 
 // draw patch
 int n=1;
