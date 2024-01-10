@@ -16,11 +16,10 @@ chairRule.addtile(shift(4,0)*rotate(90),lightblue);
 chairRule.addtile(shift(0,4)*rotate(270),lightblue);
 
 path dot=(1/2,1/2);
-chairRule.addlayer(dot,drawpen=blue+2);
-write(chairRule.patch[0].fillpen[1]);
-//chairRule.set(green+3);
+chairRule.addlayer(dot,blue+2);
+chairRule.set();
 
 // draw patch
-int n=2;
+int n=1;
 mosaic M=mosaic(n,chairRule);
 draw(M);

@@ -49,9 +49,11 @@ struct mtile {
 struct substitution {
   path[] supertile;
   mtile[] patch;
+  int layers;
 
   void operator init(path[] supertile={}) {
     this.supertile=supertile;
+    layers=1;
   }
 
   void addtile(transform transform=identity, path[] prototile={}, path[] drawtile={},
@@ -79,6 +81,7 @@ struct substitution {
     for(int i=0; i < L; ++i) {
       patch[i].addlayer(drawtile,fillpen,drawpen);
     }
+    layers+=1;
   }
 
   void addlayer(path[] drawtile={}, pen fillpen) {
@@ -87,6 +90,7 @@ struct substitution {
       int l=patch[i].layers;
       patch[i].addlayer(drawtile,fillpen, patch[i].drawpen[l-1]);
     }
+    layers+=1;
   }
 
   void addlayer(path[] drawtile={}, pen drawpen) {
@@ -95,6 +99,7 @@ struct substitution {
       int l=patch[i].layers;
       patch[i].addlayer(drawtile,patch[i].fillpen[l-1], drawpen);
     }
+    layers+=1;
   }
 
   void addlayer(path[] drawtile={}) {
@@ -103,54 +108,71 @@ struct substitution {
       int l=patch[i].layers;
       patch[i].addlayer(drawtile,patch[i].fillpen[l-1], patch[i].drawpen[l-1]);
     }
+    layers+=1;
   }
 
-  void set(path[] drawtile, int layer=-1 ...string[] id) {
+  void set(path[] drawtile, int l=-1, string[] id) {
 
-    int l(int i) {
-      if(layer < 0) {return patch[i].layers-1;}
-      return layer;
-    }
-
+    int ind=l < 0 ? layers-1 : l;
     if(id.length == 0)
       for(int i=0; i < patch.length; ++i) {
-        patch[i].drawtile[l(i)] = drawtile;
+        patch[i].drawtile[ind] = drawtile;
       }
     else
       for(int i=0; i < patch.length; ++i) {
-        int l=patch[i].layers;
         for(int j=0; j < id.length; ++j) {
           if(patch[i].id == id[j]) {
-            patch[i].drawtile[l(i)] = drawtile;
+            patch[i].drawtile[ind] = drawtile;
             break;
           }
         }
       }
   }
 
-  void set(pen fillpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+  void set(path[] drawtile, int l=-1 ...string[] id) {
+    set(drawtile, l, id);
+  }
 
-    int l(int i) {
-      if(layer < 0) {return patch[i].layers-1;}
-      return layer;
-    }
+  void set(pair drawtile, int l=-1, string[] id) {
+    set((path[]) (path) drawtile, l,id);
+  }
 
+  void set(pair drawtile, int l=-1 ...string[] id) {
+    set((path[]) (path) drawtile, l,id);
+  }
+
+  void set(pen fillpen=nullpen, pen drawpen=nullpen, int l=-1,string[] id) {
+
+    int ind=l < 0 ? layers-1 : l;
     if(id.length == 0)
       for(int i=0; i < patch.length; ++i) {
-        patch[i].fillpen[l(i)] = fillpen;
-        if(drawpen != nullpen) patch[i].drawpen[l(i)] = drawpen;
+        patch[i].fillpen[ind] = fillpen;
+        if(drawpen != nullpen) patch[i].drawpen[ind] = drawpen;
       }
     else
       for(int i=0; i < patch.length; ++i) {
-        int l=patch[i].layers;
         for(int j=0; j < id.length; ++j) {
           if(patch[i].id == id[j]) {
-            patch[i].fillpen[l(i)] = fillpen;
-            if(drawpen != nullpen) patch[i].drawpen[l(i)] = drawpen;
+            patch[i].fillpen[ind] = fillpen;
+            if(drawpen != nullpen) patch[i].drawpen[ind] = drawpen;
             break;
           }
         }
       }
+  }
+
+  void set(pen fillpen=nullpen, pen drawpen=nullpen, int l=-1 ...string[] id) {
+    set(fillpen,drawpen,l,id);
+  }
+
+  void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int l=-1 ...string[] id) {
+    set(drawtile,l,id);
+    set(fillpen,drawpen,l,id);
+  }
+
+  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int l=-1 ...string[] id) {
+    set(drawtile,l,id);
+    set(fillpen,drawpen,l,id);
   }
 
 }
