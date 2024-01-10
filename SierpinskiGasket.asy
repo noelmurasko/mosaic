@@ -14,6 +14,6 @@ ifs.addtile(shift(1,sqrt(3)),black);
 ifs.addtile(shift(2,0),black);
 
 // draw patch
-int n=8;
+int n=5;
 mosaic M=mosaic(triangle,n,ifs);
-//draw(M);
+draw(M);
