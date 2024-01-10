@@ -170,7 +170,7 @@ struct substitution {
       }
   }
 
-  void set(pen fillpen, pen drawpen, int l=-1, string[] ids={}) {
+  void set(pen fillpen, pen drawpen, int l=-1 ...string[] ids) {
     set(fillpen,drawpen,l,ids);
   }
 
