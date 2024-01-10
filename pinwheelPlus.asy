@@ -13,20 +13,26 @@ path tri=u--v--w--cycle;
 inflation=sqrt(5);
 
 // number of iterations
-int n=4;
+int n=1;
 
 // options
 bool drawTiles=true;  // draw the tiles
-bool drawCPs=false;  // draw critical points in each triangle
-bool drawFP=false;  // draw the fixed point of the tiling
+bool drawCPs=true;  // draw critical points in each triangle
+bool drawFP=true;  // draw the fixed point of the tiling
+bool colourTiles=true;  // colour tiles by chirality
+bool colourCPs=true;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
 bool overlaySupertiles=true;  // overlay supertiles
 bool clipPatch=false;  // clip the patch with a box
 
 // dot size/colour settings
+pen posTiles=paleblue;  // tiles of positive chirality
+pen negTiles=paleyellow;  // tiles of negative chirality 
 pen CP_pen=black+5;  // critical points
-pen FP_pen=heavymagenta+4;  // fixed point
+pen posCP_pen=blue+5;  // critical points of positive chirality
+pen negCP_pen=orange+5;  // critical points of negative chirality
+pen FP_pen=heavymagenta+6;  // fixed point
 
 // supertile settings
 int k=1;  // overlay level n-k supertiles
@@ -41,14 +47,27 @@ real boxShiftY=0;  // shift clip box vertically
 // initialize a substitution rule
 substitution pinSub=substitution(tri);
 
+// set tile colours
+pen[] tileColours;
+if(colourTiles) {
+	tileColours[0]=posTiles;
+	tileColours[1]=negTiles;
+}else{
+	tileColours=array(2,invisible); 
+}
+
 // define the substitution rule
 real varphi=aTan(1/2);
 transform T=reflect((0,0),(0,1))*rotate(180-varphi);
-pinSub.addtile(T, paleyellow, id="1");
-pinSub.addtile(T*shift(2,1), paleyellow, id="2");
-pinSub.addtile(T*reflect((2,0),(2,1)), paleblue, id="3");
-pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), paleblue, id="4");
-pinSub.addtile(T*shift(4,2)*rotate(-90), paleyellow, id="5");
+pinSub.addtile(T, tileColours[1], id="1");
+pinSub.addtile(T*shift(2,1), tileColours[1], id="2");
+pinSub.addtile(T*reflect((2,0),(2,1)), tileColours[0], id="3");
+pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), tileColours[0], id="4");
+pinSub.addtile(T*shift(4,2)*rotate(-90), tileColours[1], id="5");
+
+// add control points
+pair CP=(u+2*v+w)/4;
+pinSub.addlayer(CP, CP_pen);
 
 // build patch
 mosaic M=mosaic(n,pinSub);
@@ -62,12 +81,6 @@ if(reorientPatch) M=Rot90*M;
 // draw patch
 if(drawTiles) draw(M);
 
-// draw control points
-pair CP=(u+2*v+w)/4;
-M.set(CP);
-if(drawCPs) draw(M, CP_pen);
-
-
 // draw fixed point
 pair FP=(inflation^n)*CP;
 if(rotatePatch) FP=RotVarphi*FP;
@@ -75,8 +88,9 @@ if(reorientPatch) FP=Rot90*FP;
 if(drawFP) draw(FP, p=FP_pen);
 
 // overlay level n-k supertiles
+pinSub.set(invisible, l=0);
 mosaic superM=mosaic(max(n-k,0),pinSub);
-superM.set(invisible);
+//superM.set(invisible);
 superM=scale(inflation^k)*superM;
 if(rotatePatch) superM=RotVarphi*superM;
 if(reorientPatch) superM=Rot90*superM;
