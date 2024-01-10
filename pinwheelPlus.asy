@@ -21,7 +21,7 @@ bool drawCPs=false;  // draw critical points in each triangle
 bool drawFP=false;  // draw the fixed point of the tiling
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
-bool overlaySupertiles=true;  // overlay supertiles 
+bool overlaySupertiles=true;  // overlay supertiles
 bool clipPatch=false;  // clip the patch with a box
 
 // dot size/colour settings
@@ -38,17 +38,17 @@ real boxL=boxW;  // clip box length
 real boxShiftX=0;  // shift clip box horizontally
 real boxShiftY=0;  // shift clip box vertically
 
-// initialize a substitution rule 
+// initialize a substitution rule
 substitution pinSub=substitution(tri);
 
-// define the substitution rule 
+// define the substitution rule
 real varphi=aTan(1/2);
 transform T=reflect((0,0),(0,1))*rotate(180-varphi);
 pinSub.addtile(T, paleyellow, id="1");
-pinSub.addtile(T*shift(2,1), paleyellow, id="2");  
-pinSub.addtile(T*reflect((2,0),(2,1)), paleblue, id="3");  
-pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), paleblue, id="4");  
-pinSub.addtile(T*shift(4,2)*rotate(-90), paleyellow, id="5");  
+pinSub.addtile(T*shift(2,1), paleyellow, id="2");
+pinSub.addtile(T*reflect((2,0),(2,1)), paleblue, id="3");
+pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), paleblue, id="4");
+pinSub.addtile(T*shift(4,2)*rotate(-90), paleyellow, id="5");
 
 // build patch
 mosaic M=mosaic(n,pinSub);
@@ -81,8 +81,8 @@ superM=scale(inflation^k)*superM;
 if(rotatePatch) superM=RotVarphi*superM;
 if(reorientPatch) superM=Rot90*superM;
 if(overlaySupertiles && n>=k) draw(superM,p=overlayLine);
-	
-	
+
+
 // clip the patch
 pair boxShift=(boxShiftX,boxShiftY);
 pair bottomLeft=(FP.x-boxL/2,FP.y-boxW/2)+boxShift;
@@ -91,4 +91,3 @@ pair topRight=(FP.x+boxL/2,FP.y+boxW/2)+boxShift;
 pair topLeft=(FP.x-boxL/2,FP.y+boxW/2)+boxShift;
 path box=bottomLeft--bottomRight--topRight--topLeft--cycle;
 if(clipPatch) clip(g=box);
-

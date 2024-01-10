@@ -24,6 +24,7 @@ path hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);
 path[] decorate=pentagon^^hexagon;
 
 chairRule.addlayer(decorate);
+
 chairRule.set(lightblue,"A");
 chairRule.set(white,"B");
 chairRule.set(orange,"C","D");

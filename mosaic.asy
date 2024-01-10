@@ -5,7 +5,6 @@ struct mtile {
   path[] supertile;
   path[] prototile;
 
-  // restrict these variables
   path[][] drawtile={};
   pen[] fillpen;
   pen[] drawpen;
@@ -30,11 +29,24 @@ struct mtile {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
-    path drawtileP = drawtile;
-    this.drawtile.push(drawtileP);
+    this.drawtile.push((path) drawtile);
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
     this.layers=1;
+    this.id=id;
+  }
+
+  void operator init(transform transform=identity, path[] supertile, path[] prototile={},
+                     path[][] drawtile={}, pen[] fillpen, pen[] drawpen, string id="") {
+    int L=drawtile.length;
+    assert(fillpen.length == L && drawpen.length == L);
+    this.transform=transform;
+    this.supertile=supertile;
+    this.prototile = prototile.length == 0 ? supertile : prototile;
+    this.drawtile=drawtile;
+    this.fillpen=fillpen;
+    this.drawpen=drawpen;
+    this.layers=L;
     this.id=id;
   }
 
@@ -223,20 +235,12 @@ struct substitution {
 }
 
 mtile copy(mtile T) {
-  mtile T2;
-  T2.transform=T.transform;
-  T2.supertile=copy(T.supertile);
-  T2.prototile=copy(T.prototile);
   int L=T.drawtile.length;
   path[][] drawtilecopy;
   for(int i=0; i < L; ++i) {
     drawtilecopy.push(copy(T.drawtile[i]));
   }
-  T2.drawtile=drawtilecopy;
-  T2.fillpen=copy(T.fillpen);
-  T2.drawpen=copy(T.drawpen);
-  T2.id=T.id;
-  return T2;
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), drawtilecopy, copy(T.fillpen), copy(T.drawpen), T.id);
 }
 
 substitution copy(substitution T) {
