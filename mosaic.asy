@@ -104,6 +104,55 @@ struct substitution {
       patch[i].addlayer(drawtile,patch[i].fillpen[l-1], patch[i].drawpen[l-1]);
     }
   }
+
+  void set(path[] drawtile, int layer=-1 ...string[] id) {
+
+    int l(int i) {
+      if(layer < 0) {return patch[i].layers-1;}
+      return layer;
+    }
+
+    if(id.length == 0)
+      for(int i=0; i < patch.length; ++i) {
+        patch[i].drawtile[l(i)] = drawtile;
+      }
+    else
+      for(int i=0; i < patch.length; ++i) {
+        int l=patch[i].layers;
+        for(int j=0; j < id.length; ++j) {
+          if(patch[i].id == id[j]) {
+            patch[i].drawtile[l(i)] = drawtile;
+            break;
+          }
+        }
+      }
+  }
+
+  void set(pen fillpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+
+    int l(int i) {
+      if(layer < 0) {return patch[i].layers-1;}
+      return layer;
+    }
+
+    if(id.length == 0)
+      for(int i=0; i < patch.length; ++i) {
+        patch[i].fillpen[l(i)] = fillpen;
+        if(drawpen != nullpen) patch[i].drawpen[l(i)] = drawpen;
+      }
+    else
+      for(int i=0; i < patch.length; ++i) {
+        int l=patch[i].layers;
+        for(int j=0; j < id.length; ++j) {
+          if(patch[i].id == id[j]) {
+            patch[i].fillpen[l(i)] = fillpen;
+            if(drawpen != nullpen) patch[i].drawpen[l(i)] = drawpen;
+            break;
+          }
+        }
+      }
+  }
+
 }
 
 mtile copy(mtile T) {
