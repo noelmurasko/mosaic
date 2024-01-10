@@ -406,7 +406,7 @@ void draw(picture pic=currentpicture, mtile T, pen p=currentpen,real scaling=1) 
 
 void draw(picture pic=currentpicture, mtile[] T, pen p=currentpen, real scaling=1) {
   for(int k=0; k < T.length; ++k)
-    draw(pic, T[k], p);
+    draw(pic, T[k], p, scaling);
 }
 
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
