@@ -408,11 +408,19 @@ void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
     draw(pic, s.patch[k], p, 1, 0);
 }
 
-
+// Draw mosaic. Layers are drawn in increasing order.
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
   for(int l=0; l < M.layers; ++l)
     for(int k=0; k < M.tiles.length; ++k)
       draw(pic, M.tiles[k], p, scaling, l);
+}
+
+// Draw layer l of mosaic.
+void draw(picture pic=currentpicture, mosaic M, int l,pen p=currentpen,
+          bool scalelinewidth=true, real inflation=inflation) {
+  real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
+  for(int k=0; k < M.tiles.length; ++k)
+    draw(pic, M.tiles[k], p, scaling, l);
 }
