@@ -88,7 +88,10 @@ struct substitution {
     this.patch.push(m);
   }
 
-  // add layer with drawtile, fillpen and drawpen
+  // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
+  // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
+  // The drawtile can be a pair, in which only the drawpen can be passed.
+
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
     int L=patch.length;
     int ind=layers-1;
@@ -97,8 +100,6 @@ struct substitution {
     }
     layers+=1;
   }
-
-  // if only 1 pen is specified it is the fillpen if the drawtile is fillable and the drawpen otherwise
   void addlayer(path[] drawtile={}, pen p=nullpen) {
     bool fillable=true;
     for(int i=0; i < drawtile.length; ++i) {
@@ -108,8 +109,6 @@ struct substitution {
     if(fillable) this.addlayer(drawtile, p, nullpen);
     else this.addlayer(drawtile, invisible, p);
   }
-
-  // if passing a pair, only drawpen can be set
   void addlayer(pair drawtile, pen drawpen=nullpen) {
     int L=patch.length;
     int ind=layers-1;
@@ -121,17 +120,18 @@ struct substitution {
     layers+=1;
   }
 
-  void set(path[] drawtile, int l=-1, string[] id) {
+  // set() sets the drawtile, fillpen, and/or drawpen for a layer l and tiles that have id in ids.
+  void set(path[] drawtile, int l=-1, string[] ids) {
 
     int ind=l < 0 ? layers-1 : l;
-    if(id.length == 0)
+    if(ids.length == 0)
       for(int i=0; i < patch.length; ++i) {
         patch[i].drawtile[ind] = drawtile;
       }
     else
       for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < id.length; ++j) {
-          if(patch[i].id == id[j]) {
+        for(int j=0; j < ids.length; ++j) {
+          if(patch[i].id == ids[j]) {
             patch[i].drawtile[ind] = drawtile;
             break;
           }
@@ -139,29 +139,29 @@ struct substitution {
       }
   }
 
-  void set(path[] drawtile, int l=-1 ...string[] id) {
-    set(drawtile, l, id);
+  void set(path[] drawtile, int l=-1 ...string[] ids) {
+    set(drawtile, l, ids);
   }
 
-  void set(pair drawtile, int l=-1, string[] id) {
-    set((path[]) (path) drawtile, l,id);
+  void set(pair drawtile, int l=-1, string[] ids) {
+    set((path[]) (path) drawtile, l,ids);
   }
 
-  void set(pair drawtile, int l=-1 ...string[] id) {
-    set((path[]) (path) drawtile, l,id);
+  void set(pair drawtile, int l=-1 ...string[] ids) {
+    set((path[]) (path) drawtile, l,ids);
   }
 
-  void set(pen fillpen, pen drawpen, int l=-1, string[] id={}) {
+  void set(pen fillpen, pen drawpen, int l=-1, string[] ids={}) {
     int ind=l < 0 ? layers-1 : l;
-    if(id.length == 0)
+    if(ids.length == 0)
       for(int i=0; i < patch.length; ++i) {
         if(fillpen != nullpen) patch[i].fillpen[ind] = fillpen;
         if(drawpen != nullpen) patch[i].drawpen[ind] = drawpen;
       }
     else
       for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < id.length; ++j) {
-          if(patch[i].id == id[j]) {
+        for(int j=0; j < ids.length; ++j) {
+          if(patch[i].id == ids[j]) {
             if(fillpen != nullpen) patch[i].fillpen[ind] = fillpen;
             if(drawpen != nullpen) patch[i].drawpen[ind] = drawpen;
             break;
@@ -170,13 +170,13 @@ struct substitution {
       }
   }
 
-  void set(pen fillpen, pen drawpen, int l=-1, string[] id={}) {
-    set(fillpen,drawpen,l,id);
+  void set(pen fillpen, pen drawpen, int l=-1, string[] ids={}) {
+    set(fillpen,drawpen,l,ids);
   }
 
-  void set(pen p, int l=-1, string[] id) {
+  void set(pen p, int l=-1, string[] ids) {
     int ind=l < 0 ? layers-1 : l;
-    if(id.length == 0)
+    if(ids.length == 0)
       for(int i=0; i < patch.length; ++i) {
         bool fillable=true;
         for(int n=0; n < patch[i].drawtile[ind].length; ++n) {
@@ -193,8 +193,8 @@ struct substitution {
       }
     else
       for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < id.length; ++j) {
-          if(patch[i].id == id[j]) {
+        for(int j=0; j < ids.length; ++j) {
+          if(patch[i].id == ids[j]) {
             bool fillable=true;
             for(int n=0; n < patch[i].drawtile[ind].length; ++n) {
               if(cyclic(patch[i].drawtile[ind][n]) == false) fillable=false;
