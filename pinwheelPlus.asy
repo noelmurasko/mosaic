@@ -13,19 +13,19 @@ path tri=u--v--w--cycle;
 inflation=sqrt(5);
 
 // number of iterations
-int n=2;
+int n=5;
 
 // options
 bool drawTiles=true;  // draw the tiles
 bool drawCPs=true;  // (TODO) draw critical points in each triangle
-bool drawFP=true;  // draw the fixed point of the tiling
+bool drawFP=false;  // draw the fixed point of the tiling
 bool colourTiles=true;  // colour tiles by chirality
-bool colourBorders=false;  // (TODO) colour tile borders by chirality
+bool colourBorders=true;  // colour tile borders by chirality
 bool colourCPs=true;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
 bool overlaySupertiles=true;  // overlay supertile borders
-bool colourSupertiles=false;  // (TODO) colour supertile borders by chirality
+bool colourSupertiles=true;  // colour supertile borders by chirality
 bool clipPatch=false;  // clip the patch with a box
 
 // dot size/colour settings
@@ -35,11 +35,15 @@ pen negTiles=paleyellow;  // tiles of negative chirality
 pen CP_pen=black+5;  // critical points when colourCPs=false
 pen posCP_pen=blue+5;  // critical points of positive chirality
 pen negCP_pen=orange+5;  // critical points of negative chirality
+pen posBorders=blue+2;  // borders of tiles of positive chirality
+pen negBorders=orange+2;  // borders of tiles of negative chirality
 pen FP_pen=heavymagenta+6;  // fixed point
+pen overlay=black+4;  // supertile borders
+pen posOverlay=blue+4;  // supertile borders of positive chirality
+pen negOverlay=orange+4;  // supertile borders of negative chirality
 
-// supertile settings
-int k=1;  // overlay level n-k supertiles
-pen overlayLine=black+2;
+// overlay level n-k supertiles
+int k=1;  
 
 // clip settings (rectangle centered at the fixed point)
 real boxW=inflation^(max(n-2,0));  // clip box width
@@ -62,10 +66,19 @@ pinSub.addtile(T*shift(4,2)*rotate(-90), id="5");
 // create the patch
 mosaic M=mosaic(n,pinSub);
 
-// set tile colours
+// colour tiles by chirality 
 if(colourTiles) {
 	M.set(posTiles, "3", "4");  // positive chirality 
 	M.set(negTiles, "1", "2", "5");  // negative chirality 
+}
+
+// colour tile borders by chirality tile borders (with positive on top)
+M.set(drawpen=tilePen);
+if(colourBorders){
+	M.addlayer();
+	M.set(tri, drawpen=negBorders, "1", "2", "5");  // negative chirality 
+	M.addlayer();
+	M.set(tri, drawpen=posBorders, "3", "4");  // positive chirality 
 }
 
 // add control points
@@ -82,11 +95,8 @@ transform Rot90=rotate(-90);
 if(rotatePatch) M=RotVarphi*M;
 if(reorientPatch) M=Rot90*M;
 
-// set the tile borders
-//M.set(drawpen=posCP_pen, "3");
-
 // draw patch
-if(drawTiles) draw(M, tilePen);
+if(drawTiles) draw(M);
 
 // draw fixed point
 pair FP=(inflation^n)*CP;
@@ -98,10 +108,16 @@ if(drawFP) draw(FP, p=FP_pen);
 mosaic superM=mosaic(max(n-k,0),pinSub);
 superM.set(invisible, layer=0); 
 superM.set(invisible, layer=1);
+if(colourSupertiles){
+	superM.addlayer();
+	superM.set(tri, drawpen=negOverlay, "1", "2", "5");
+	superM.addlayer();
+	superM.set(tri, drawpen=posOverlay, "3", "4");
+}
 superM=scale(inflation^k)*superM;
 if(rotatePatch) superM=RotVarphi*superM;
 if(reorientPatch) superM=Rot90*superM;
-if(overlaySupertiles && n>=k) draw(superM,overlayLine);
+if(overlaySupertiles && n>=k) draw(superM);
 
 // clip the patch
 pair boxShift=(boxShiftX,boxShiftY);
