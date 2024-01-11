@@ -101,8 +101,8 @@ struct mtile {
   }
 
   void setpen(pen fillpen, pen drawpen, int ind) {
-    bool fpnull=fillpen!= nullpen;
-    bool dpnull=drawpen!= nullpen;
+    bool fpnull=fillpen == nullpen;
+    bool dpnull=drawpen == nullpen;
     if(fillable[ind]) {
       if(fpnull) this.fillpen[ind]=fillpen;
       if(dpnull) this.drawpen[ind]=drawpen;
