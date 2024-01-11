@@ -17,7 +17,7 @@ int n=5;
 
 // options
 bool drawTiles=true;  // draw the tiles
-bool drawCPs=true;  // (TODO) draw critical points in each triangle
+bool drawCPs=true;  // draw critical points in each triangle
 bool drawFP=false;  // draw the fixed point of the tiling
 bool colourTiles=true;  // colour tiles by chirality
 bool colourBorders=true;  // colour tile borders by chirality
@@ -95,7 +95,7 @@ transform Rot90=rotate(-90);
 if(rotatePatch) M=RotVarphi*M;
 if(reorientPatch) M=Rot90*M;
 
-// draw patch
+// draw the patch
 if(drawTiles) draw(M);
 
 // draw fixed point
