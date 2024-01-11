@@ -1,27 +1,65 @@
 real inflation=1;
 
-struct mlayers {
+struct mtile {
+  transform transform;
+  path[] supertile;
+  path[] prototile;
+
   path[][] drawtile={};
   pen[] fillpen;
   pen[] drawpen;
 
   bool[] fillable;
+
+  restricted int layers;
+
+  string id;
+
   bool checkfillable(path[] drawtile, int ind=0) {
     for(int i=0; i < drawtile.length; ++i)
       if(!cyclic(drawtile[i])) return false;
     return true;
   }
-  restricted int layers;
 
-  void operator init(path[] drawtile, pen fillpen=invisible, pen drawpen=nullpen) {
-    this.drawtile.push(drawtile);
+  void operator init(transform transform=identity, path[] supertile, path[] prototile={},
+                     path[] drawtile={}, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
+    this.transform=transform;
+    this.supertile=supertile;
+    this.prototile = prototile.length == 0 ? supertile : prototile;
+
+    this.drawtile.push(drawtile.length == 0 ? this.prototile : drawtile);
     this.fillable.push(checkfillable(drawtile));
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
+
     this.layers=1;
+    this.id=id;
   }
 
-  void operator init(path[][] drawtile, pen[] fillpen, pen[] drawpen) {
+  void operator init(transform transform=identity, path[] supertile, path[] prototile={},
+                     pair drawtile, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
+    this.transform=transform;
+    this.supertile=supertile;
+    this.prototile = prototile.length == 0 ? supertile : prototile;
+
+    this.drawtile.push((path) drawtile);
+    this.fillable.push(checkfillable((path) drawtile));
+    this.fillpen.push(fillpen);
+    this.drawpen.push(drawpen);
+
+
+    this.layers=1;
+    this.id=id;
+  }
+
+  void operator init(transform transform=identity, path[] supertile, path[] prototile={},
+                     path[][] drawtile={}, pen[] fillpen, pen[] drawpen, string id="") {
+    int L=drawtile.length;
+    assert(fillpen.length == L && drawpen.length == L);
+    this.transform=transform;
+    this.supertile=supertile;
+    this.prototile = prototile.length == 0 ? supertile : prototile;
+
     this.drawtile=drawtile;
     this.fillpen=fillpen;
     this.drawpen=drawpen;
@@ -31,6 +69,8 @@ struct mlayers {
       this.fillable.push(checkfillable(drawtile[i]));
     }
     this.layers=L;
+
+    this.id=id;
   }
 
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
@@ -68,84 +108,6 @@ struct mlayers {
   }
 }
 
-struct mtile {
-  transform transform;
-  path[] supertile;
-  path[] prototile;
-
-  mlayers mlayers;
-
-  restricted int layers;
-
-  string id;
-
-  void operator init(transform transform=identity, path[] supertile, path[] prototile={},
-                     path[] drawtile={}, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
-    this.transform=transform;
-    this.supertile=supertile;
-    this.prototile = prototile.length == 0 ? supertile : prototile;
-
-    mlayers.operator init(drawtile.length == 0 ? this.prototile : drawtile, fillpen, drawpen);
-    this.layers=1;
-    this.id=id;
-  }
-
-  void operator init(transform transform=identity, path[] supertile, path[] prototile={},
-                     pair drawtile, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
-    this.transform=transform;
-    this.supertile=supertile;
-    this.prototile = prototile.length == 0 ? supertile : prototile;
-
-    mlayers.operator init((path) drawtile, fillpen, drawpen);
-    this.layers=1;
-    this.id=id;
-  }
-
-  void operator init(transform transform=identity, path[] supertile, path[] prototile={},
-                     path[][] drawtile={}, pen[] fillpen, pen[] drawpen, string id="") {
-    int L=drawtile.length;
-    assert(fillpen.length == L && drawpen.length == L);
-    this.transform=transform;
-    this.supertile=supertile;
-    this.prototile = prototile.length == 0 ? supertile : prototile;
-
-    mlayers.operator init(drawtile, fillpen, drawpen);
-    this.layers=L;
-    this.id=id;
-  }
-
-  void operator init(transform transform=identity, path[] supertile, path[] prototile, mlayers mlayers, string id="") {
-    this.transform=transform;
-    this.supertile=supertile;
-    this.prototile=prototile;
-    this.mlayers=mlayers;
-    this.layers=mlayers.layers;
-    this.id=id;
-  }
-
-  void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
-    mlayers.addlayer(drawtile,fillpen,drawpen);
-    this.layers+=1;
-  }
-
-  void addlayer(path[] drawtile, pen p) {
-    mlayers.addlayer(drawtile,p);
-    this.layers+=1;
-  }
-
-  void setdrawtile(path[] drawtile, int ind) {
-    mlayers.setdrawtile(drawtile,ind);
-  }
-
-  void setfillpen(pen fillpen, int ind) {
-    mlayers.setfillpen(fillpen,ind);
-  }
-
-  void setdrawpen(pen drawpen, int ind) {
-   mlayers.setdrawpen(drawpen,ind);
-  }
-}
-
 struct substitution {
   path[] supertile;
   mtile[] patch;
@@ -176,7 +138,7 @@ struct substitution {
 }
 
 mtile copy(mtile T) {
-  return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.mlayers, T.id); // Do not do deep copy of mlayers
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.drawtile, T.fillpen, T.drawpen, T.id); // Do not do deep copy of drawtile, fillpen, or drawpen
 }
 
 substitution copy(substitution T) {
@@ -353,8 +315,8 @@ struct mosaic {
     if(ids.length == 0)
       for(int i=0; i < patch.length; ++i) {
         bool fillable=true;
-        for(int n=0; n < patch[i].mlayers.drawtile[ind].length; ++n) {
-          if(cyclic(patch[i].mlayers.drawtile[ind][n]) == false) fillable=false;
+        for(int n=0; n < patch[i].drawtile[ind].length; ++n) {
+          if(cyclic(patch[i].drawtile[ind][n]) == false) fillable=false;
           break;
         }
         if(fillable) {
@@ -368,8 +330,8 @@ struct mosaic {
         for(int j=0; j < ids.length; ++j) {
           if(patch[i].id == ids[j]) {
             bool fillable=true;
-            for(int n=0; n < patch[i].mlayers.drawtile[ind].length; ++n) {
-              if(cyclic(patch[i].mlayers.drawtile[ind][n]) == false) fillable=false;
+            for(int n=0; n < patch[i].drawtile[ind].length; ++n) {
+              if(cyclic(patch[i].drawtile[ind][n]) == false) fillable=false;
               break;
             }
             if(fillable) {
@@ -452,11 +414,11 @@ mosaic operator *(transform T, mosaic M) {
 }
 
 void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
-  path[] Td=T.transform*T.mlayers.drawtile[l];
+  path[] Td=T.transform*T.drawtile[l];
   for(int j=0; j < Td.length; ++j) {
-    if(cyclic(Td[j]) == true) fill(pic, Td[j], T.mlayers.fillpen[l]);
+    if(cyclic(Td[j]) == true) fill(pic, Td[j], T.fillpen[l]);
   }
-  pen dpl=T.mlayers.drawpen[l];
+  pen dpl=T.drawpen[l];
   if(dpl != nullpen)
     draw(pic,Td,dpl+scaling*linewidth(dpl));
   else
