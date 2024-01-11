@@ -4,7 +4,8 @@ struct mlayers {
   path[][] drawtile={};
   pen[] fillpen;
   pen[] drawpen;
-  int layers;
+
+  restricted int layers;
 
   void operator init(path[] drawtile, pen fillpen=invisible, pen drawpen=nullpen) {
     this.drawtile.push(drawtile);
@@ -17,7 +18,7 @@ struct mlayers {
     this.drawtile=drawtile;
     this.fillpen=fillpen;
     this.drawpen=drawpen;
-    this.layers=1;
+    this.layers=drawtile.length;
   }
 
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
@@ -35,10 +36,7 @@ struct mtile {
 
   mlayers mlayers;
 
-  path[][] drawtile={};
-  pen[] fillpen;
-  pen[] drawpen;
-  int layers;
+  restricted int layers;
 
   string id;
 
@@ -49,10 +47,6 @@ struct mtile {
     this.prototile = prototile.length == 0 ? supertile : prototile;
 
     mlayers.operator init(drawtile.length == 0 ? this.prototile : drawtile, fillpen, drawpen);
-
-    this.drawtile.push(drawtile.length == 0 ? this.prototile : drawtile);
-    this.fillpen.push(fillpen);
-    this.drawpen.push(drawpen);
     this.layers=1;
     this.id=id;
   }
@@ -64,10 +58,6 @@ struct mtile {
     this.prototile = prototile.length == 0 ? supertile : prototile;
 
     mlayers.operator init((path) drawtile, fillpen, drawpen);
-
-    this.drawtile.push((path) drawtile);
-    this.fillpen.push(fillpen);
-    this.drawpen.push(drawpen);
     this.layers=1;
     this.id=id;
   }
@@ -81,19 +71,21 @@ struct mtile {
     this.prototile = prototile.length == 0 ? supertile : prototile;
 
     mlayers.operator init(drawtile, fillpen, drawpen);
-
-    this.drawtile=drawtile;
-    this.fillpen=fillpen;
-    this.drawpen=drawpen;
     this.layers=L;
+    this.id=id;
+  }
+
+  void operator init(transform transform=identity, path[] supertile, path[] prototile, mlayers mlayers, string id="") {
+    this.transform=transform;
+    this.supertile=supertile;
+    this.prototile=prototile;
+    this.mlayers=mlayers;
+    this.layers=mlayers.layers;
     this.id=id;
   }
 
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
     mlayers.addlayer(drawtile,fillpen,drawpen);
-    this.drawtile.push(drawtile);
-    this.fillpen.push(fillpen);
-    this.drawpen.push(drawpen);
     this.layers+=1;
   }
 
@@ -140,14 +132,7 @@ struct substitution {
 }
 
 mtile copy(mtile T) {
-  int L=T.drawtile.length;
-  path[][] drawtilecopy;
-  for(int i=0; i < L; ++i) {
-    drawtilecopy.push(copy(T.drawtile[i]));
-  }
-  mtile T2=mtile(T.transform, copy(T.supertile), copy(T.prototile), drawtilecopy, copy(T.fillpen), copy(T.drawpen), T.id);
-  T2.mlayers=T.mlayers; // Do not make deep copy of mlayers
-  return T2;
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.mlayers, T.id); // Do not do deep copy of mlayers
 }
 
 substitution copy(substitution T) {
@@ -230,7 +215,7 @@ struct mosaic {
       for(int i=0; i < L; ++i) {
         mtile Ti=patchcopy[i];
         if(samepath(Ti.prototile,this.supertile)) {
-          tiles.push(mtile(identity,this.supertile,Ti.fillpen[0],Ti.drawpen[0],Ti.id));
+          tiles.push(mtile(this.supertile,Ti.mlayers.fillpen[0],Ti.mlayers.drawpen[0],Ti.id));
           break;
         }
       }
