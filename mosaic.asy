@@ -16,6 +16,7 @@ private struct mtile {
   string id;
 
   bool checkfillable(path[] drawtile, int ind=0) {
+
     for(int i=0; i < drawtile.length; ++i)
       if(!cyclic(drawtile[i])) return false;
     return true;
@@ -26,9 +27,8 @@ private struct mtile {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
-
     this.drawtile.push(drawtile.length == 0 ? this.prototile : drawtile);
-    this.fillable.push(checkfillable(drawtile));
+    this.fillable.push(checkfillable(this.drawtile[0]));
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
 
@@ -398,8 +398,9 @@ void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
 }
 
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
-  for(int k=0; k < s.patch.length; ++k)
+  for(int k=0; k < s.patch.length; ++k) {
     draw(pic, s.patch[k], p, 1, 0);
+  }
 }
 
 // Draw mosaic. Layers are drawn in increasing order.
