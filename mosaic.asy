@@ -282,14 +282,14 @@ struct mosaic {
 
     int ind=l < 0 ? layers-1 : l;
     if(ids.length == 0)
-      for(int i=0; i < tiles.length; ++i) {
-        tiles[i].setdrawtile(drawtile,ind);
+      for(int i=0; i < patch.length; ++i) {
+        patch[i].setdrawtile(drawtile,ind);
       }
     else
       for(int i=0; i < tiles.length; ++i) {
         for(int j=0; j < ids.length; ++j) {
-          if(tiles[i].id == ids[j]) {
-            tiles[i].setdrawtile(drawtile,ind);
+          if(patch[i].id == ids[j]) {
+            patch[i].setdrawtile(drawtile,ind);
             break;
           }
         }
