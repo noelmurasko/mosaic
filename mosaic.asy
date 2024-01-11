@@ -271,47 +271,30 @@ struct mosaic {
 
   void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] ids) {
     int ind=layer < 0 ? layers-1 : layer;
-    if(ids.length == 0)
-      for(int i=0; i < patch.length; ++i) {
-        patch[i].setpen(fillpen,drawpen,ind);
+    int idslength=ids.length;
+    for(int i=0; i < patch.length; ++i) {
+      for(int j=0; j < max(idslength,1); ++j) {
+        if(idslength == 0 || patch[i].id == ids[j]) {
+          patch[i].setpen(fillpen,drawpen,ind);
+          break;
+        }
       }
-    else
+    }
+  }
+
+  void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen,int layer=-1, string[] ids) {
+      int ind=layer < 0 ? layers-1 : layer;
+      int idslength=ids.length;
       for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < ids.length; ++j) {
-          if(patch[i].id == ids[j]) {
+        for(int j=0; j < max(idslength,1); ++j) {
+          if(idslength == 0 || patch[i].id == ids[j]) {
+            patch[i].setdrawtile(drawtile,ind);
             patch[i].setpen(fillpen,drawpen,ind);
             break;
           }
         }
       }
-  }
-
-  void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen,int layer=-1, string[] ids) {
-      int ind=layer < 0 ? layers-1 : layer;
-      if(ids.length == 0)
-        for(int i=0; i < patch.length; ++i) {
-          patch[i].setdrawtile(drawtile,ind);
-          patch[i].setpen(fillpen,drawpen,ind);
-        }
-      else
-        for(int i=0; i < patch.length; ++i) {
-          for(int j=0; j < ids.length; ++j) {
-            if(patch[i].id == ids[j]) {
-              patch[i].setdrawtile(drawtile,ind);
-              patch[i].setpen(fillpen,drawpen,ind);
-              break;
-            }
-          }
-        }
     }
-
-  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] ids) {
-    set((path[]) (path) drawtile, fillpen, drawpen, layer, ids);
-  }
-
-  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] ids) {
-    set(drawtile, fillpen, drawpen, layer, ids);
-  }
 
   void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] ids) {
     set(fillpen,drawpen,layer,ids);
@@ -319,6 +302,14 @@ struct mosaic {
 
   void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(drawtile, fillpen,drawpen,layer,id);
+  }
+
+  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] ids) {
+    set((path[]) (path) drawtile, fillpen, drawpen, layer, ids);
+  }
+
+  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] ids) {
+    set(drawtile, fillpen, drawpen, layer, ids);
   }
 
   void operator init(path[] supertile={}, int n=0, real inflation=inflation ...substitution[] rules) {
