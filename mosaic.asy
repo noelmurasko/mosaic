@@ -1,9 +1,39 @@
 real inflation=1;
 
+struct mlayers {
+  path[][] drawtile={};
+  pen[] fillpen;
+  pen[] drawpen;
+  int layers;
+
+  void operator init(path[] drawtile, pen fillpen=invisible, pen drawpen=nullpen) {
+    this.drawtile.push(drawtile);
+    this.fillpen.push(fillpen);
+    this.drawpen.push(drawpen);
+    this.layers=1;
+  }
+
+  void operator init(path[][] drawtile, pen[] fillpen, pen[] drawpen) {
+    this.drawtile=drawtile;
+    this.fillpen=fillpen;
+    this.drawpen=drawpen;
+    this.layers=1;
+  }
+
+  void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
+    this.drawtile.push(drawtile);
+    this.fillpen.push(fillpen);
+    this.drawpen.push(drawpen);
+    this.layers+=1;
+  }
+}
+
 struct mtile {
   transform transform;
   path[] supertile;
   path[] prototile;
+
+  mlayers mlayers;
 
   path[][] drawtile={};
   pen[] fillpen;
@@ -17,6 +47,9 @@ struct mtile {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
+
+    mlayers.operator init(drawtile.length == 0 ? this.prototile : drawtile, fillpen, drawpen);
+
     this.drawtile.push(drawtile.length == 0 ? this.prototile : drawtile);
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
@@ -29,6 +62,9 @@ struct mtile {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
+
+    mlayers.operator init((path) drawtile, fillpen, drawpen);
+
     this.drawtile.push((path) drawtile);
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
@@ -43,6 +79,9 @@ struct mtile {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
+
+    mlayers.operator init(drawtile, fillpen, drawpen);
+
     this.drawtile=drawtile;
     this.fillpen=fillpen;
     this.drawpen=drawpen;
@@ -51,10 +90,23 @@ struct mtile {
   }
 
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
+    mlayers.addlayer(drawtile,fillpen,drawpen);
     this.drawtile.push(drawtile);
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
     this.layers+=1;
+  }
+
+  void setdrawtile(path[] drawtile, int ind) {
+    mlayers.drawtile[ind]=drawtile;
+  }
+
+  void setfillpen(pen fillpen, int ind) {
+    mlayers.fillpen[ind]=fillpen;
+  }
+
+  void setdrawpen(pen drawpen, int ind) {
+    mlayers.drawpen[ind]=drawpen;
   }
 }
 
@@ -93,7 +145,9 @@ mtile copy(mtile T) {
   for(int i=0; i < L; ++i) {
     drawtilecopy.push(copy(T.drawtile[i]));
   }
-  return mtile(T.transform, copy(T.supertile), copy(T.prototile), drawtilecopy, copy(T.fillpen), copy(T.drawpen), T.id);
+  mtile T2=mtile(T.transform, copy(T.supertile), copy(T.prototile), drawtilecopy, copy(T.fillpen), copy(T.drawpen), T.id);
+  T2.mlayers=T.mlayers; // Do not make deep copy of mlayers
+  return T2;
 }
 
 substitution copy(substitution T) {
@@ -202,10 +256,9 @@ struct mosaic {
   // The drawtile can be a pair, in which only the drawpen can be passed.
 
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
-    int L=tiles.length;
-    int ind=layers-1;
+    int L=patch.length;
     for(int i=0; i < L; ++i) {
-      tiles[i].addlayer(drawtile,fillpen,drawpen);
+      patch[i].addlayer(drawtile,fillpen,drawpen);
     }
     layers+=1;
   }
@@ -221,14 +274,7 @@ struct mosaic {
   }
 
   void addlayer(pair drawtile, pen drawpen=nullpen) {
-    int L=tiles.length;
-    int ind=layers-1;
-    for(int i=0; i < L; ++i) {
-      pen dp=drawpen;
-      //pen dp=drawpen == nullpen ? patch[i].drawpen[ind] : drawpen;
-      tiles[i].addlayer((path) drawtile,invisible,dp);
-    }
-    layers+=1;
+    this.addlayer((path) drawtile,invisible,drawpen);
   }
 
   // set() sets the drawtile, fillpen, and/or drawpen for a layer l and tiles that have id in ids.
@@ -237,13 +283,13 @@ struct mosaic {
     int ind=l < 0 ? layers-1 : l;
     if(ids.length == 0)
       for(int i=0; i < tiles.length; ++i) {
-        tiles[i].drawtile[ind] = drawtile;
+        tiles[i].setdrawtile(drawtile,ind);
       }
     else
       for(int i=0; i < tiles.length; ++i) {
         for(int j=0; j < ids.length; ++j) {
           if(tiles[i].id == ids[j]) {
-            tiles[i].drawtile[ind] = drawtile;
+            tiles[i].setdrawtile(drawtile,ind);
             break;
           }
         }
@@ -265,16 +311,17 @@ struct mosaic {
   void set(pen fillpen, pen drawpen, int l=-1, string[] ids={}) {
     int ind=l < 0 ? layers-1 : l;
     if(ids.length == 0)
-      for(int i=0; i < tiles.length; ++i) {
-        if(fillpen != nullpen) tiles[i].fillpen[ind] = fillpen;
-        if(drawpen != nullpen) tiles[i].drawpen[ind] = drawpen;
+      for(int i=0; i < patch.length; ++i) {
+        if(fillpen != nullpen) patch[i].setfillpen(fillpen,ind);
+        if(drawpen != nullpen) patch[i].setdrawpen(drawpen,ind);
       }
     else
-      for(int i=0; i < tiles.length; ++i) {
+      for(int i=0; i < patch.length; ++i) {
         for(int j=0; j < ids.length; ++j) {
-          if(tiles[i].id == ids[j]) {
-            if(fillpen != nullpen) tiles[i].fillpen[ind] = fillpen;
-            if(drawpen != nullpen) tiles[i].drawpen[ind] = drawpen;
+          if(patch[i].id == ids[j]) {
+            // why not nullpen?
+            if(fillpen != nullpen) patch[i].setfillpen(fillpen,ind);
+            if(drawpen != nullpen) patch[i].setdrawpen(drawpen,ind);
             break;
           }
         }
@@ -288,35 +335,31 @@ struct mosaic {
   void set(pen p, int l=-1, string[] ids) {
     int ind=l < 0 ? layers-1 : l;
     if(ids.length == 0)
-      for(int i=0; i < tiles.length; ++i) {
+      for(int i=0; i < patch.length; ++i) {
         bool fillable=true;
-        for(int n=0; n < tiles[i].drawtile[ind].length; ++n) {
-          if(cyclic(tiles[i].drawtile[ind][n]) == false) fillable=false;
+        for(int n=0; n < patch[i].mlayers.drawtile[ind].length; ++n) {
+          if(cyclic(patch[i].mlayers.drawtile[ind][n]) == false) fillable=false;
           break;
         }
         if(fillable) {
-          tiles[i].fillpen[ind]=p;
-          tiles[i].drawpen[ind]=tiles[i].drawpen[ind];
+          patch[i].setfillpen(p,ind);
         } else {
-          tiles[i].fillpen[ind]=tiles[i].fillpen[ind];
-          tiles[i].drawpen[ind]=p;
+          patch[i].setdrawpen(p,ind);
         }
       }
     else
-      for(int i=0; i < tiles.length; ++i) {
+      for(int i=0; i < patch.length; ++i) {
         for(int j=0; j < ids.length; ++j) {
-          if(tiles[i].id == ids[j]) {
+          if(patch[i].id == ids[j]) {
             bool fillable=true;
-            for(int n=0; n < tiles[i].drawtile[ind].length; ++n) {
-              if(cyclic(tiles[i].drawtile[ind][n]) == false) fillable=false;
+            for(int n=0; n < patch[i].mlayers.drawtile[ind].length; ++n) {
+              if(cyclic(patch[i].mlayers.drawtile[ind][n]) == false) fillable=false;
               break;
             }
             if(fillable) {
-              tiles[i].fillpen[ind]=p;
-              tiles[i].drawpen[ind]=tiles[i].drawpen[ind];
+              patch[i].setfillpen(p,ind);
             } else {
-              tiles[i].fillpen[ind]=tiles[i].fillpen[ind];
-              tiles[i].drawpen[ind]=p;
+              patch[i].setfillpen(p,ind);
             }
             break;
           }
@@ -392,11 +435,11 @@ mosaic operator *(transform T, mosaic M) {
 }
 
 void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
-  path[] Td=T.transform*T.drawtile[l];
+  path[] Td=T.transform*T.mlayers.drawtile[l];
   for(int j=0; j < Td.length; ++j) {
-    if(cyclic(Td[j]) == true) fill(pic, Td[j], T.fillpen[l]);
+    if(cyclic(Td[j]) == true) fill(pic, Td[j], T.mlayers.fillpen[l]);
   }
-  pen dpl=T.drawpen[l];
+  pen dpl=T.mlayers.drawpen[l];
   if(dpl != nullpen)
     draw(pic,Td,dpl+scaling*linewidth(dpl));
   else
@@ -414,12 +457,13 @@ void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
   for(int l=0; l < M.layers; ++l)
-    for(int k=0; k < M.tiles.length; ++k)
+    for(int k=0; k < M.tiles.length; ++k){
       draw(pic, M.tiles[k], p, scaling, l);
+    }
 }
 
 // Draw layer l of mosaic.
-void draw(picture pic=currentpicture, mosaic M, int l,pen p=currentpen,
+void draw(picture pic=currentpicture, mosaic M, int l, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
   for(int k=0; k < M.tiles.length; ++k)

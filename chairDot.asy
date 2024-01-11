@@ -30,5 +30,5 @@ M.addlayer(decorate);
 M.set(lightblue,"A");
 M.set(white,"B");
 M.set(orange,"C","D");
-//M=shift(1,1)*M;
+
 draw(M);
