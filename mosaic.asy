@@ -41,6 +41,19 @@ struct mlayers {
     this.layers+=1;
   }
 
+  void addlayer(path[] drawtile={}, pen p=nullpen) {
+    this.drawtile.push(drawtile);
+    bool fillable=checkfillable(drawtile);
+    if(fillable) {
+      this.fillpen.push(p);
+      this.drawpen.push(nullpen);
+    } else {
+      this.fillpen.push(nullpen);
+      this.drawpen.push(p);
+    }
+    layers+=1;
+  }
+
   void setdrawtile(path[] drawtile, int ind) {
     this.drawtile[ind]=drawtile;
     this.fillable[ind]=checkfillable(drawtile);
@@ -112,6 +125,11 @@ struct mtile {
 
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
     mlayers.addlayer(drawtile,fillpen,drawpen);
+    this.layers+=1;
+  }
+
+  void addlayer(path[] drawtile, pen p) {
+    mlayers.addlayer(drawtile,p);
     this.layers+=1;
   }
 
@@ -264,13 +282,11 @@ struct mosaic {
   }
 
   void addlayer(path[] drawtile={}, pen p=nullpen) {
-    bool fillable=true;
-    for(int i=0; i < drawtile.length; ++i) {
-      if(cyclic(drawtile[i]) == false) fillable=false;
-      break;
+    int L=patch.length;
+    for(int i=0; i < L; ++i) {
+      patch[i].addlayer(drawtile,p);
     }
-    if(fillable) this.addlayer(drawtile, p, nullpen);
-    else this.addlayer(drawtile, invisible, p);
+    layers+=1;
   }
 
   void addlayer(pair drawtile, pen drawpen=nullpen) {
