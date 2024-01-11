@@ -53,9 +53,9 @@ struct mtile {
   }
 
   void operator init(transform transform=identity, path[] supertile, path[] prototile={},
-                     path[][] drawtile={}, pen[] fillpen, pen[] drawpen, string id="") {
+                     path[][] drawtile={}, pen[] fillpen, pen[] drawpen, bool[] fillable, string id="") {
     int L=drawtile.length;
-    assert(fillpen.length == L && drawpen.length == L);
+    assert(fillable.length == L && fillpen.length == L && drawpen.length == L);
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile.length == 0 ? supertile : prototile;
@@ -69,7 +69,7 @@ struct mtile {
       this.fillable.push(checkfillable(drawtile[i]));
     }
     this.layers=L;
-
+    this.fillable=fillable;
     this.id=id;
   }
 
@@ -84,6 +84,7 @@ struct mtile {
   void addlayer(path[] drawtile={}, pen p=nullpen) {
     this.drawtile.push(drawtile);
     bool fillable=checkfillable(drawtile);
+    this.fillable.push(fillable);
     if(fillable) {
       this.fillpen.push(p);
       this.drawpen.push(nullpen);
@@ -105,6 +106,16 @@ struct mtile {
 
   void setdrawpen(pen drawpen, int ind) {
     this.drawpen[ind]=drawpen;
+  }
+
+  void setpen(pen fillpen, pen drawpen, int ind) {
+    this.fillpen[ind]=fillpen;
+    this.drawpen[ind]=drawpen;
+  }
+
+  void setpen(pen p, int ind) {
+    if(fillable[ind]) this.fillpen[ind]=p;
+    else this.drawpen[ind]=p;
   }
 }
 
@@ -138,7 +149,7 @@ struct substitution {
 }
 
 mtile copy(mtile T) {
-  return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.drawtile, T.fillpen, T.drawpen, T.id); // Do not do deep copy of drawtile, fillpen, or drawpen
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.drawtile, T.fillpen, T.drawpen, T.fillable, T.id); // Do not do deep copy of drawtile, fillpen, or drawpen
 }
 
 substitution copy(substitution T) {
@@ -234,7 +245,6 @@ struct mosaic {
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
   // The drawtile can be a pair, in which only the drawpen can be passed.
-
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
     int L=patch.length;
     for(int i=0; i < L; ++i) {
@@ -264,7 +274,7 @@ struct mosaic {
         patch[i].setdrawtile(drawtile,ind);
       }
     else
-      for(int i=0; i < tiles.length; ++i) {
+      for(int i=0; i < patch.length; ++i) {
         for(int j=0; j < ids.length; ++j) {
           if(patch[i].id == ids[j]) {
             patch[i].setdrawtile(drawtile,ind);
@@ -290,15 +300,13 @@ struct mosaic {
     int ind=l < 0 ? layers-1 : l;
     if(ids.length == 0)
       for(int i=0; i < patch.length; ++i) {
-        patch[i].setfillpen(fillpen,ind);
-        patch[i].setdrawpen(drawpen,ind);
+        patch[i].setpen(fillpen,drawpen,ind);
       }
     else
       for(int i=0; i < patch.length; ++i) {
         for(int j=0; j < ids.length; ++j) {
           if(patch[i].id == ids[j]) {
-            patch[i].setfillpen(fillpen,ind);
-            patch[i].setdrawpen(drawpen,ind);
+            patch[i].setpen(fillpen,drawpen,ind);
             break;
           }
         }
@@ -313,32 +321,13 @@ struct mosaic {
     int ind=l < 0 ? layers-1 : l;
     if(ids.length == 0)
       for(int i=0; i < patch.length; ++i) {
-        bool fillable=true;
-        for(int n=0; n < patch[i].drawtile[ind].length; ++n) {
-          if(cyclic(patch[i].drawtile[ind][n]) == false) fillable=false;
-          break;
-        }
-        if(fillable) {
-          patch[i].setfillpen(p,ind);
-        } else {
-          patch[i].setdrawpen(p,ind);
-        }
+        patch[i].setpen(p,ind);
       }
     else
       for(int i=0; i < patch.length; ++i) {
         for(int j=0; j < ids.length; ++j) {
           if(patch[i].id == ids[j]) {
-            bool fillable=true;
-            for(int n=0; n < patch[i].drawtile[ind].length; ++n) {
-              if(cyclic(patch[i].drawtile[ind][n]) == false) fillable=false;
-              break;
-            }
-            if(fillable) {
-              patch[i].setfillpen(p,ind);
-            } else {
-              patch[i].setfillpen(p,ind);
-            }
-            break;
+            patch[i].setpen(p,ind);
           }
         }
       }
@@ -362,6 +351,7 @@ struct mosaic {
     set(drawtile,l,id);
     set(p,l,id);
   }
+
   void operator init(path[] supertile={}, int n=0, real inflation=inflation ...substitution[] rules) {
     // If supertile is not specified, use supertile from first specified rule.
     if(supertile.length == 0)
@@ -414,9 +404,7 @@ mosaic operator *(transform T, mosaic M) {
 
 void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
   path[] Td=T.transform*T.drawtile[l];
-  for(int j=0; j < Td.length; ++j) {
-    if(cyclic(Td[j]) == true) fill(pic, Td[j], T.fillpen[l]);
-  }
+  if(T.fillable[l]) fill(pic, Td, T.fillpen[l]);
   pen dpl=T.drawpen[l];
   if(dpl != nullpen)
     draw(pic,Td,dpl+scaling*linewidth(dpl));
