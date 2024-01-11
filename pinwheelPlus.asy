@@ -29,7 +29,7 @@ bool colourSupertiles=false;  // (TODO) colour supertile borders by chirality
 bool clipPatch=false;  // clip the patch with a box
 
 // dot size/colour settings
-pen tilePen=green+2;  // tile borders
+pen tilePen=defaultpen;  // tile borders
 pen posTiles=paleblue;  // tiles of positive chirality
 pen negTiles=paleyellow;  // tiles of negative chirality
 pen CP_pen=black+5;  // critical points when colourCPs=false
@@ -76,13 +76,11 @@ pair CP=(u+2*v+w)/4;
 M.addlayer(CP, CP_pen);
 
 if(colourCPs) {
-	CP_pens[0]=posCP_pen;
-	CP_pens[1]=negCP_pen;
-	M.set(CP_pens[1], "1");
-	M.set(CP_pens[1], "2");
-	M.set(CP_pens[0], "3");
-	M.set(CP_pens[0], "4");
-	M.set(CP_pens[1], "5");
+	M.set(negCP_pen, "1");
+	M.set(negCP_pen, "2");
+	M.set(posCP_pen, "3");
+	M.set(posCP_pen, "4");
+	M.set(negCP_pen, "5");
 }
 
 // rotate/reorient patch
@@ -92,7 +90,7 @@ if(rotatePatch) M=RotVarphi*M;
 if(reorientPatch) M=Rot90*M;
 
 // set the tile borders
-M.set(drawpen=posCP_pen, ids="3");
+//M.set(drawpen=posCP_pen, "3");
 
 // draw patch
 if(drawTiles) draw(M, tilePen);
@@ -105,8 +103,8 @@ if(drawFP) draw(FP, p=FP_pen);
 
 // overlay level n-k supertiles
 mosaic superM=mosaic(max(n-k,0),pinSub);
-superM.set(invisible, l=0); // TODO: needs fix in mosaic
-superM.set(invisible, l=1);
+superM.set(invisible, layer=0); // TODO: needs fix in mosaic
+superM.set(invisible, layer=1);
 superM=scale(inflation^k)*superM;
 if(rotatePatch) superM=RotVarphi*superM;
 if(reorientPatch) superM=Rot90*superM;
