@@ -336,7 +336,7 @@ struct mosaic {
     set(fillpen,drawpen,layer,ids);
   }
 
-  void set(path[] drawtile, pen fillpen, pen drawpen, int layer=-1 ...string[] id) {
+  void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(drawtile, fillpen,drawpen,layer,id);
   }
 
