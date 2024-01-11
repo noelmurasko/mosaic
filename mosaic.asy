@@ -125,28 +125,36 @@ struct mtile {
 struct substitution {
   path[] supertile;
   mtile[] patch;
+  pen fillpen;
+  pen drawpen;
 
-  void operator init(path[] supertile={}) {
+  void operator init(path[] supertile={}, pen fillpen=invisible, pen drawpen=nullpen) {
     this.supertile=supertile;
+    this.fillpen=fillpen;
+    this.drawpen=drawpen;
   }
 
   void addtile(transform transform=identity, path[] prototile={}, path[] drawtile={},
-                     pen fillpen=invisible, pen drawpen=nullpen, string id="") {
+                     pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
+    pen fp=fillpen == nullpen ? this.fillpen : fillpen;
+    pen dp=drawpen == nullpen ? this.drawpen : drawpen;
     if(prototile.length == 0)
-      m=mtile(transform,this.supertile,drawtile=drawtile,fillpen,drawpen,id);
+      m=mtile(transform,this.supertile,drawtile=drawtile,fp,dp,id);
     else
-      m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
+      m=mtile(transform,this.supertile,prototile,drawtile,fp,dp,id);
     this.patch.push(m);
   }
 
   void addtile(transform transform=identity, path[] prototile={}, pair drawtile,
     pen fillpen=invisible, pen drawpen=nullpen, string id="") {
     mtile m;
+    pen fp=fillpen == nullpen ? this.fillpen : fillpen;
+    pen dp=drawpen == nullpen ? this.drawpen : drawpen;
     if(prototile.length == 0)
-      m=mtile(transform,this.supertile,drawtile=drawtile,fillpen,drawpen,id);
+      m=mtile(transform,this.supertile,drawtile=drawtile,fp,dp,id);
     else
-      m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
+      m=mtile(transform,this.supertile,prototile,drawtile,fp,dp,id);
     this.patch.push(m);
   }
 }
