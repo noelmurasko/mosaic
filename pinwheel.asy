@@ -3,22 +3,34 @@ size(300);
 
 import mosaic;
 
-path triangle=(0,0)--(2,0)--(2,1)--cycle;
+// pinwheel triangle
+pair u=(2,0);
+pair v=(2,1);
+pair w=(0,0);
+path tri=u--v--w--cycle;
 
+// inflation factor
 inflation=sqrt(5);
 
+// number of iterations
+int n=4;
+
 transform T=reflect((0,0),(0,1))*rotate(90+aTan(2));
-//transform reorient=rotate(-90-aTan(1/2));
 
 // pinwheel substitution tiles
-substitution pinRule=substitution(triangle);
+substitution pinSub=substitution(tri);
 
-pinRule.addtile(T, paleyellow);
-pinRule.addtile(T*shift(2,1), paleyellow);
-pinRule.addtile(T*reflect((2,0),(2,1)), lightred);
-pinRule.addtile(T*reflect((0,1),(1,1))*shift(2,1),paleblue);
-pinRule.addtile(T*shift(4,2)*rotate(-90),heavyred);
+// define the substitution rule
+real varphi=aTan(1/2);
+transform T=reflect((0,0),(0,1))*rotate(180-varphi);
+pinSub.addtile(T, paleyellow);
+pinSub.addtile(T*shift(2,1), paleyellow);
+pinSub.addtile(T*reflect((2,0),(2,1)), lightred);
+pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), paleblue);
+pinSub.addtile(T*shift(4,2)*rotate(-90), heavyred);
 
-int n=4;
-mosaic M=mosaic(triangle,n,pinRule);
+// create the patch
+mosaic M=mosaic(tri,n,pinSub);
+
+// draw the patch
 draw(M);
