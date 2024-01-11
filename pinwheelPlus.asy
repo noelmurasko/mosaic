@@ -76,11 +76,11 @@ pair CP=(u+2*v+w)/4;
 M.addlayer(CP, CP_pen);
 
 if(colourCPs) {
-	M.set(negCP_pen, "1");
-	M.set(negCP_pen, "2");
-	M.set(posCP_pen, "3");
-	M.set(posCP_pen, "4");
-	M.set(negCP_pen, "5");
+	M.set(negCP_pen, id="1");
+	M.set(negCP_pen, id="2");
+	M.set(posCP_pen, id="3");
+	M.set(posCP_pen, id="4");
+	M.set(negCP_pen, id="5");
 }
 
 // rotate/reorient patch

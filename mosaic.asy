@@ -269,12 +269,12 @@ struct mosaic {
     this.addlayer((path) drawtile,invisible,drawpen);
   }
 
-  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] ids) {
+  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
     int ind=layer < 0 ? layers-1 : layer;
-    int idslength=ids.length;
+    int idlength=id.length;
     for(int i=0; i < patch.length; ++i) {
-      for(int j=0; j < max(idslength,1); ++j) {
-        if(idslength == 0 || patch[i].id == ids[j]) {
+      for(int j=0; j < max(idlength,1); ++j) {
+        if(idlength == 0 || patch[i].id == id[j]) {
           patch[i].setpen(fillpen,drawpen,ind);
           break;
         }
@@ -282,12 +282,12 @@ struct mosaic {
     }
   }
 
-  void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen,int layer=-1, string[] ids) {
+  void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen,int layer=-1, string[] id) {
       int ind=layer < 0 ? layers-1 : layer;
-      int idslength=ids.length;
+      int idlength=id.length;
       for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < max(idslength,1); ++j) {
-          if(idslength == 0 || patch[i].id == ids[j]) {
+        for(int j=0; j < max(idlength,1); ++j) {
+          if(idlength == 0 || patch[i].id == id[j]) {
             patch[i].setdrawtile(drawtile,ind);
             patch[i].setpen(fillpen,drawpen,ind);
             break;
@@ -296,20 +296,38 @@ struct mosaic {
       }
     }
 
-  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] ids) {
-    set(fillpen,drawpen,layer,ids);
+  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+    set(fillpen,drawpen,layer,id);
+  }
+
+  // Overloading set to take a string provides no new functionality except
+  // one can now use the keyword "id=" when calling set(). I'm uncertain if
+  // this is worth it or not.
+  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string id) {
+    string[] idarray={id};
+    set(fillpen,drawpen,layer,idarray);
   }
 
   void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(drawtile, fillpen,drawpen,layer,id);
   }
 
-  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] ids) {
-    set((path[]) (path) drawtile, fillpen, drawpen, layer, ids);
+  void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string id) {
+    string[] idarray={id};
+    set(drawtile, fillpen, drawpen,layer,idarray);
   }
 
-  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] ids) {
-    set(drawtile, fillpen, drawpen, layer, ids);
+  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+    set((path[]) (path) drawtile, fillpen, drawpen, layer, id);
+  }
+
+  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+    set(drawtile, fillpen, drawpen, layer, id);
+  }
+
+  void set(pair drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string id) {
+    string[] idarray={id};
+    set(drawtile, fillpen, drawpen, layer, id);
   }
 
   void operator init(path[] supertile={}, int n=0, real inflation=inflation ...substitution[] rules) {
@@ -370,7 +388,6 @@ void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
   else
     draw(pic,Td,p+scaling*linewidth(p));
 }
-
 
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
   for(int k=0; k < s.patch.length; ++k)
