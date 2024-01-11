@@ -108,7 +108,7 @@ if(drawFP) draw(FP, p=FP_pen);
 mosaic superM=mosaic(max(n-k,0),pinSub);
 superM.set(invisible, layer=0); 
 superM.set(invisible, layer=1);
-if(colourSupertiles){
+if(colourSupertiles) {
 	superM.addlayer();
 	superM.set(tri, drawpen=negOverlay, "1", "2", "5");
 	superM.addlayer();
