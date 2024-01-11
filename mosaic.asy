@@ -290,16 +290,15 @@ struct mosaic {
     int ind=l < 0 ? layers-1 : l;
     if(ids.length == 0)
       for(int i=0; i < patch.length; ++i) {
-        if(fillpen != nullpen) patch[i].setfillpen(fillpen,ind);
-        if(drawpen != nullpen) patch[i].setdrawpen(drawpen,ind);
+        patch[i].setfillpen(fillpen,ind);
+        patch[i].setdrawpen(drawpen,ind);
       }
     else
       for(int i=0; i < patch.length; ++i) {
         for(int j=0; j < ids.length; ++j) {
           if(patch[i].id == ids[j]) {
-            // why not nullpen?
-            if(fillpen != nullpen) patch[i].setfillpen(fillpen,ind);
-            if(drawpen != nullpen) patch[i].setdrawpen(drawpen,ind);
+            patch[i].setfillpen(fillpen,ind);
+            patch[i].setdrawpen(drawpen,ind);
             break;
           }
         }
