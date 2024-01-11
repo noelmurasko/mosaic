@@ -100,14 +100,6 @@ struct mtile {
     this.fillable[ind]=checkfillable(drawtile);
   }
 
-  void setfillpen(pen fillpen, int ind) {
-    this.fillpen[ind]=fillpen;
-  }
-
-  void setdrawpen(pen drawpen, int ind) {
-    this.drawpen[ind]=drawpen;
-  }
-
   void setpen(pen fillpen, pen drawpen, int ind) {
     this.fillpen[ind]=fillpen;
     this.drawpen[ind]=drawpen;
