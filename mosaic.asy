@@ -381,6 +381,7 @@ mosaic copy(mosaic M) {
   for(int i=0; i < Lp; ++i) {
     M2patch[i]=copy(M.patch[i]);
   }
+  M2.layers=M.layers;
   return M2;
 }
 
