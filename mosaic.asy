@@ -104,8 +104,8 @@ struct mtile {
     bool fpnull=fillpen == nullpen;
     bool dpnull=drawpen == nullpen;
     if(fillable[ind]) {
-      if(fpnull) this.fillpen[ind]=fillpen;
-      if(dpnull) this.drawpen[ind]=drawpen;
+      if(!fpnull) this.fillpen[ind]=fillpen;
+      if(!dpnull) this.drawpen[ind]=drawpen;
     } else {
       if(fpnull & !dpnull) {
         this.drawpen[ind]=drawpen;
@@ -267,25 +267,6 @@ struct mosaic {
 
   void addlayer(pair drawtile, pen drawpen=nullpen) {
     this.addlayer((path) drawtile,invisible,drawpen);
-  }
-
-  // set() sets the drawtile, fillpen, and/or drawpen for a layer l and tiles
-  // that have id in ids.
-  void set(path[] drawtile, int layer=-1, string[] ids) {
-    int ind=layer < 0 ? layers-1 : layer;
-    if(ids.length == 0)
-      for(int i=0; i < patch.length; ++i) {
-        patch[i].setdrawtile(drawtile,ind);
-      }
-    else
-      for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < ids.length; ++j) {
-          if(patch[i].id == ids[j]) {
-            patch[i].setdrawtile(drawtile,ind);
-            break;
-          }
-        }
-      }
   }
 
   void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] ids) {
