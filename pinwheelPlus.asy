@@ -71,15 +71,18 @@ pinSub.addtile(T*shift(4,2)*rotate(-90), tileColours[1], id="5");
 // build patch
 mosaic M=mosaic(n,pinSub);
 
-// add control points
+// set control point colour
 pair CP=(u+2*v+w)/4;
 M.addlayer(CP, CP_pen);
+
 if(colourCPs) {
-	M.set(negCP_pen, "1");
-	M.set(negCP_pen, "2");
-	M.set(posCP_pen, "3");
-	M.set(posCP_pen, "4");
-	M.set(negCP_pen, "5");
+	CP_pens[0]=posCP_pen;
+	CP_pens[1]=negCP_pen;
+	M.set(CP_pens[1], "1");
+	M.set(CP_pens[1], "2");
+	M.set(CP_pens[0], "3");
+	M.set(CP_pens[0], "4");
+	M.set(CP_pens[1], "5");
 }
 
 // rotate/reorient patch
@@ -102,8 +105,8 @@ if(drawFP) draw(FP, p=FP_pen);
 
 // overlay level n-k supertiles
 mosaic superM=mosaic(max(n-k,0),pinSub);
-superM.set(invisible, layer=0); 
-superM.set(invisible, layer=1);
+superM.set(invisible, l=0); // TODO: needs fix in mosaic
+superM.set(invisible, l=1);
 superM=scale(inflation^k)*superM;
 if(rotatePatch) superM=RotVarphi*superM;
 if(reorientPatch) superM=Rot90*superM;

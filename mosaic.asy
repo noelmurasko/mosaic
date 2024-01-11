@@ -101,8 +101,19 @@ struct mtile {
   }
 
   void setpen(pen fillpen, pen drawpen, int ind) {
-    this.fillpen[ind]=fillpen;
-    this.drawpen[ind]=drawpen;
+    bool fpnull=fillpen!= nullpen;
+    bool dpnull=drawpen!= nullpen;
+    if(fillable[ind]) {
+      if(fpnull) this.fillpen[ind]=fillpen;
+      if(dpnull) this.drawpen[ind]=drawpen;
+    } else {
+      if(fpnull & !dpnull) {
+        this.drawpen[ind]=drawpen;
+      }
+      else if(dpnull & !fpnull) {
+        this.drawpen[ind]=fillpen;
+      }
+    }
   }
 
   void setpen(pen p, int ind) {
@@ -277,7 +288,7 @@ struct mosaic {
       }
   }
 
-  void set(pen fillpen, pen drawpen, int layer=-1, string[] ids={}) {
+  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] ids) {
     int ind=layer < 0 ? layers-1 : layer;
     if(ids.length == 0)
       for(int i=0; i < patch.length; ++i) {
@@ -289,22 +300,6 @@ struct mosaic {
           if(patch[i].id == ids[j]) {
             patch[i].setpen(fillpen,drawpen,ind);
             break;
-          }
-        }
-      }
-  }
-
-  void set(pen p, int layer=-1, string[] ids) {
-    int ind=layer < 0 ? layers-1 : layer;
-    if(ids.length == 0)
-      for(int i=0; i < patch.length; ++i) {
-        patch[i].setpen(p,ind);
-      }
-    else
-      for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < ids.length; ++j) {
-          if(patch[i].id == ids[j]) {
-            patch[i].setpen(p,ind);
           }
         }
       }
@@ -322,27 +317,13 @@ struct mosaic {
     set((path[]) (path) drawtile, layer, ids);
   }
 
-  void set(pen fillpen, pen drawpen, int layer=-1 ...string[] ids) {
+  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] ids) {
     set(fillpen,drawpen,layer,ids);
   }
 
-  void set(pen p, int layer=-1 ...string[] id) {
-    set(p, layer, id);
-  }
-
-  void set(path[] drawtile, pen fillpen, pen drawpen, int layer=-1 ...string[] id) {
+  void set(path[] drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(drawtile,layer,id);
     set(fillpen,drawpen,layer,id);
-  }
-
-  void set(path[] drawtile, pen p, int layer=-1 ...string[] id) {
-    set(drawtile,layer,id);
-    set(p,layer,id);
-  }
-
-  void set(pair drawtile, pen p, int layer=-1 ...string[] id) {
-    set(drawtile,layer,id);
-    set(p,layer,id);
   }
 
   void operator init(path[] supertile={}, int n=0, real inflation=inflation ...substitution[] rules) {
