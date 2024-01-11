@@ -50,37 +50,30 @@ real boxShiftY=0;  // shift clip box vertically
 // initialize a substitution rule
 substitution pinSub=substitution(tri);
 
-// set tile colours
-pen[] tileColours;
-if(colourTiles) {
-	tileColours[0]=posTiles;
-	tileColours[1]=negTiles;
-}else{
-	tileColours=array(2,invisible);
-}
-
 // define the substitution rule
 real varphi=aTan(1/2);
 transform T=reflect((0,0),(0,1))*rotate(180-varphi);
-pinSub.addtile(T, tileColours[1], id="1");
-pinSub.addtile(T*shift(2,1), tileColours[1], id="2");
-pinSub.addtile(T*reflect((2,0),(2,1)), tileColours[0], id="3");
-pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), tileColours[0], id="4");
-pinSub.addtile(T*shift(4,2)*rotate(-90), tileColours[1], id="5");
+pinSub.addtile(T, id="1");
+pinSub.addtile(T*shift(2,1), id="2");
+pinSub.addtile(T*reflect((2,0),(2,1)), id="3");
+pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), id="4");
+pinSub.addtile(T*shift(4,2)*rotate(-90), id="5");
 
-// build patch
+// create the patch
 mosaic M=mosaic(n,pinSub);
 
-// set control point colour
+// set tile colours
+if(colourTiles) {
+	M.set(posTiles, "3", "4");  // positive chirality 
+	M.set(negTiles, "1", "2", "5");  // negative chirality 
+}
+
+// add control points
 pair CP=(u+2*v+w)/4;
 M.addlayer(CP, CP_pen);
-
 if(colourCPs) {
-	M.set(negCP_pen, "1");
-	M.set(negCP_pen, "2");
-	M.set(posCP_pen, "3");
-	M.set(posCP_pen, "4");
-	M.set(negCP_pen, "5");
+	M.set(posCP_pen, "3", "4");  // positive chirality
+	M.set(negCP_pen, "1", "2", "5");  // negative chirality
 }
 
 // rotate/reorient patch
@@ -103,13 +96,12 @@ if(drawFP) draw(FP, p=FP_pen);
 
 // overlay level n-k supertiles
 mosaic superM=mosaic(max(n-k,0),pinSub);
-superM.set(invisible, layer=0); // TODO: needs fix in mosaic
+superM.set(invisible, layer=0); 
 superM.set(invisible, layer=1);
 superM=scale(inflation^k)*superM;
 if(rotatePatch) superM=RotVarphi*superM;
 if(reorientPatch) superM=Rot90*superM;
 if(overlaySupertiles && n>=k) draw(superM,overlayLine);
-
 
 // clip the patch
 pair boxShift=(boxShiftX,boxShiftY);
