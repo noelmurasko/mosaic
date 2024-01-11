@@ -1,6 +1,6 @@
 real inflation=1;
 
-struct mtile {
+private struct mtile {
   transform transform;
   path[] supertile;
   path[] prototile;
