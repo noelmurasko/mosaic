@@ -5,10 +5,17 @@ struct mlayers {
   pen[] fillpen;
   pen[] drawpen;
 
+  bool[] fillable;
+  bool checkfillable(path[] drawtile, int ind=0) {
+    for(int i=0; i < drawtile.length; ++i)
+      if(!cyclic(drawtile[i])) return false;
+    return true;
+  }
   restricted int layers;
 
   void operator init(path[] drawtile, pen fillpen=invisible, pen drawpen=nullpen) {
     this.drawtile.push(drawtile);
+    this.fillable.push(checkfillable(drawtile));
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
     this.layers=1;
@@ -18,14 +25,33 @@ struct mlayers {
     this.drawtile=drawtile;
     this.fillpen=fillpen;
     this.drawpen=drawpen;
-    this.layers=drawtile.length;
+
+    int L=drawtile.length;
+    for(int i=0; i < L; ++i) {
+      this.fillable.push(checkfillable(drawtile[i]));
+    }
+    this.layers=L;
   }
 
   void addlayer(path[] drawtile, pen fillpen, pen drawpen) {
     this.drawtile.push(drawtile);
+    this.fillable.push(checkfillable(drawtile));
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
     this.layers+=1;
+  }
+
+  void setdrawtile(path[] drawtile, int ind) {
+    this.drawtile[ind]=drawtile;
+    this.fillable[ind]=checkfillable(drawtile);
+  }
+
+  void setfillpen(pen fillpen, int ind) {
+    this.fillpen[ind]=fillpen;
+  }
+
+  void setdrawpen(pen drawpen, int ind) {
+    this.drawpen[ind]=drawpen;
   }
 }
 
@@ -90,15 +116,15 @@ struct mtile {
   }
 
   void setdrawtile(path[] drawtile, int ind) {
-    mlayers.drawtile[ind]=drawtile;
+    mlayers.setdrawtile(drawtile,ind);
   }
 
   void setfillpen(pen fillpen, int ind) {
-    mlayers.fillpen[ind]=fillpen;
+    mlayers.setfillpen(fillpen,ind);
   }
 
   void setdrawpen(pen drawpen, int ind) {
-    mlayers.drawpen[ind]=drawpen;
+   mlayers.setdrawpen(drawpen,ind);
   }
 }
 
