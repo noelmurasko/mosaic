@@ -25,12 +25,12 @@ bool colourCPs=true;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
 bool overlaySupertiles=true;  // overlay supertile borders
-bool colourSupertiles=false;  // (TODO) colour supertile borders by chirality 
+bool colourSupertiles=false;  // (TODO) colour supertile borders by chirality
 bool clipPatch=false;  // clip the patch with a box
 
 // dot size/colour settings
 pen posTiles=paleblue;  // tiles of positive chirality
-pen negTiles=paleyellow;  // tiles of negative chirality 
+pen negTiles=paleyellow;  // tiles of negative chirality
 pen defaultCP_pen=black+5;  // critical points when colourCPs=false
 pen posCP_pen=blue+5;  // critical points of positive chirality
 pen negCP_pen=orange+5;  // critical points of negative chirality
@@ -55,7 +55,7 @@ if(colourTiles) {
 	tileColours[0]=posTiles;
 	tileColours[1]=negTiles;
 }else{
-	tileColours=array(2,invisible); 
+	tileColours=array(2,invisible);
 }
 
 // define the substitution rule
