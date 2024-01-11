@@ -13,23 +13,25 @@ path tri=u--v--w--cycle;
 inflation=sqrt(5);
 
 // number of iterations
-int n=1;
+int n=2;
 
 // options
 bool drawTiles=true;  // draw the tiles
-bool drawCPs=true;  // draw critical points in each triangle
+bool drawCPs=true;  // (TODO) draw critical points in each triangle
 bool drawFP=true;  // draw the fixed point of the tiling
 bool colourTiles=true;  // colour tiles by chirality
+bool colourBorders=false;  // (TODO) colour tile borders by chirality
 bool colourCPs=true;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
-bool overlaySupertiles=true;  // overlay supertiles
+bool overlaySupertiles=true;  // overlay supertile borders
+bool colourSupertiles=false;  // (TODO) colour supertile borders by chirality 
 bool clipPatch=false;  // clip the patch with a box
 
 // dot size/colour settings
 pen posTiles=paleblue;  // tiles of positive chirality
 pen negTiles=paleyellow;  // tiles of negative chirality 
-pen CP_pen=black+5;  // critical points
+pen defaultCP_pen=black+5;  // critical points when colourCPs=false
 pen posCP_pen=blue+5;  // critical points of positive chirality
 pen negCP_pen=orange+5;  // critical points of negative chirality
 pen FP_pen=heavymagenta+6;  // fixed point
@@ -65,12 +67,22 @@ pinSub.addtile(T*reflect((2,0),(2,1)), tileColours[0], id="3");
 pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), tileColours[0], id="4");
 pinSub.addtile(T*shift(4,2)*rotate(-90), tileColours[1], id="5");
 
-// add control points
-pair CP=(u+2*v+w)/4;
-pinSub.addlayer(CP, CP_pen);
-
 // build patch
 mosaic M=mosaic(n,pinSub);
+
+// set control point colour
+pair CP=(u+2*v+w)/4;
+M.addlayer(CP, defaultCP_pen);
+pen[] CP_pens;
+if(colourCPs) {
+	CP_pens[0]=posCP_pen;
+	CP_pens[1]=negCP_pen;
+	M.set(CP_pens[1], "1");
+	M.set(CP_pens[1], "2");
+	M.set(CP_pens[0], "3");
+	M.set(CP_pens[0], "4");
+	M.set(CP_pens[1], "5");
+}
 
 // rotate/reorient patch
 transform RotVarphi=rotate(-varphi)^n;
@@ -88,9 +100,9 @@ if(reorientPatch) FP=Rot90*FP;
 if(drawFP) draw(FP, p=FP_pen);
 
 // overlay level n-k supertiles
-pinSub.set(invisible, l=0);
 mosaic superM=mosaic(max(n-k,0),pinSub);
-//superM.set(invisible);
+superM.set(invisible, l=0); // TODO: needs fix in mosaic
+superM.set(invisible, l=1);
 superM=scale(inflation^k)*superM;
 if(rotatePatch) superM=RotVarphi*superM;
 if(reorientPatch) superM=Rot90*superM;
