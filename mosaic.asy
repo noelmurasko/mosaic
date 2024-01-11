@@ -186,7 +186,7 @@ bool samepath(path[] P1, path[] P2) {
 struct mosaic {
   mtile[] tiles={};
   path[] supertile;
-  int n;
+  int n=0;
   substitution[] rules;
   mtile[] patch;
   int layers;
@@ -232,6 +232,7 @@ struct mosaic {
       for(int i=0; i < sTL; ++i)
         this.loop(patchcopy,this.tiles[i],n,0,tiles,inflation);
     this.tiles=tiles;
+    this.n+=n;
   }
 
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
@@ -350,15 +351,14 @@ struct mosaic {
       this.supertile=rules[0].supertile;
     else
       this.supertile=supertile;
-
-    assert(n > 0); // Fix me
-    this.n=n;
     this.rules=rules;
     int L=rules.length;
     for(int i=0; i < L; ++i) {
       this.patch.append(rules[i].patch);
     }
+    assert(n > 0); // Fix me
     this.substitute(n,inflation);
+
     this.layers=1;
   }
 }
