@@ -210,29 +210,18 @@ struct mosaic {
         T.supertile=this.supertile;
       }
     }
-    if(n == 0) {
-      // Draw a tile when no iterations are asked for.
-      for(int i=0; i < L; ++i) {
-        mtile Ti=patchcopy[i];
-        if(samepath(Ti.prototile,this.supertile)) {
-          tiles.push(mtile(this.supertile,Ti.mlayers.fillpen[0],Ti.mlayers.drawpen[0],Ti.id));
-          break;
-        }
-      }
-    } else {
-      real deflation=1/inflation;
-      for(int i=0; i < L; ++i) {
-        // Inflate transforms (without changing user data).
-        transform Ti=patchcopy[i].transform;
-        patchcopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
-      }
-      int sTL=this.tiles.length;
-      if(sTL == 0)
-        this.loop(patchcopy,mtile(this.supertile),n,0,tiles,inflation);
-      else
-        for(int i=0; i < sTL; ++i)
-          this.loop(patchcopy,this.tiles[i],n,0,tiles,inflation);
+    real deflation=1/inflation;
+    for(int i=0; i < L; ++i) {
+      // Inflate transforms (without changing user data).
+      transform Ti=patchcopy[i].transform;
+      patchcopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
     }
+    int sTL=this.tiles.length;
+    if(sTL == 0)
+      this.loop(patchcopy,mtile(this.supertile),n,0,tiles,inflation);
+    else
+      for(int i=0; i < sTL; ++i)
+        this.loop(patchcopy,this.tiles[i],n,0,tiles,inflation);
     this.tiles=tiles;
   }
 
@@ -377,6 +366,7 @@ struct mosaic {
     else
       this.supertile=supertile;
 
+    assert(n > 0); // Fix me
     this.n=n;
     this.rules=rules;
     int L=rules.length;
