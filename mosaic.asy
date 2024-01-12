@@ -282,7 +282,7 @@ struct mosaic {
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
   // The drawtile can be a pair, in which only the drawpen can be passed.
-  void addlayer(tile drawtile, pen fillpen, pen drawpen) {
+  void addlayer(tile drawtile, pen fillpen=invisible, pen drawpen=nullpen) {
     int L=patch.length;
     for(int i=0; i < L; ++i) {
       patch[i].addlayer(drawtile,fillpen,drawpen);
