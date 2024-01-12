@@ -6,7 +6,7 @@ import mosaic;
 inflation=2;
 
 // prototile
-path chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
+tile chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
 substitution chairRule=substitution(chair); // chair substitution rule
 
@@ -24,7 +24,7 @@ M.addlayer(dot,black+10);
 
 path pentagon=shift(7/5,1/2)*rotate(30)*scale(1/5)*polygon(5);
 path hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);
-path[] decorate=pentagon^^hexagon;
+tile decorate=pentagon^^hexagon;
 
 M.addlayer(decorate);
 M.set(lightblue,"A");

@@ -10,8 +10,8 @@ real b=Cos(18);
 real c=Sin(36);
 real d=Cos(36);
 
-path rhomb1=(0,0)--(c,d)--(0,2*d)--(-c,d)--cycle;
-path rhomb2=(0,0)--(b,a)--(0,2*a)--(-b,a)--cycle;
+tile rhomb1=(0,0)--(c,d)--(0,2*d)--(-c,d)--cycle;
+tile rhomb2=(0,0)--(b,a)--(0,2*a)--(-b,a)--cycle;
 
 a*=inflation; b*=inflation; c*=inflation; d*=inflation;
 

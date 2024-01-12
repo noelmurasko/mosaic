@@ -6,8 +6,8 @@ import mosaic;
 inflation=2;
 
 // prototiles
-path square=box((0,0),(1,1));
-path rect=box((0,0),(2,1));
+tile square=box((0,0),(1,1));
+tile rect=box((0,0),(2,1));
 
 
 substitution squareRule=substitution(square);  // square substitution rule

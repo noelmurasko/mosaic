@@ -7,7 +7,7 @@ import mosaic;
 pair u=(2,0);
 pair v=(2,1);
 pair w=(0,0);
-path tri=u--v--w--cycle;
+tile tri=u--v--w--cycle;
 
 // inflation factor
 inflation=sqrt(5);
@@ -43,7 +43,7 @@ pen posOverlay=blue+4;  // supertile borders of positive chirality
 pen negOverlay=orange+4;  // supertile borders of negative chirality
 
 // overlay level n-k supertiles
-int k=1;  
+int k=1;
 
 // clip settings (rectangle centered at the fixed point)
 real boxW=inflation^(max(n-2,0));  // clip box width
@@ -66,19 +66,19 @@ pinSub.addtile(T*shift(4,2)*rotate(-90), id="5");
 // create the patch
 mosaic M=mosaic(n,pinSub);
 
-// colour tiles by chirality 
+// colour tiles by chirality
 if(colourTiles) {
-	M.set(posTiles, "3", "4");  // positive chirality 
-	M.set(negTiles, "1", "2", "5");  // negative chirality 
+	M.set(posTiles, "3", "4");  // positive chirality
+	M.set(negTiles, "1", "2", "5");  // negative chirality
 }
 
 // colour tile borders by chirality tile borders (with positive on top)
 M.set(drawpen=tilePen);
 if(colourBorders){
 	M.addlayer();
-	M.set(tri, drawpen=negBorders, "1", "2", "5");  // negative chirality 
+	M.set(tri, drawpen=negBorders, "1", "2", "5");  // negative chirality
 	M.addlayer();
-	M.set(tri, drawpen=posBorders, "3", "4");  // positive chirality 
+	M.set(tri, drawpen=posBorders, "3", "4");  // positive chirality
 }
 
 // add control points
@@ -106,7 +106,7 @@ if(drawFP) draw(FP, p=FP_pen);
 
 // overlay level n-k supertiles
 mosaic superM=mosaic(max(n-k,0),pinSub);
-superM.set(invisible, layer=0); 
+superM.set(invisible, layer=0);
 superM.set(invisible, layer=1);
 if(colourSupertiles) {
 	superM.addlayer();

@@ -5,7 +5,7 @@ import mosaic;
 
 inflation=2;
 // starting set
-path triangle=(0,0)--(1,sqrt(3))--(2,0)--cycle;
+tile triangle=(0,0)--(1,sqrt(3))--(2,0)--cycle;
 
 substitution ifs=substitution(triangle); // ifs substitution rule
 

@@ -3,11 +3,8 @@ size(300);
 
 import mosaic;
 
-// pinwheel triangle
-pair u=(2,0);
-pair v=(2,1);
-pair w=(0,0);
-path tri=u--v--w--cycle;
+tile triangle=(0,0)--(2,0)--(2,1)--cycle;
+
 
 // inflation factor
 inflation=sqrt(5);

@@ -10,8 +10,8 @@ real a=Sin(18);
 real b=Cos(18);
 real c=Tan(54);
 
-path dart=(0,0)--(b,1+a)--(0,1)--(-b,1+a)--cycle;
-path kite=(0,0)--(b,b*c)--(0,b*c+a)--(-b,b*c)--cycle;
+tile dart=(0,0)--(b,1+a)--(0,1)--(-b,1+a)--cycle;
+tile kite=(0,0)--(b,b*c)--(0,b*c+a)--(-b,b*c)--cycle;
 
 real A=b*tau;
 real B=(1+a)*tau;
