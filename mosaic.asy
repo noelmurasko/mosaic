@@ -1,11 +1,20 @@
 real inflation=1;
 
+
+bool checkfillable(path[] drawtile, int ind=0) {
+  for(int i=0; i < drawtile.length; ++i)
+    if(!cyclic(drawtile[i])) return false;
+  return true;
+}
+
 struct tile {
   restricted path[] boundary;
   restricted int length;
+  restricted bool fillable;
 
   void operator init(path[] boundary) {
     this.boundary=boundary;
+    this.fillable=checkfillable(boundary);
     this.length=boundary.length;
   }
 }
@@ -30,11 +39,21 @@ tile duplicate(tile T) {
   return tile(copy(T.boundary));
 }
 
+tile operator *(transform T, tile t) {
+  return tile(T*t.boundary);
+}
+
 bool operator ==(tile T1, tile T2) {
   return alias(T1,T2);
 }
 
 tile nulltile=tile(nullpath);
+
+bool checkfillable(tile drawtile, int ind=0) {
+  for(int i=0; i < drawtile.length; ++i)
+    if(!cyclic(drawtile.boundary[i])) return false;
+  return true;
+}
 
 private struct mtile {
   transform transform;
@@ -45,17 +64,11 @@ private struct mtile {
   pen[] fillpen;
   pen[] drawpen;
 
-  bool[] fillable;
+  //bool[] fillable;
 
   restricted int layers;
 
   string id;
-
-  bool checkfillable(tile drawtile, int ind=0) {
-    for(int i=0; i < drawtile.length; ++i)
-      if(!cyclic(drawtile.boundary[i])) return false;
-    return true;
-  }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
                      tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
@@ -63,34 +76,17 @@ private struct mtile {
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
     this.drawtile.push(drawtile == nulltile ? this.prototile : drawtile);
-    this.fillable.push(checkfillable(this.drawtile[0]));
     this.fillpen.push(fillpen);
     this.drawpen.push(drawpen);
-
-    this.layers=1;
-    this.id=id;
-  }
-
-  void operator init(transform transform=identity, tile supertile, tile prototile,
-                     pair drawtile, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
-    this.transform=transform;
-    this.supertile=supertile;
-    this.prototile = prototile == nulltile ? supertile : prototile;
-
-    this.drawtile.push((path) drawtile);
-    this.fillable.push(checkfillable((path) drawtile));
-    this.fillpen.push(fillpen);
-    this.drawpen.push(drawpen);
-
 
     this.layers=1;
     this.id=id;
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile[] drawtile, pen[] fillpen, pen[] drawpen, bool[] fillable, string id="") {
+                     tile[] drawtile, pen[] fillpen, pen[] drawpen, string id="") {
     int L=drawtile.length;
-    assert(fillable.length == L && fillpen.length == L && drawpen.length == L);
+    assert(fillpen.length == L && drawpen.length == L);
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
@@ -99,24 +95,15 @@ private struct mtile {
     this.fillpen=fillpen;
     this.drawpen=drawpen;
 
-    int L=drawtile.length;
-    for(int i=0; i < L; ++i) {
-      this.fillable.push(checkfillable(drawtile[i]));
-    }
-    this.layers=L;
-    this.fillable=fillable;
+    this.layers=drawtile.length;
     this.id=id;
   }
 
   void addlayer(tile drawtile, pen fillpen, pen drawpen) {
     this.drawtile.push(drawtile);
-
-    bool fillthislayer=checkfillable(drawtile);
-    this.fillable.push(fillthislayer);
-
     bool fpnull=fillpen == nullpen;
     bool dpnull=drawpen == nullpen;
-    if(fillthislayer) {
+    if(drawtile.fillable) {
       this.fillpen.push(fillpen);
       this.drawpen.push(drawpen);
     } else {
@@ -134,13 +121,12 @@ private struct mtile {
 
   void setdrawtile(tile drawtile, int ind) {
     this.drawtile[ind]=drawtile;
-    this.fillable[ind]=checkfillable(drawtile);
   }
 
   void setpen(pen fillpen, pen drawpen, int ind) {
     bool fpnull=fillpen == nullpen;
     bool dpnull=drawpen == nullpen;
-    if(fillable[ind]) {
+    if(drawtile[ind].fillable) {
       if(!fpnull) this.fillpen[ind]=fillpen;
       if(!dpnull) this.drawpen[ind]=drawpen;
     } else {
@@ -179,11 +165,11 @@ struct substitution {
   }
 }
 
-private mtile duplicate(mtile T) {
-  return mtile(T.transform, T.supertile, T.prototile, T.drawtile, T.fillpen, T.drawpen, T.fillable, T.id);
+mtile duplicate(mtile T) {
+  return mtile(T.transform, T.supertile, T.prototile, T.drawtile, T.fillpen, T.drawpen, T.id);
 }
 
-private substitution duplicate(substitution T) {
+substitution duplicate(substitution T) {
   substitution T2=substitution(T.supertile);
   T2.patch=T.patch;
   return T2;
@@ -382,9 +368,15 @@ mosaic operator *(transform T, mosaic M) {
   return M2;
 }
 
+// draw tile T
+void draw(picture pic=currentpicture, tile T, pen p=currentpen) {
+  draw(pic, T.boundary, p);
+}
+
+// Draw layer l of mtile.
 void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
   path[] Td=T.transform*T.drawtile[l].boundary;
-  if(T.fillable[l]) fill(pic, Td, T.fillpen[l]);
+  if(T.drawtile[l].fillable) fill(pic, Td, T.fillpen[l]);
   pen dpl=T.drawpen[l];
   if(dpl != nullpen)
     draw(pic,Td,dpl+scaling*linewidth(dpl));
@@ -392,6 +384,7 @@ void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
     draw(pic,Td,p+scaling*linewidth(p));
 }
 
+// Draw substitution.
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
   for(int k=0; k < s.patch.length; ++k) {
     draw(pic, s.patch[k], p, 1, 0);

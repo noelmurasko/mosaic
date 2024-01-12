@@ -19,4 +19,5 @@ squareRule.addtile(shift(0,1),square,yellow);
 // draw patch
 int n=4;
 mosaic M=mosaic(square,n,squareRule);
+
 draw(M);
