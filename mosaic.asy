@@ -47,7 +47,7 @@ bool operator ==(tile T1, tile T2) {
   return alias(T1,T2);
 }
 
-// Can write tiles (just writes boundary)
+// write tiles (just writes boundary)
 void write(string s="", tile t) {
   write(s,t.boundary);
 }
