@@ -152,14 +152,6 @@ private struct mtile {
       }
     }
   }
-
-
-  /*
-  void setpen(pen p, int ind) {
-    if(fillable[ind]) this.fillpen[ind]=p;
-    else this.drawpen[ind]=p;
-  }
-  */
 }
 
 struct substitution {
