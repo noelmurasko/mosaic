@@ -30,8 +30,8 @@ tile copy(tile T) {
   return tile(copy(T.boundary));
 }
 
-bool alias(tile T1, tile T2) {
-  return alias(T1.boundary,T2.boundary);
+bool operator ==(tile T1, tile T2) {
+  return alias(T1,T2);
 }
 
 tile nulltile=tile(nullpath);
@@ -240,7 +240,7 @@ struct mosaic {
     if(k < n)
       for(int i; i < patch.length; ++i) {
         mtile patchi=patch[i];
-        if(alias(patchi.supertile,T.prototile))
+        if(patchi.supertile == T.prototile)
           loop(patch, T*patchi, n, k+1,tiles);
       }
     else
