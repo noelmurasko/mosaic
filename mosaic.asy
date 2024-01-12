@@ -110,26 +110,27 @@ private struct mtile {
 
   void addlayer(tile drawtile, pen fillpen, pen drawpen) {
     this.drawtile.push(drawtile);
-    this.fillable.push(checkfillable(drawtile));
-    this.fillpen.push(fillpen);
-    this.drawpen.push(drawpen);
+
+    bool fillthislayer=checkfillable(drawtile);
+    this.fillable.push(fillthislayer);
+
+    bool fpnull=fillpen == nullpen;
+    bool dpnull=drawpen == nullpen;
+    if(fillthislayer) {
+      this.fillpen.push(fillpen);
+      this.drawpen.push(drawpen);
+    } else {
+      if(fpnull & !dpnull) {
+        this.fillpen.push(nullpen);
+        this.drawpen.push(drawpen);
+      }
+      else if(dpnull & !fpnull) {
+        this.fillpen.push(nullpen);
+        this.drawpen.push(fillpen);
+      }
+    }
     this.layers+=1;
   }
-  //remove
-  void addlayer(tile drawtile=nulltile, pen p=nullpen) {
-    this.drawtile.push(drawtile);
-    bool fillable=checkfillable(drawtile);
-    this.fillable.push(fillable);
-    if(fillable) {
-      this.fillpen.push(p);
-      this.drawpen.push(nullpen);
-    } else {
-      this.fillpen.push(nullpen);
-      this.drawpen.push(p);
-    }
-    layers+=1;
-  }
-
 
   void setdrawtile(tile drawtile, int ind) {
     this.drawtile[ind]=drawtile;
@@ -152,10 +153,13 @@ private struct mtile {
     }
   }
 
+
+  /*
   void setpen(pen p, int ind) {
     if(fillable[ind]) this.fillpen[ind]=p;
     else this.drawpen[ind]=p;
   }
+  */
 }
 
 struct substitution {
@@ -288,18 +292,6 @@ struct mosaic {
       patch[i].addlayer(drawtile,fillpen,drawpen);
     }
     layers+=1;
-  }
-
-  void addlayer(tile drawtile=nulltile, pen p=nullpen) {
-    int L=patch.length;
-    for(int i=0; i < L; ++i) {
-      patch[i].addlayer(drawtile,p);
-    }
-    layers+=1;
-  }
-
-  void addlayer(pair drawtile, pen drawpen=nullpen) {
-    this.addlayer((path) drawtile,invisible,drawpen);
   }
 
   void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
