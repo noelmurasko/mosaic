@@ -26,7 +26,7 @@ tile operator cast(guide g) {
   return tile(g);
 }
 
-tile copy(tile T) {
+tile duplicate(tile T) {
   return tile(copy(T.boundary));
 }
 
@@ -179,25 +179,24 @@ struct substitution {
   }
 }
 
-mtile copy(mtile T) {
-  return mtile(T.transform, T.supertile, T.prototile, T.drawtile, T.fillpen, T.drawpen, T.fillable, T.id); // Do not do deep copy of drawtile, fillpen, or drawpen
-  // don't copy tiles?
+private mtile duplicate(mtile T) {
+  return mtile(T.transform, T.supertile, T.prototile, T.drawtile, T.fillpen, T.drawpen, T.fillable, T.id);
 }
 
-substitution copy(substitution T) {
+private substitution duplicate(substitution T) {
   substitution T2=substitution(T.supertile);
   T2.patch=T.patch;
   return T2;
 }
 
 mtile operator *(mtile t1, mtile t2) {
-  mtile t3=copy(t2);
+  mtile t3=duplicate(t2);
   t3.transform=t1.transform*t2.transform;
   return t3;
 }
 
 mtile operator *(transform T, mtile t1) {
-  mtile t2=copy(t1);
+  mtile t2=duplicate(t1);
   t2.transform=T*t2.transform;
   return t2;
 }
@@ -247,7 +246,7 @@ struct mosaic {
     int L=this.patch.length;
     mtile[] patchcopy=new mtile[L];
     for(int i=0; i < L; ++i) {
-      patchcopy[i]=copy(this.patch[i]);
+      patchcopy[i]=duplicate(this.patch[i]);
     }
     mtile[] tiles;
     for(int i=0; i < L; ++i) {
@@ -278,7 +277,7 @@ struct mosaic {
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
   // The drawtile can be a pair, in which only the drawpen can be passed.
-  void addlayer(tile drawtile, pen fillpen=invisible, pen drawpen=nullpen) {
+  void addlayer(tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen) {
     int L=patch.length;
     for(int i=0; i < L; ++i) {
       patch[i].addlayer(drawtile,fillpen,drawpen);
@@ -352,33 +351,33 @@ struct mosaic {
   }
 }
 
-mosaic copy(mosaic M) {
+mosaic duplicate(mosaic M) {
   mosaic M2;
   int Lt=M.tiles.length;
   mtile[] M2tiles=new mtile[Lt];
   for(int i=0; i < Lt; ++i) {
-    M2tiles[i]=copy(M.tiles[i]);
+    M2tiles[i]=duplicate(M.tiles[i]);
   }
   M2.tiles=M2tiles;
-  M2.supertile=copy(M.supertile);
+  M2.supertile=duplicate(M.supertile);
   M2.n=M.n;
   int Lr=M.rules.length;
   substitution[] M2rules=new substitution[Lr];
   for(int i=0; i < Lr; ++i) {
-    M2rules[i]=copy(M.rules[i]);
+    M2rules[i]=duplicate(M.rules[i]);
   }
   M2.rules=M2rules;
   int Lp=M.patch.length;
   mtile[] M2patch=new mtile[Lp];
   for(int i=0; i < Lp; ++i) {
-    M2patch[i]=copy(M.patch[i]);
+    M2patch[i]=duplicate(M.patch[i]);
   }
   M2.layers=M.layers;
   return M2;
 }
 
 mosaic operator *(transform T, mosaic M) {
-  mosaic M2=copy(M);
+  mosaic M2=duplicate(M);
   M2.tiles=T*M2.tiles;
   return M2;
 }
