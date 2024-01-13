@@ -7,7 +7,7 @@ import mosaic;
 pair u=(2,0);
 pair v=(2,1);
 pair w=(0,0);
-path tri=u--v--w--cycle;
+tile tri=u--v--w--cycle;
 
 // inflation factor
 inflation=sqrt(5);
