@@ -379,7 +379,7 @@ void draw(picture pic=currentpicture, explicit tile T, pen p=currentpen) {
 }
 
 // Draw layer l of mtile.
-void draw(picture pic=currentpicture, mtile T, pen p, real scaling, int l) {
+void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int l=0) {
   path[] Td=T.transform*T.drawtile[l].boundary;
   if(T.drawtile[l].fillable) fill(pic, Td, T.fillpen[l]);
   pen dpl=T.drawpen[l];
