@@ -11,10 +11,12 @@ struct tile {
   restricted path[] boundary;
   restricted int length;
   restricted bool fillable;
+  restricted pen fillpen;
 
-  void operator init(path[] boundary) {
+  void operator init(path[] boundary, pen fillpen=invisible) {
     this.boundary=boundary;
     this.fillable=checkfillable(boundary);
+    this.fillpen=fillpen;
     this.length=boundary.length;
   }
 }
@@ -160,7 +162,7 @@ struct substitution {
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
-    pen fp=fillpen == nullpen ? this.fillpen : fillpen;
+    pen fp=fillpen == nullpen ? prototile.fillpen : fillpen;
     pen dp=drawpen == nullpen ? this.drawpen : drawpen;
     if(prototile == nulltile)
       m=mtile(transform,this.supertile,drawtile=drawtile,fp,dp,id);
