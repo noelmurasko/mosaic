@@ -160,12 +160,10 @@ struct substitution {
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
-    pen fp=fillpen == nullpen ? prototile.fillpen : fillpen;
-    pen dp=drawpen == nullpen ? prototile.drawpen : drawpen;
-    if(prototile == nulltile)
-      m=mtile(transform,this.supertile,drawtile=drawtile,fp,dp,id);
-    else
-      m=mtile(transform,this.supertile,prototile,drawtile,fp,dp,id);
+    tile protile=prototile == nulltile ? this.supertile : prototile;
+    pen fp=fillpen == nullpen ? protile.fillpen : fillpen;
+    pen dp=drawpen == nullpen ? protile.drawpen : drawpen;
+    m=mtile(transform,this.supertile,protile,drawtile,fp,dp,id);
     this.patch.push(m);
   }
 }

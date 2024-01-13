@@ -11,10 +11,10 @@ tile square=box((0,0),(1,1));
 substitution squareRule=substitution(square); // substitution rule
 
 // substitution tiles
-squareRule.addtile(square,red);
-squareRule.addtile(shift(1,0),square,green);
-squareRule.addtile(shift(1,1),square,blue);
-squareRule.addtile(shift(0,1),square,yellow);
+squareRule.addtile(square,brown);
+squareRule.addtile(shift(1,0),square,paleyellow);
+squareRule.addtile(shift(1,1),square,brown);
+squareRule.addtile(shift(0,1),square,paleyellow);
 
 // draw patch
 int n=4;

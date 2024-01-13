@@ -4,16 +4,10 @@ size(300);
 import mosaic;
 
 // pinwheel triangle
-pair u=(2,0);
-pair v=(2,1);
-pair w=(0,0);
-tile tri=u--v--w--cycle;
+tile tri=(0,0)--(2,0)--(2,1)--cycle;
 
 // inflation factor
 inflation=sqrt(5);
-
-// number of iterations
-int n=6;
 
 transform T=reflect((0,0),(0,1))*rotate(90+aTan(2));
 
@@ -29,8 +23,9 @@ pinSub.addtile(shift(2*Cos(varphi),2*Sin(varphi))*rotate(180)*shift(-sqrt(5),0)*
 pinSub.addtile(shift(2*Cos(varphi),2*Sin(varphi))*T, paleblue);  // different from pinwheel
 pinSub.addtile(T*shift(4,2)*rotate(-90), heavyred);
 
-// create the patch
-mosaic M=mosaic(tri,n,pinSub);
+// number of iterations
+int n=4;
+mosaic M=mosaic(n,pinSub);
 
 // draw the patch
 draw(M);

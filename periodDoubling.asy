@@ -5,8 +5,8 @@ import mosaic;
 inflation=2;
 
 // prototile
-tile l1=(0,0)--(1,1);
-tile l2=(0,0)--(1,1);
+tile l1=tile((0,0)--(1,1));
+tile l2=tile((0,0)--(1,1));
 
 pen l1pen=red+100;
 pen l2pen=green+100;
