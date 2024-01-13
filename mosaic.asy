@@ -48,7 +48,7 @@ bool operator ==(tile T1, tile T2) {
 }
 
 // write tiles (just writes boundary)
-void write(string s="", tile t) {
+void write(string s="", explicit tile t) {
   write(s,t.boundary);
 }
 
@@ -224,10 +224,10 @@ struct mosaic {
   private void loop(mtile[] patch, mtile T, int n, int k, mtile[] tiles,
           real inflation=inflation) {
     if(k < n)
-      for(int i; i < patch.length; ++i) {
+      for(int i=0; i < patch.length; ++i) {
         mtile patchi=patch[i];
         if(patchi.supertile == T.prototile)
-          loop(patch, T*patchi, n, k+1,tiles);
+          loop(patch, T*patchi, n, k+1,tiles,inflation);
       }
     else
       tiles.push(scale(inflation)^n*T);
@@ -374,7 +374,7 @@ mosaic operator *(transform T, mosaic M) {
 }
 
 // draw tile T
-void draw(picture pic=currentpicture, tile T, pen p=currentpen) {
+void draw(picture pic=currentpicture, explicit tile T, pen p=currentpen) {
   draw(pic, T.boundary, p);
 }
 
