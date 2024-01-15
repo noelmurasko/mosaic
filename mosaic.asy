@@ -323,16 +323,26 @@ struct mosaic {
   }
 
   void operator init(tile supertile=nulltile, int n=0, real inflation=inflation ...substitution[] rules) {
-    // If supertile is not specified, use supertile from first specified rule.
-    if(supertile == nulltile)
-      this.supertile=rules[0].supertile;
-    else
-      this.supertile=supertile;
+
     this.rules=rules;
     int L=rules.length;
     for(int i=0; i < L; ++i) {
       this.patch.append(rules[i].patch);
     }
+
+    // If supertile is not specified, use supertile from first specified rule.
+    if(supertile == nulltile){
+      this.supertile=rules[0].supertile;
+    } else {
+      for(int i=0; i < L; ++i) {
+        if(supertile==rules[i].supertile) {
+          this.supertile=supertile;
+          break;
+        }
+      assert(i == L, "Supertile in mosaic does not match supertile in provided substitutions.");
+      }
+    }
+
     assert(n > 0,"Mosaics must be initialized with a positive number of iterations n.");
     this.substitute(n,inflation);
 

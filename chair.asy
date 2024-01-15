@@ -17,5 +17,5 @@ chairRule.addtile(shift(0,4)*rotate(270),lightblue);
 
 // draw patch
 int n=4;
-mosaic M=mosaic(n,chairRule);
+mosaic M=mosaic(chair,n,chairRule);
 draw(M);
