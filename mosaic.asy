@@ -64,7 +64,7 @@ bool checkfillable(tile drawtile, int ind=0) {
   return true;
 }
 
-private struct mtile {
+struct mtile {
   transform transform;
   tile supertile;
   tile prototile;
