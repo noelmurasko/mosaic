@@ -300,7 +300,7 @@ struct mosaic {
         }
       }
     }
-
+  
   void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(fillpen,drawpen,layer,id);
   }
@@ -339,7 +339,7 @@ struct mosaic {
           this.supertile=supertile;
           break;
         }
-      assert(i == L, "Supertile in mosaic does not match supertile in provided substitutions.");
+      assert(i < L, "Supertile in mosaic does not match supertile in provided substitutions.");
       }
     }
 
