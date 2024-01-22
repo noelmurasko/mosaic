@@ -156,25 +156,8 @@ struct mtile {
     this.id=id;
   }
 
-// TODO: what if the drawtiles comes with colours?
   void addlayer(tile drawtile, pen fillpen, pen drawpen) {
-    this.drawtile.push(duplicate(drawtile));
-    bool fpnull=fillpen == nullpen;
-    bool dpnull=drawpen == nullpen;
-
-    if(drawtile.fillable) {
-      drawtile.fillpen=fillpen;
-      drawtile.drawpen=drawpen;
-    } else {
-      if(fpnull & !dpnull) {
-        drawtile.fillpen=nullpen;
-        drawtile.drawpen=drawpen;
-      }
-      else if(dpnull & !fpnull) {
-        drawtile.fillpen=nullpen;
-        drawtile.drawpen=fillpen;
-      }
-    }
+    this.drawtile.push(tile(drawtile.boundary, fillpen, drawpen));
     this.layers+=1;
   }
 
@@ -281,10 +264,30 @@ struct mosaic {
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
   // The drawtile can be a pair, in which only the drawpen can be passed.
+  // TODO: what if the drawtiles comes with colours?
   void addlayer(tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen) {
+    pen fp;
+    pen dp;
+    bool fpnull=fillpen == nullpen;
+    bool dpnull=drawpen == nullpen;
+
+    if(drawtile.fillable) {
+      fp=fillpen;
+      dp=drawpen;
+    } else {
+      if(fpnull & !dpnull) {
+        fp=nullpen;
+        dp=drawpen;
+      }
+      else if(dpnull & !fpnull) {
+        fp=nullpen;
+        dp=fillpen;
+      }
+    }
+
     int L=patch.length;
     for(int i=0; i < L; ++i) {
-      patch[i].addlayer(drawtile,fillpen,drawpen);
+      patch[i].addlayer(drawtile,fp,dp);
     }
     layers+=1;
   }
