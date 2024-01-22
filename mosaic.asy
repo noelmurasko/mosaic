@@ -306,13 +306,13 @@ struct mosaic {
     set(drawtile, fillpen, drawpen,layer,idarray);
   }
 
-  private void loop(mtile[] patch, mtile T, int n, int k, mtile[] tiles,
+  private void loop(mtile T, int n, int k, mtile[] tiles,
           real inflation=inflation) {
     if(k < n)
       for(int i=0; i < patch.length; ++i) {
         mtile patchi=patch[i];
         if(patchi.supertile == T.prototile)
-          loop(patch, T*patchi, n, k+1,tiles,inflation);
+          loop(T*patchi, n, k+1,tiles,inflation);
       }
     else
       tiles.push(scale(inflation)^n*T);
@@ -336,11 +336,11 @@ struct mosaic {
     }
     int sTL=this.tiles.length;
     if(sTL == 0){
-      this.loop(patch,mtile(this.supertile),n,0,tiles,inflation);
+      this.loop(mtile(this.supertile),n,0,tiles,inflation);
     }
     else
       for(int i=0; i < sTL; ++i)
-        this.loop(patch,this.tiles[i],n,0,tiles,inflation);
+        this.loop(this.tiles[i],n,0,tiles,inflation);
     this.tiles=tiles;
     this.n+=n;
   }
