@@ -212,20 +212,6 @@ mtile[] operator *(transform T, mtile[] t1) {
   return t2;
 }
 
-//remove
-bool samepath(path[] P1, path[] P2) {
-  int L=P1.length;
-  if(P2.length != L) {
-    return false;
-  } else {
-    for(int i=0; i < L; ++i) {
-      if(P1[i] != P2[i])
-        return false;
-    }
-  }
-  return true;
-}
-
 struct mosaic {
   mtile[] tiles;
   tile supertile;
