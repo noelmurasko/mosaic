@@ -59,6 +59,28 @@ tile duplicate(tile T) {
   return tile(copy(T.boundary),T.fillpen, T.drawpen);
 }
 
+tile copy(tile t) {
+  return tile(copy(t.boundary),t.fillpen, t.drawpen);
+}
+/*
+tile[] what(tile[] t) {
+  write("Hello");
+  int L=t.length;
+  tile[] t2=new tile[L];
+  for(int i; i < L; ++i)
+    t2[i]=copy(t[i]);
+  return t2;
+}
+
+
+tile[] copy(tile[] t) {
+  int L=t.length;
+  tile[] t2=new tile[L];
+  for(int i; i < L; ++i)
+    t2[i]=copy(t[i]);
+  return t2;
+}
+*/
 tile operator *(transform T, tile t) {
   return tile(T*t.boundary, t.fillpen, t.drawpen);
 }
@@ -198,6 +220,15 @@ struct substitution {
 
 mtile duplicate(mtile T) {
   return mtile(T.transform, T.supertile, T.prototile, T.drawtile, T.fillpen, T.drawpen, T.id);
+}
+
+mtile copy(mtile T) {
+  int L=T.drawtile.length;
+  tile[] dtcopy=new tile[L];
+  for(int i; i < L; ++i)
+    dtcopy[i]=copy(T.drawtile[i]);
+
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), dtcopy, T.fillpen, T.drawpen, T.id);
 }
 
 substitution duplicate(substitution T) {
@@ -352,7 +383,7 @@ struct mosaic {
     for(int i=0; i < L; ++i) {
       mtile[] rpi=rules[i].patch;
       for(int j=0; j < rpi.length; ++j) {
-        this.patch.push(duplicate(rules[i].patch[j]));
+        this.patch.push(duplicate(rules[i].patch[j])); // Needs duplicate
       }
     }
     // If supertile is not specified, use supertile from first specified rule.
@@ -369,7 +400,6 @@ struct mosaic {
     }
     assert(n > 0,"Mosaics must be initialized with a positive number of iterations n.");
     this.substitute(n,inflation);
-
     this.layers=1;
   }
 }
