@@ -117,11 +117,8 @@ struct mtile {
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
 
-    int L=drawtile.length;
-    tile[] dtcopy=new tile[L];
-    for(int i; i < L; ++i)
-      dtcopy[i]=copy(drawtile[i]);
-    this.drawtile=dtcopy;
+
+    this.drawtile=drawtile;
 
     this.index=index;
     this.layers=drawtile.length;
@@ -178,11 +175,15 @@ mtile duplicate(mtile T) {
 }
 
 mtile copy(mtile T) {
+  int L=T.drawtile.length;
+  tile[] dtcopy=new tile[L];
+  for(int i; i < L; ++i)
+    dtcopy[i]=copy(T.drawtile[i]);
   if(T.supertile == T.prototile) {
     tile super2=copy(T.supertile);
-    return mtile(T.transform, super2, super2, T.drawtile, T.index,T.id);
+    return mtile(T.transform, super2, super2, dtcopy, T.index,T.id);
   } else
-    return mtile(T.transform, copy(T.supertile), copy(T.prototile), T.drawtile, T.index,T.id);
+    return mtile(T.transform, copy(T.supertile), copy(T.prototile), dtcopy, T.index,T.id);
 }
 
 substitution duplicate(substitution T) {
@@ -317,6 +318,7 @@ struct mosaic {
     if(k < n)
       for(int i=0; i < patch.length; ++i) {
         mtile patchi=patch[i];
+        //write(patchi.supertile == T.prototile);
         if(patchi.supertile == T.prototile) {
           loop(T*patchi, n, k+1,tiles,inflation);
         }
@@ -326,21 +328,7 @@ struct mosaic {
   }
 
   void substitute(int n, real inflation=inflation) {
-    int L=this.patch.length;
     mtile[] tiles=new mtile[];
-    real deflation=1/inflation;
-    for(int i=0; i < L; ++i) {
-      mtile T=patch[i];
-      if(T.prototile == nulltile) {
-        T.prototile=this.supertile;
-      }
-      if(T.supertile == nulltile) {
-        T.supertile=this.supertile;
-      }
-      // Inflate transforms (without changing user data).
-      transform Ti=patch[i].transform;
-      patch[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
-    }
     int sTL=this.tiles.length;
     if(sTL == 0) {
       this.loop(mtile(this.supertile),n,0,tiles,inflation);
@@ -357,8 +345,8 @@ struct mosaic {
 
     //this.rules=rules;
     int ind=0;
-    int L=rules.length;
-    for(int i=0; i < L; ++i) {
+    int Lr=rules.length;
+    for(int i=0; i < Lr; ++i) {
       mtile[] rpi=rules[i].patch;
       for(int j=0; j < rpi.length; ++j) {
         mtile pj=duplicate(rules[i].patch[j]);
@@ -367,16 +355,29 @@ struct mosaic {
         this.patch.push(pj); // Needs duplicate
       }
     }
+    int Lp=this.patch.length;
+    real deflation=1/inflation;
+    for(int i=0; i < Lp; ++i) {
+      mtile T=patch[i];
+      if(T.prototile == nulltile) {
+        T.prototile=this.supertile;
+      }
+      if(T.supertile == nulltile) {
+        T.supertile=this.supertile;
+      }
+      transform Ti=patch[i].transform;
+      patch[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+    }
     // If supertile is not specified, use supertile from first specified rule.
     if(supertile == nulltile) {
       this.supertile=rules[0].supertile;
     } else {
-      for(int i=0; i < L; ++i) {
+      for(int i=0; i < Lr; ++i) {
         if(supertile==rules[i].supertile) {
           this.supertile=supertile;
           break;
         }
-      assert(i < L, "Supertile in mosaic does not match supertile in provided substitutions.");
+      assert(i < Lr, "Supertile in mosaic does not match supertile in provided substitutions.");
       }
     }
     assert(n > 0,"Mosaics must be initialized with a positive number of iterations n.");
@@ -385,8 +386,17 @@ struct mosaic {
   }
 }
 
+int searchtile(tile[] ts, tile t) {
+  for(int i; i < ts.length; ++i) {
+    if(ts[i] == t) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 // What to do with supertile?
-mosaic duplicate2(mosaic M) {
+mosaic copy(mosaic M) {
   mosaic M2;
 
   M2.n=M.n;
@@ -395,18 +405,30 @@ mosaic duplicate2(mosaic M) {
   int Lt=M.tiles.length;
   int Lp=M.patch.length;
 
-  //mtile[] M2patch=new mtile[Lp];
-  tile[] oldsupertiles;
-  //tile[][] olddrawtiles;
+  tile[] Msupertiles;
+  tile[] Mprototiles;
 
-  for(int j=0; j < Lp; ++j) {
-    M2.patch.push(copy(M.patch[j]));
-    oldsupertiles.push(M.patch[j].supertile);
-    //olddrawtiles.push(M.patch[j].drawtile);
+  M2.patch.push(copy(M.patch[0]));
+  Msupertiles.push(M.patch[0].supertile);
+  Mprototiles.push(M.patch[0].prototile);
+
+  for(int j=1; j < Lp; ++j) {
+    mtile pj=copy(M.patch[j]);
+    int is=searchtile(Msupertiles, M.patch[j].supertile);
+    if(is != -1)
+      pj.supertile=M2.patch[is].supertile;
+    Msupertiles.push(M.patch[j].supertile);
+
+    int ip=searchtile(Mprototiles, M.patch[j].prototile);
+    if(ip != -1)
+      pj.prototile=M2.patch[is].prototile;
+    Mprototiles.push(M.patch[j].supertile);
+
+    M2.patch.push(pj);
   }
 
   for(int j=0; j < Lp; ++j) {
-    if(M.supertile == oldsupertiles[j]); {
+    if(M.supertile == Msupertiles[j]); {
       M2.supertile=M2.patch[j].supertile;
       break;
     }
@@ -418,8 +440,10 @@ mosaic duplicate2(mosaic M) {
     mtile t2=mtile(t.transform, M2.patch[j].supertile, M2.patch[j].prototile, M2.patch[j].drawtile, j, M2.patch[j].id);
     M2.tiles.push(t2);
   }
+
   return M2;
 }
+
 
 
 mosaic duplicate(mosaic M) {
@@ -432,6 +456,7 @@ mosaic duplicate(mosaic M) {
   M2.tiles=M2tiles;
   M2.supertile=duplicate(M.supertile);
   M2.n=M.n;
+
   /*
   int Lr=M.rules.length;
   substitution[] M2rules=new substitution[Lr];
@@ -442,6 +467,8 @@ mosaic duplicate(mosaic M) {
 
   M2.rules=M2rules;
   */
+
+
   int Lp=M.patch.length;
   mtile[] M2patch=new mtile[Lp];
   for(int i=0; i < Lp; ++i) {
@@ -452,7 +479,7 @@ mosaic duplicate(mosaic M) {
 }
 
 mosaic operator *(transform T, mosaic M) {
-  mosaic M2=duplicate(M);
+  mosaic M2=copy(M);
   M2.tiles=T*M2.tiles;
   return M2;
 }
