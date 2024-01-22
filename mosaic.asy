@@ -136,7 +136,7 @@ struct mtile {
 
 // TODO: what if the drawtiles comes with colours?
   void addlayer(tile drawtile, pen fillpen, pen drawpen) {
-    this.drawtile.push(drawtile);
+    this.drawtile.push(duplicate(drawtile));
     bool fpnull=fillpen == nullpen;
     bool dpnull=drawpen == nullpen;
 
