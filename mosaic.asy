@@ -240,7 +240,7 @@ bool samepath(path[] P1, path[] P2) {
 }
 
 struct mosaic {
-  mtile[] tiles={};
+  mtile[] tiles;
   tile supertile;
   int n=0;
   substitution[] rules;
@@ -320,7 +320,7 @@ struct mosaic {
 
   void substitute(int n, real inflation=inflation) {
     int L=this.patch.length;
-    mtile[] tiles;
+    mtile[] tiles=new mtile[];
     real deflation=1/inflation;
     for(int i=0; i < L; ++i) {
       mtile T=patch[i];
