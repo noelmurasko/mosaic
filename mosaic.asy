@@ -55,10 +55,6 @@ tile operator cast(guide g) {
   return tile(g);
 }
 
-tile duplicate(tile T) {
-  return tile(copy(T.boundary),T.fillpen, T.drawpen);
-}
-
 tile copy(tile t) {
   return tile(copy(t.boundary),t.fillpen, t.drawpen);
 }
@@ -179,6 +175,7 @@ mtile copy(mtile T) {
   tile[] dtcopy=new tile[L];
   for(int i; i < L; ++i)
     dtcopy[i]=copy(T.drawtile[i]);
+  // If supertile and prototile are the same, make only one copy
   if(T.supertile == T.prototile) {
     tile super2=copy(T.supertile);
     return mtile(T.transform, super2, super2, dtcopy, T.index,T.id);
@@ -381,7 +378,6 @@ int searchtile(tile[] ts, tile t) {
   return -1;
 }
 
-// What to do with supertile?
 mosaic copy(mosaic M) {
   mosaic M2;
 
@@ -427,40 +423,6 @@ mosaic copy(mosaic M) {
     M2.tiles.push(t2);
   }
 
-  return M2;
-}
-
-
-
-mosaic duplicate(mosaic M) {
-  mosaic M2;
-  int Lt=M.tiles.length;
-  mtile[] M2tiles=new mtile[Lt];
-  for(int i=0; i < Lt; ++i) {
-    M2tiles[i]=duplicate(M.tiles[i]);
-  }
-  M2.tiles=M2tiles;
-  M2.supertile=duplicate(M.supertile);
-  M2.n=M.n;
-
-  /*
-  int Lr=M.rules.length;
-  substitution[] M2rules=new substitution[Lr];
-
-  for(int i=0; i < Lr; ++i) {
-    M2rules[i]=duplicate(M.rules[i]);
-  }
-
-  M2.rules=M2rules;
-  */
-
-
-  int Lp=M.patch.length;
-  mtile[] M2patch=new mtile[Lp];
-  for(int i=0; i < Lp; ++i) {
-    M2patch[i]=duplicate(M.patch[i]);
-  }
-  M2.layers=M.layers;
   return M2;
 }
 
