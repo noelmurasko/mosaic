@@ -163,7 +163,6 @@ struct mtile {
   void setpen(pen fillpen, pen drawpen, int ind) {
     bool fpnull=fillpen == nullpen;
     bool dpnull=drawpen == nullpen;
-    write(ind);
     if(drawtile[ind].fillable) {
       if(!fpnull) drawtile[ind].fillpen=fillpen;
       if(!dpnull) drawtile[ind].drawpen=drawpen;
@@ -240,18 +239,6 @@ bool samepath(path[] P1, path[] P2) {
   return true;
 }
 
-void loop(mtile[] patch, mtile T, int n, int k, mtile[] tiles,
-          real inflation=inflation) {
-    if(k < n)
-      for(int i=0; i < patch.length; ++i) {
-        mtile patchi=patch[i];
-        if(patchi.supertile == T.prototile)
-          loop(patch, T*patchi, n, k+1,tiles,inflation);
-      }
-    else
-      tiles.push(scale(inflation)^n*T);
-  }
-
 struct mosaic {
   mtile[] tiles={};
   tile supertile;
@@ -259,40 +246,6 @@ struct mosaic {
   substitution[] rules;
   mtile[] patch;
   int layers;
-
-
-  void substitute(int n, real inflation=inflation) {
-    int L=this.patch.length;
-    mtile[] patchcopy=new mtile[L];
-    for(int i=0; i < L; ++i) {
-      patchcopy[i]=duplicate(this.patch[i]);
-    }
-    mtile[] tiles;
-    for(int i=0; i < L; ++i) {
-      mtile T=patchcopy[i];
-      if(T.prototile == nulltile) {
-        T.prototile=this.supertile;
-      }
-      if(T.supertile == nulltile) {
-        T.supertile=this.supertile;
-      }
-    }
-    real deflation=1/inflation;
-    for(int i=0; i < L; ++i) {
-      // Inflate transforms (without changing user data).
-      transform Ti=patchcopy[i].transform;
-      patchcopy[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
-    }
-    int sTL=this.tiles.length;
-    if(sTL == 0){
-      loop(patchcopy,mtile(this.supertile),n,0,tiles,inflation);
-    }
-    else
-      for(int i=0; i < sTL; ++i)
-        loop(patchcopy,this.tiles[i],n,0,tiles,inflation);
-    this.tiles=tiles;
-    this.n+=n;
-  }
 
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
@@ -353,12 +306,54 @@ struct mosaic {
     set(drawtile, fillpen, drawpen,layer,idarray);
   }
 
+  private void loop(mtile[] patch, mtile T, int n, int k, mtile[] tiles,
+          real inflation=inflation) {
+    if(k < n)
+      for(int i=0; i < patch.length; ++i) {
+        mtile patchi=patch[i];
+        if(patchi.supertile == T.prototile)
+          loop(patch, T*patchi, n, k+1,tiles,inflation);
+      }
+    else
+      tiles.push(scale(inflation)^n*T);
+  }
+
+  void substitute(int n, real inflation=inflation) {
+    int L=this.patch.length;
+    mtile[] tiles;
+    real deflation=1/inflation;
+    for(int i=0; i < L; ++i) {
+      mtile T=patch[i];
+      if(T.prototile == nulltile) {
+        T.prototile=this.supertile;
+      }
+      if(T.supertile == nulltile) {
+        T.supertile=this.supertile;
+      }
+      // Inflate transforms (without changing user data).
+      transform Ti=patch[i].transform;
+      patch[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+    }
+    int sTL=this.tiles.length;
+    if(sTL == 0){
+      this.loop(patch,mtile(this.supertile),n,0,tiles,inflation);
+    }
+    else
+      for(int i=0; i < sTL; ++i)
+        this.loop(patch,this.tiles[i],n,0,tiles,inflation);
+    this.tiles=tiles;
+    this.n+=n;
+  }
+
   void operator init(tile supertile=nulltile, int n=0, real inflation=inflation ...substitution[] rules) {
 
     this.rules=rules;
     int L=rules.length;
     for(int i=0; i < L; ++i) {
-      this.patch.append(rules[i].patch);
+      mtile[] rpi=rules[i].patch;
+      for(int j=0; j < rpi.length; ++j) {
+        this.patch.push(duplicate(rules[i].patch[j]));
+      }
     }
     // If supertile is not specified, use supertile from first specified rule.
     if(supertile == nulltile) {
