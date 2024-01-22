@@ -20,7 +20,7 @@ bool drawTiles=true;  // draw the tiles
 bool drawCPs=true;  // draw critical points in each triangle
 bool drawFP=false;  // draw the fixed point of the tiling
 bool colourTiles=true;  // colour tiles by chirality
-bool colourBorders=true;  // colour tile borders by chirality
+bool colourBorders=false;  // colour tile borders by chirality
 bool colourCPs=true;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
@@ -72,18 +72,17 @@ if(colourTiles) {
 	M.set(negTiles, "1", "2", "5");  // negative chirality
 }
 
-// colour tile borders by chirality tile borders (with positive on top)
+// colour tile borders by chirality (with positive on top)
 M.set(drawpen=tilePen);
-if(colourBorders){
-	M.addlayer();
-	M.set(tri, drawpen=negBorders, "1", "2", "5");  // negative chirality
-	M.addlayer();
-	M.set(tri, drawpen=posBorders, "3", "4");  // positive chirality
-}
+M.addlayer();
+M.set(tri, drawpen=negBorders, "1", "2", "5");  // negative chirality
+M.addlayer();
+M.set(tri, drawpen=posBorders, "3", "4");  // positive chirality
 
 // add control points
 pair CP=(u+2*v+w)/4;
 M.addlayer(CP, CP_pen);
+
 if(colourCPs) {
 	M.set(posCP_pen, "3", "4");  // positive chirality
 	M.set(negCP_pen, "1", "2", "5");  // negative chirality
@@ -96,7 +95,12 @@ if(rotatePatch) M=RotVarphi*M;
 if(reorientPatch) M=Rot90*M;
 
 // draw the patch
-if(drawTiles) draw(M);
+if(drawTiles) draw(M, l=0);
+if(colourBorders){
+		draw(M, l=2);  // negative chirality tiles
+		draw(M, l=3);  // positive chirallity tiles
+	}
+if(drawCPs) draw(M, l=3);
 
 // draw fixed point
 pair FP=(inflation^n)*CP;
@@ -107,7 +111,7 @@ if(drawFP) draw(FP, p=FP_pen);
 // overlay level n-k supertiles
 mosaic superM=mosaic(max(n-k,0),pinSub);
 superM.set(invisible, layer=0);
-superM.set(invisible, layer=1);
+if(superM.layers>1) superM.set(invisible, layer=1); 
 if(colourSupertiles) {
 	superM.addlayer();
 	superM.set(tri, drawpen=negOverlay, "1", "2", "5");
