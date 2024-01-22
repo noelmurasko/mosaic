@@ -339,7 +339,7 @@ struct mosaic {
           this.supertile=supertile;
           break;
         }
-      assert(i == L, "Supertile in mosaic does not match supertile in provided substitutions.");
+      assert(i < L, "Supertile in mosaic does not match supertile in provided substitutions.");
       }
     }
 
