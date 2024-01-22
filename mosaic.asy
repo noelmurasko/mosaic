@@ -62,25 +62,7 @@ tile duplicate(tile T) {
 tile copy(tile t) {
   return tile(copy(t.boundary),t.fillpen, t.drawpen);
 }
-/*
-tile[] what(tile[] t) {
-  write("Hello");
-  int L=t.length;
-  tile[] t2=new tile[L];
-  for(int i; i < L; ++i)
-    t2[i]=copy(t[i]);
-  return t2;
-}
 
-
-tile[] copy(tile[] t) {
-  int L=t.length;
-  tile[] t2=new tile[L];
-  for(int i; i < L; ++i)
-    t2[i]=copy(t[i]);
-  return t2;
-}
-*/
 tile operator *(transform T, tile t) {
   return tile(T*t.boundary, t.fillpen, t.drawpen);
 }
@@ -108,13 +90,8 @@ struct mtile {
   tile prototile;
 
   tile[] drawtile={};
-  pen[] fillpen;
-  pen[] drawpen;
-
-  //bool[] fillable;
 
   restricted int layers;
-
   string id;
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
@@ -128,29 +105,18 @@ struct mtile {
     } else {
       this.drawtile.push(tile(drawtile.boundary, fillpen, drawpen));
     }
-    //this.drawtile.push(drawtile == nulltile ? this.prototile : drawtile);
-
-    //this.drawtile[0].fillpen=fillpen;
-    //this.drawtile[0].drawpen=drawpen;
-
-    //this.fillpen.push(fillpen);
-    //this.drawpen.push(drawpen);
 
     this.layers=1;
     this.id=id;
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile[] drawtile, pen[] fillpen, pen[] drawpen, string id="") {
-    //int L=drawtile.length;
-    //assert(fillpen.length == L && drawpen.length == L);
+                     tile[] drawtile, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
 
     this.drawtile=drawtile;
-    //this.fillpen=fillpen;
-    //this.drawpen=drawpen;
 
     this.layers=drawtile.length;
     this.id=id;
@@ -202,7 +168,7 @@ struct substitution {
 }
 
 mtile duplicate(mtile T) {
-  return mtile(T.transform, T.supertile, T.prototile, T.drawtile, T.fillpen, T.drawpen, T.id);
+  return mtile(T.transform, T.supertile, T.prototile, T.drawtile, T.id);
 }
 
 mtile copy(mtile T) {
@@ -211,7 +177,7 @@ mtile copy(mtile T) {
   for(int i; i < L; ++i)
     dtcopy[i]=copy(T.drawtile[i]);
 
-  return mtile(T.transform, copy(T.supertile), copy(T.prototile), dtcopy, T.fillpen, T.drawpen, T.id);
+  return mtile(T.transform, copy(T.supertile), copy(T.prototile), dtcopy, T.id);
 }
 
 substitution duplicate(substitution T) {
