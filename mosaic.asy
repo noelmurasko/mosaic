@@ -1,6 +1,5 @@
 real inflation=1;
 
-
 bool checkfillable(path[] drawtile, int ind=0) {
   for(int i=0; i < drawtile.length; ++i)
     if(!cyclic(drawtile[i])) return false;
@@ -97,11 +96,10 @@ struct mtile {
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
 
-    if(drawtile == nulltile) {
-      this.drawtile.push(tile(prototile.boundary, fillpen, drawpen));
-    } else {
-      this.drawtile.push(tile(drawtile.boundary, fillpen, drawpen));
-    }
+    tile dt=drawtile == nulltile ? this.prototile : drawtile;
+    pen fp=dt.fillpen == nullpen ? fillpen : dt.fillpen;
+    pen dp=dt.drawpen == nullpen ? drawpen : dt.drawpen;
+    this.drawtile.push(tile(dt.boundary, fp, dp));
 
     this.layers=1;
     this.id=id;
@@ -159,9 +157,9 @@ struct substitution {
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
     tile protile=prototile == nulltile ? this.supertile : prototile;
-    pen fp=fillpen == nullpen ? protile.fillpen : fillpen;
-    pen dp=drawpen == nullpen ? protile.drawpen : drawpen;
-    m=mtile(transform,this.supertile,protile,drawtile,fp,dp,id);
+    //pen fp=fillpen == nullpen ? protile.fillpen : fillpen;
+    //pen dp=drawpen == nullpen ? protile.drawpen : drawpen;
+    m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
     this.patch.push(m);
   }
 }
@@ -363,8 +361,8 @@ struct mosaic {
       assert(i < Lr, "Supertile in mosaic does not match supertile in provided substitutions.");
       }
     }
-    assert(n > 0,"Mosaics must be initialized with a positive number of iterations n.");
-    this.substitute(n,inflation);
+    if(n > 0) this.substitute(n,inflation);
+    else this.tiles.push(mtile(this.supertile));
     this.layers=1;
   }
 }
@@ -460,10 +458,11 @@ void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
-  for(int l=0; l < M.layers; ++l)
+  for(int l=0; l < M.layers; ++l) {
     for(int k=0; k < M.tiles.length; ++k){
       draw(pic, M.tiles[k], p, scaling, l);
     }
+  }
 }
 
 // Draw layer l of mosaic.
