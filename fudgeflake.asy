@@ -19,4 +19,5 @@ ifs.addtile(shift(sqrt3/2,-1/2)*R30);
 
 int n=4;
 mosaic M=mosaic(hexagon,n,ifs);
+
 draw(M,white);

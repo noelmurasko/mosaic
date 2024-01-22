@@ -398,7 +398,8 @@ mosaic copy(mosaic M) {
 
     int ip=searchtile(Mprototiles, M.patch[j].prototile);
     if(ip != -1)
-      pj.prototile=M2.patch[is].prototile;
+      pj.prototile=M2.patch[ip].prototile;
+
     Mprototiles.push(M.patch[j].supertile);
 
     M2.patch.push(pj);
