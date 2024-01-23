@@ -7,6 +7,7 @@ inflation=2;
 tile dom=tile(box((0,0),(1,2)),brown);
 tile ino=tile(box((0,0),(2,1)),paleyellow);
 
+
 substitution domRule=substitution(dom); // dom substitution rule
 
 domRule.addtile(ino);
@@ -21,7 +22,7 @@ inoRule.addtile(shift(1,0),ino);
 inoRule.addtile(shift(1,1),ino);
 inoRule.addtile(shift(3,0),dom);
 
-int n=4;
-mosaic M=mosaic(ino,n,domRule,inoRule);
+int n=6;
+mosaic M=mosaic(dom,n,domRule,inoRule);
 
 draw(M);
