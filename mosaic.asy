@@ -319,7 +319,7 @@ struct mosaic {
     this.n+=n;
   }
 
-  void operator init(tile supertile=nulltile, int n=0, real inflation=inflation ...substitution[] rules) {
+  void operator init(tile supertile=nulltile, int n=0, bool layerbylayer=false, real inflation=inflation ...substitution[] rules) {
 
     //this.rules=rules;
     int ind=0;
@@ -358,7 +358,15 @@ struct mosaic {
       assert(i < Lr, "Supertile in mosaic does not match supertile in provided substitutions.");
       }
     }
-    if(n > 0) this.substitute(n,inflation);
+    if(n > 0) {
+      if(layerbylayer) {
+        for(int k=0; k < n; ++k) {
+          this.substitute(1,inflation);
+        }
+      } else
+        this.substitute(n,inflation);
+
+    }
     else this.tiles.push(mtile(this.supertile));
     this.layers=1;
   }
