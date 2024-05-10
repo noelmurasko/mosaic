@@ -320,15 +320,16 @@ struct mosaic {
           real inflation=inflation) {
     //write(patch.length);
     mtile[] correctprototiles;
-    for(int i=0; i < patch.length; ++i) {
-      mtile patchi=patch[i];
-      if(patchi.supertile == T.prototile) {
-        if(applytransform)
-          tiles.push(scale(inflation)*T*patchi);
-        else
-          tiles.push(scale(inflation)*T);
-        //correctprototiles.push(patchi);
+    if(applytransform) {
+      for(int i=0; i < patch.length; ++i) {
+        mtile patchi=patch[i];
+        if(patchi.supertile == T.prototile) {
+            tiles.push(scale(inflation)*T*patchi);
+        }
       }
+    } else {
+      tiles.push(scale(inflation)*T);
+      //correctprototiles.push(patchi);
     }
     /*
     write(correctprototiles.length);
