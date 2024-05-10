@@ -153,7 +153,7 @@ struct mtile {
 }
 
 bool lessinflated(mtile t1, mtile t2) {
-  return scale2(t1.transform) <= scale2(t2.transform);
+  return scale2(t1.transform) < scale2(t2.transform);
 }
 
 
@@ -316,17 +316,41 @@ struct mosaic {
       tiles.push(scale(inflation)^n*T);
   }
 
-  private void loopMS(mtile T, int n, int k, mtile[] tiles,
+  private void loopMS(mtile T, mtile[] tiles,
           real inflation=inflation) {
-    if(k < n)
-      for(int i=0; i < patch.length; ++i) {
-        mtile patchi=patch[i];
-        if(patchi.supertile == T.prototile) {
-          loop(T*patchi, n, k+1,tiles,inflation);
-        }
+    write(patch.length);
+    mtile[] correctprototiles;
+    for(int i=0; i < patch.length; ++i) {
+      mtile patchi=patch[i];
+      if(patchi.supertile == T.prototile) {
+        correctprototiles.push(patchi);
       }
-    else
-      tiles.push(scale(inflation)^n*T);
+    }
+    write(correctprototiles.length);
+    mtile[] sortedprototiles={correctprototiles[0]};
+
+    for(int i=1; i < correctprototiles.length; ++i) {
+      mtile correctpatchi=correctprototiles[i];
+      bool addon=true;
+      for(int j=0; j < sortedprototiles.length; ++j) {
+        if(sortedprototiles[j].prototile == correctpatchi.prototile) {
+          addon=false;
+          if(lessinflated(correctpatchi,sortedprototiles[j]))
+            sortedprototiles[j]=correctpatchi;
+        }
+      if(addon) sortedprototiles.push(correctpatchi);
+      }
+    }
+    write(sortedprototiles.length);
+
+    for(int i=0; i < sortedprototiles.length; ++i) {
+      tiles.push(scale(inflation)*T*sortedprototiles[i]);
+    }
+
+    //write(correctprototiles.length);
+
+    //mtile[] test=sort(correctprototiles, lessinflated);
+    //tiles.push(scale(inflation)*T*test[0]);
   }
 
   void substitute(int n, real inflation=inflation) {
@@ -347,13 +371,15 @@ struct mosaic {
     mtile[] tiles=new mtile[];
     int sTL=this.tiles.length;
     if(sTL == 0) {
-      this.loopMS(mtile(this.supertile),1,0,tiles,inflation);
+      this.loopMS(mtile(this.supertile),tiles,inflation);
+      this.tiles=tiles;
     }
     else {
       for(int i=0; i < sTL; ++i)
-        this.loopMS(this.tiles[i],1,0,tiles,inflation);
+        this.loopMS(this.tiles[i],tiles,inflation);
+        this.tiles.append(tiles);
     }
-    this.tiles=tiles;
+
     this.n+=1;
   }
 
@@ -398,6 +424,7 @@ struct mosaic {
     }
     if(n > 0) {
       if(multiscale) {
+        //this.substitute(1,inflation);
         for(int k=0; k < n; ++k) {
           this.substituteMS(inflation);
         }
