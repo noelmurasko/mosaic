@@ -1,5 +1,12 @@
 real inflation=1;
 
+// Return the square of the scaling applied by a transform T
+// i.e. det(abs(M)), where M is the matrix (shiftless) part of T.
+real scale2(transform T) {
+  transform M=shiftless(T);
+  return abs(M.xx*M.yy-M.xy*M.xy);
+}
+
 bool checkfillable(path[] drawtile, int ind=0) {
   for(int i=0; i < drawtile.length; ++i)
     if(!cyclic(drawtile[i])) return false;
@@ -144,6 +151,11 @@ struct mtile {
     }
   }
 }
+
+bool lessinflated(mtile t1, mtile t2) {
+  return scale2(t1.transform) <= scale2(t2.transform);
+}
+
 
 struct substitution {
   tile supertile;
@@ -296,7 +308,19 @@ struct mosaic {
     if(k < n)
       for(int i=0; i < patch.length; ++i) {
         mtile patchi=patch[i];
-        //write(patchi.supertile == T.prototile);
+        if(patchi.supertile == T.prototile) {
+          loop(T*patchi, n, k+1,tiles,inflation);
+        }
+      }
+    else
+      tiles.push(scale(inflation)^n*T);
+  }
+
+  private void loopMS(mtile T, int n, int k, mtile[] tiles,
+          real inflation=inflation) {
+    if(k < n)
+      for(int i=0; i < patch.length; ++i) {
+        mtile patchi=patch[i];
         if(patchi.supertile == T.prototile) {
           loop(T*patchi, n, k+1,tiles,inflation);
         }
@@ -319,7 +343,21 @@ struct mosaic {
     this.n+=n;
   }
 
-  void operator init(tile supertile=nulltile, int n=0, bool layerbylayer=false, real inflation=inflation ...substitution[] rules) {
+  void substituteMS(real inflation=inflation) {
+    mtile[] tiles=new mtile[];
+    int sTL=this.tiles.length;
+    if(sTL == 0) {
+      this.loopMS(mtile(this.supertile),1,0,tiles,inflation);
+    }
+    else {
+      for(int i=0; i < sTL; ++i)
+        this.loopMS(this.tiles[i],1,0,tiles,inflation);
+    }
+    this.tiles=tiles;
+    this.n+=1;
+  }
+
+  void operator init(tile supertile=nulltile, int n=0, bool multiscale=false, real inflation=inflation ...substitution[] rules) {
 
     //this.rules=rules;
     int ind=0;
@@ -359,13 +397,12 @@ struct mosaic {
       }
     }
     if(n > 0) {
-      if(layerbylayer) {
+      if(multiscale) {
         for(int k=0; k < n; ++k) {
-          this.substitute(1,inflation);
+          this.substituteMS(inflation);
         }
       } else
         this.substitute(n,inflation);
-
     }
     else this.tiles.push(mtile(this.supertile));
     this.layers=1;
