@@ -4,7 +4,7 @@ real inflation=1;
 // i.e. det(abs(M)), where M is the matrix (shiftless) part of T.
 real scale2(transform T) {
   transform M=shiftless(T);
-  return abs(M.xx*M.yy-M.xy*M.xy);
+  return abs(M.xx*M.yy-M.xy*M.yx);
 }
 
 bool checkfillable(path[] drawtile, int ind=0) {
@@ -316,16 +316,21 @@ struct mosaic {
       tiles.push(scale(inflation)^n*T);
   }
 
-  private void loopMS(mtile T, mtile[] tiles,
+  private void loopMS(mtile T, mtile[] tiles, bool applytransform=true,
           real inflation=inflation) {
-    write(patch.length);
+    //write(patch.length);
     mtile[] correctprototiles;
     for(int i=0; i < patch.length; ++i) {
       mtile patchi=patch[i];
       if(patchi.supertile == T.prototile) {
-        correctprototiles.push(patchi);
+        if(applytransform)
+          tiles.push(scale(inflation)*T*patchi);
+        else
+          tiles.push(scale(inflation)*T);
+        //correctprototiles.push(patchi);
       }
     }
+    /*
     write(correctprototiles.length);
     mtile[] sortedprototiles={correctprototiles[0]};
 
@@ -346,7 +351,7 @@ struct mosaic {
     for(int i=0; i < sortedprototiles.length; ++i) {
       tiles.push(scale(inflation)*T*sortedprototiles[i]);
     }
-
+  */
     //write(correctprototiles.length);
 
     //mtile[] test=sort(correctprototiles, lessinflated);
@@ -375,9 +380,41 @@ struct mosaic {
       this.tiles=tiles;
     }
     else {
-      for(int i=0; i < sTL; ++i)
-        this.loopMS(this.tiles[i],tiles,inflation);
-        this.tiles.append(tiles);
+      int[] indices={0};
+      mtile[] sortedtiles={this.tiles[0]};
+      for(int i=1; i < this.tiles.length; ++i) {
+        mtile tilei=this.tiles[i];
+        bool addon=true;
+        for(int j=0; j < indices.length; ++j) {
+          mtile tilej=this.tiles[indices[j]];
+          if(tilej.prototile == tilei.prototile) {
+            addon=false;
+            if(lessinflated(tilej,tilei)) {
+              //write(scale2(tilei.transform),i);
+              //write(scale2(tilej.transform));
+              //write();
+              indices[j]=i;
+            }
+          }
+        //if(addon) sortedtiles.push(tilei);
+        }
+        if(addon) indices.push(i);
+      }
+      bool[] applytransform = array(this.tiles.length,false);
+      for(int i=0; i < indices.length; ++i) {
+        applytransform[indices[i]]=true;
+      }
+
+      write(applytransform);
+      write(indices);
+
+      for(int i=0; i < applytransform.length; ++i) {
+        this.loopMS(this.tiles[i],tiles,applytransform[i],inflation);
+      }
+
+      //for(int i=0; i < iterate.length; ++i)
+      //  this.loopMS(sortedtiles[indices[i]],tiles,iterate[i],inflation);
+      this.tiles=tiles;
     }
 
     this.n+=1;
