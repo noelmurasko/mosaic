@@ -62,6 +62,11 @@ tile operator *(transform T, tile t) {
   return tile(T*t.boundary, t.fillpen, t.drawpen);
 }
 
+// Note that the fillpen and drawpen the new tile is the same as t1.
+tile operator ^^(tile t1, tile t2) {
+  return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen);
+}
+
 bool operator ==(tile T1, tile T2) {
   return alias(T1,T2);
 }
@@ -214,7 +219,6 @@ struct mosaic {
 
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
-  // The drawtile can be a pair, in which only the drawpen can be passed.
   void addlayer(tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen) {
     pen fp;
     pen dp;

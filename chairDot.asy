@@ -21,9 +21,9 @@ pair dot=(1/2,1/2);
 M.addlayer(dot,black+10);
 
 
-path pentagon=shift(7/5,1/2)*rotate(30)*scale(1/5)*polygon(5);
-path hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);
-tile decorate=tile(pentagon^^hexagon);
+tile pentagon=shift(7/5,1/2)*rotate(30)*scale(1/5)*polygon(5);
+tile hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);
+tile decorate=pentagon^^hexagon;
 
 M.addlayer(decorate);
 M.set(lightblue,"A");
