@@ -184,10 +184,10 @@ mtile copy(mtile mt) {
       mt.index, mt.id);
 }
 
-substitution duplicate(substitution S1) {
-  substitution S2=substitution(S1.supertile);
-  S2.patch=S1.patch;
-  return S2;
+substitution duplicate(substitution s1) {
+  substitution s2=substitution(s1.supertile);
+  s2.patch=s1.patch;
+  return s2;
 }
 
 mtile operator *(mtile mt1, mtile mt2) {
