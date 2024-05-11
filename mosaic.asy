@@ -310,6 +310,16 @@ struct mosaic {
       tiles.push(scale(inflation)^n*T);
   }
 
+  private void iterate(mtile T, mtile[] tiles,
+          real inflation=inflation) {
+    for(int i=0; i < patch.length; ++i) {
+      mtile patchi=patch[i];
+      if(patchi.supertile == T.prototile) {
+        tiles.push(scale(inflation)^n*T*patchi);
+      }
+    }
+  }
+
   void substitute(int n, real inflation=inflation) {
     mtile[] tiles=new mtile[];
     int sTL=this.tiles.length;
@@ -324,7 +334,7 @@ struct mosaic {
     this.n+=n;
   }
 
-  void operator init(tile supertile=nulltile, int n=0, real inflation=inflation ...substitution[] rules) {
+  void operator init(tile supertile=nulltile, int n=0, bool iterbyiter=false, real inflation=inflation ...substitution[] rules) {
     int ind=0;
     int Lr=rules.length;
     for(int i=0; i < Lr; ++i) {
@@ -361,8 +371,27 @@ struct mosaic {
       assert(i < Lr, "Supertile in mosaic does not match supertile in provided substitutions.");
       }
     }
-    if(n > 0) this.substitute(n,inflation);
-    else this.tiles.push(mtile(this.supertile));
+    if(n > 0) {
+      if(iterbyiter) {
+        for(int k=0; k < n; ++k) {
+          mtile[] tiles=new mtile[];
+          int sTL=this.tiles.length;
+          if(sTL == 0) {
+            this.iterate(mtile(this.supertile),tiles,inflation);
+          }
+          else {
+            for(int i=0; i < sTL; ++i)
+              this.iterate(this.tiles[i],tiles,inflation);
+          }
+          this.tiles=tiles;
+        }
+        this.n+=n;
+      } else {
+        this.substitute(n,inflation);
+      }
+    } else {
+      this.tiles.push(mtile(this.supertile));
+    }
     this.layers=1;
   }
 }
