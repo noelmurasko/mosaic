@@ -30,7 +30,7 @@ real b = sin(alph)/sin(beta);
 real c = 2a*b^2*cos(gamm);
 
 
-tempinflation=1+b^2;
+newinflation=1+b^2;
 // image settings
 // real sepX=1.25;
 real sepX=1.25*c;
@@ -77,21 +77,8 @@ tile U3=q4--q5--q6--cycle;
 tile U4=q2--q4--q6--cycle;
 
 // prototiles
-//tile sca=tile((p1--p2--p6--cycle),drawpen=linePen);
-//tile iso=tile((q1--q2--q6--cycle),drawpen=linePen);
-
-
-tile sca=tile((p1--p2--p6--cycle),drawpen=linePen,area=areasca);
-tile iso=tile((q1--q2--q6--cycle),drawpen=linePen,area=areaiso);
-
-areasca=trianglearea(sca);
-areaiso=trianglearea(iso);
-
-//write(arclength((p1--p2--p6--cycle)));
-//write(arclength(q1--q2--q6--cycle));
-
-//draw(sca);
-//draw(iso);
+tile sca=tile((p1--p2--p6--cycle),drawpen=linePen);
+tile iso=tile((q1--q2--q6--cycle),drawpen=linePen);
 
 // initialize substitutions
 substitution scaSub=substitution(sca);
@@ -166,7 +153,7 @@ if(drawall) {
   mosaic m8=mosaic(iso,n,true,scaSub,isoSub);
   draw(shift(2sepX,-2sepY)*m8);
 } else {
-  int n=9;
+  int n=3;
   //mosaic m1=mosaic(sca,n,scaSub,isoSub);
   mosaic m1=mosaic(iso,n,true,scaSub,isoSub);
   draw(shift(sepX,0)*m1);

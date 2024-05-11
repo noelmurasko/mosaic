@@ -1,9 +1,6 @@
 real inflation=1;
 
-real tempinflation=1;
-
-real areasca;
-real areaiso;
+real newinflation=1;
 
 // Return the square of the scaling applied by a transform T
 // i.e. det(abs(M)), where M is the matrix (shiftless) part of T.
@@ -24,7 +21,6 @@ struct tile {
   restricted bool fillable;
   pen fillpen;
   pen drawpen;
-  real area;
 
   void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, real area=1) {
     this.boundary=boundary;
@@ -32,12 +28,8 @@ struct tile {
     this.fillpen=fillpen;
     this.drawpen=drawpen;
     this.length=boundary.length;
-    this.area=area;
   }
 }
-
-tile iso;
-tile sca;
 
 tile operator cast(path[] p, pen fillpen=invisible, pen drawpen=nullpen) {
   return tile(p,fillpen,drawpen);
@@ -329,17 +321,16 @@ struct mosaic {
     set(drawtile, fillpen, drawpen,layer,idarray);
   }
 
-  private void loop(mtile T, int n, int k, mtile[] tiles,
+  private void iterate(mtile T, mtile[] tiles,
           real inflation=inflation) {
-    if(k < n)
-      for(int i=0; i < patch.length; ++i) {
-        mtile patchi=patch[i];
-        if(patchi.supertile == T.prototile) {
-          loop(T*patchi, n, k+1,tiles,inflation);
-        }
+    for(int i=0; i < patch.length; ++i) {
+      mtile patchi=patch[i];
+      if(patchi.supertile == T.prototile) {
+        tiles.push(scale(inflation)^n*T*patchi);
       }
     else
       tiles.push(scale(inflation)^n*T);
+    }
   }
 
   private void loopMS(mtile T, mtile[] tiles, bool applytransform=true,
@@ -359,20 +350,6 @@ struct mosaic {
     }
   }
 
-  void substitute(int n, real inflation=inflation) {
-    mtile[] tiles=new mtile[];
-    int sTL=this.tiles.length;
-    if(sTL == 0) {
-      this.loop(mtile(this.supertile),n,0,tiles,inflation);
-    }
-    else {
-      for(int i=0; i < sTL; ++i)
-        this.loop(this.tiles[i],n,0,tiles,inflation);
-    }
-    this.tiles=tiles;
-    this.n+=n;
-  }
-
   void substituteMS(real inflation=inflation) {
     this.n+=1;
     mtile[] tiles=new mtile[];
@@ -382,47 +359,47 @@ struct mosaic {
       this.tiles=tiles;
     }
     else {
-      /*
-      // Only do biggest
-      int[] indices={0};
-      mtile[] sortedtiles={this.tiles[0]};
-      for(int i=1; i < this.tiles.length; ++i) {
-        mtile tilei=this.tiles[i];
-        bool addon=true;
-        for(int j=0; j < indices.length; ++j) {
-          mtile tilej=this.tiles[indices[j]];
-          if(tilej.prototile == tilei.prototile) {
-            addon=false;
-            if(lessinflated(tilej,tilei)) {
-              //write(scale2(tilei.transform),i);
-              //write(scale2(tilej.transform));
-              //write();
-              indices[j]=i;
-            }
-          }
-        //if(addon) sortedtiles.push(tilei);
-        }
-        if(addon) indices.push(i);
-      }
-      */
-      // Threshold
-      real threshold=0.09318;
-      //write(0.0400546044145059/0.0172172349940857);
-      //write(sqrt(2.32642491249408));
-      //write(tempinflation);
-
-
-      //write(1/threshold);
       int[] indices;
 
-      mtile[] sortedtiles;
-      //write(this.n,n);
-      for(int i=0; i < this.tiles.length; ++i) {
-        //write(scale2(this.tiles[i].transform));
-        //write(scale2(this.tiles[i].transform)*this.tiles[i].prototile.area*tempinflation^(2*this.n));
-        //write(tempinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile));
-        if(tempinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile) >= threshold)
-            indices.push(i);
+      // rule can be either "biggest" or "threshold"
+      string rule="biggest";
+
+      // Only iterate biggest (of same tile type)
+      if(rule == "biggest") {
+        indices.push(0);
+        mtile[] sortedtiles={this.tiles[0]};
+        for(int i=1; i < this.tiles.length; ++i) {
+          mtile tilei=this.tiles[i];
+          bool addon=true;
+          for(int j=0; j < indices.length; ++j) {
+            mtile tilej=this.tiles[indices[j]];
+            if(tilej.prototile == tilei.prototile) {
+              addon=false;
+              if(lessinflated(tilej,tilei)) {
+                //write(scale2(tilei.transform),i);
+                //write(scale2(tilej.transform));
+                //write();
+                indices[j]=i;
+              }
+            }
+          //if(addon) sortedtiles.push(tilei);
+          }
+          if(addon) indices.push(i);
+        }
+      }
+
+      // Iterate when bigger than threshold
+      if(rule == "threshold") {
+        real threshold=0.09318;
+
+        mtile[] sortedtiles;
+        for(int i=0; i < this.tiles.length; ++i) {
+          //write(scale2(this.tiles[i].transform));
+          //write(scale2(this.tiles[i].transform)*this.tiles[i].prototile.area*newinflation^(2*this.n));
+          //write(newinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile));
+          if(newinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile) >= threshold)
+              indices.push(i);
+        }
       }
 
       bool[] applytransform = array(this.tiles.length,false);
@@ -430,13 +407,10 @@ struct mosaic {
         applytransform[indices[i]]=true;
       }
 
-
       for(int i=0; i < applytransform.length; ++i) {
         this.loopMS(this.tiles[i],tiles,applytransform[i],inflation);
       }
 
-      //for(int i=0; i < iterate.length; ++i)
-      //  this.loopMS(sortedtiles[indices[i]],tiles,iterate[i],inflation);
       this.tiles=tiles;
     }
   }
@@ -484,8 +458,21 @@ struct mosaic {
         for(int k=0; k < n; ++k) {
           this.substituteMS(inflation);
         }
-      } else
-        this.substitute(n,inflation);
+      } else {
+        for(int k=0; k < n; ++k) {
+          mtile[] tiles=new mtile[];
+          int sTL=this.tiles.length;
+          if(sTL == 0) {
+            this.iterate(mtile(this.supertile),tiles,inflation);
+          }
+          else {
+            for(int i=0; i < sTL; ++i)
+              this.iterate(this.tiles[i],tiles,inflation);
+          }
+          this.tiles=tiles;
+        }
+        this.n+=n;
+      }
     }
     else this.tiles.push(mtile(this.supertile));
     this.layers=1;
