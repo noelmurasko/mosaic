@@ -33,4 +33,4 @@ kiteRule.addtile(shift(-A,A*c)*rotate(-108),kite);
 int n=4;
 mosaic M=mosaic(kite,n,dartRule,kiteRule);
 
-draw(M);
+filldraw(M);

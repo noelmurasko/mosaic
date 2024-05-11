@@ -62,6 +62,11 @@ tile operator *(transform T, tile t) {
   return tile(T*t.boundary, t.fillpen, t.drawpen);
 }
 
+// Note that the fillpen and drawpen the new tile is the same as t1.
+tile operator ^^(tile t1, tile t2) {
+  return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen);
+}
+
 bool operator ==(tile T1, tile T2) {
   return alias(T1,T2);
 }
@@ -214,25 +219,25 @@ struct mosaic {
 
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
-  // The drawtile can be a pair, in which only the drawpen can be passed.
-  // TODO: what if the drawtiles comes with colours?
   void addlayer(tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen) {
     pen fp;
     pen dp;
     bool fpnull=fillpen == nullpen;
     bool dpnull=drawpen == nullpen;
+    bool tilehasfillpen=drawtile.fillpen != nullpen;
+    bool tilehasdrawpen=drawtile.drawpen != nullpen;
 
     if(drawtile.fillable) {
-      fp=fillpen;
-      dp=drawpen;
+      fp=tilehasfillpen ? drawtile.fillpen : fillpen;
+      dp=tilehasdrawpen ? drawtile.drawpen : drawpen;
     } else {
       if(fpnull & !dpnull) {
         fp=nullpen;
-        dp=drawpen;
+        dp=tilehasdrawpen ? drawtile.drawpen : drawpen;
       }
       else if(dpnull & !fpnull) {
         fp=nullpen;
-        dp=fillpen;
+        dp=tilehasfillpen ? drawtile.fillpen : fillpen;
       }
     }
 
@@ -269,7 +274,7 @@ struct mosaic {
         }
       }
     }
-  
+
   void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(fillpen,drawpen,layer,id);
   }
@@ -296,7 +301,6 @@ struct mosaic {
     if(k < n)
       for(int i=0; i < patch.length; ++i) {
         mtile patchi=patch[i];
-        //write(patchi.supertile == T.prototile);
         if(patchi.supertile == T.prototile) {
           loop(T*patchi, n, k+1,tiles,inflation);
         }
@@ -320,8 +324,6 @@ struct mosaic {
   }
 
   void operator init(tile supertile=nulltile, int n=0, real inflation=inflation ...substitution[] rules) {
-
-    //this.rules=rules;
     int ind=0;
     int Lr=rules.length;
     for(int i=0; i < Lr; ++i) {
@@ -428,16 +430,25 @@ mosaic operator *(transform T, mosaic M) {
   return M2;
 }
 
-// draw tile T
-void draw(picture pic=currentpicture, explicit tile T, pen p=currentpen) {
-  draw(pic, T.boundary, p);
+// draw tile t
+void draw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
+  if(t.drawpen != nullpen) draw(pic, t.boundary, t.drawpen);
+  else  draw(pic, t.boundary, p);
+}
+
+void fill(picture pic=currentpicture, explicit tile t) {
+  fill(pic, t.boundary, t.fillpen);
+}
+
+void filldraw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
+  draw(pic, t.boundary, p);
+  fill(pic, t.boundary, t.fillpen);
 }
 
 // Draw layer l of mtile.
-void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int l=0) {
-  tile Tdl=T.drawtile[l];
+void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
+  tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable) fill(pic, Td, Tdl.fillpen);
   pen dpl=Tdl.drawpen;
   if(dpl != nullpen)
     draw(pic,Td,dpl+scaling*linewidth(dpl));
@@ -445,10 +456,34 @@ void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1,
     draw(pic,Td,p+scaling*linewidth(p));
 }
 
+void fill(picture pic=currentpicture, mtile T, int layer=0) {
+  tile Tdl=T.drawtile[layer];
+  path[] Td=T.transform*Tdl.boundary;
+  if(Tdl.fillable) fill(pic, Td, Tdl.fillpen);
+  pen dpl=Tdl.drawpen;
+}
+
+void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
+  fill(pic,T,layer);
+  draw(pic,T,p,scaling,layer);
+}
+
 // Draw substitution.
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
   for(int k=0; k < s.patch.length; ++k) {
     draw(pic, s.patch[k], p, 1, 0);
+  }
+}
+
+void fill(picture pic=currentpicture, substitution s) {
+  for(int k=0; k < s.patch.length; ++k) {
+    fill(pic, s.patch[k], 0);
+  }
+}
+
+void filldraw(picture pic=currentpicture, substitution s, pen p=currentpen) {
+  for(int k=0; k < s.patch.length; ++k) {
+    filldraw(pic, s.patch[k], p, 1, 0);
   }
 }
 
@@ -463,10 +498,41 @@ void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
   }
 }
 
-// Draw layer l of mosaic.
-void draw(picture pic=currentpicture, mosaic M, int l, pen p=currentpen,
+// Draw mosaic. Layers are drawn in increasing order.
+void fill(picture pic=currentpicture, mosaic M) {
+  for(int l=0; l < M.layers; ++l) {
+    for(int k=0; k < M.tiles.length; ++k){
+      fill(pic, M.tiles[k], l);
+    }
+  }
+}
+
+// Draw mosaic. Layers are drawn in increasing order.
+void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
+          bool scalelinewidth=true, real inflation=inflation) {
+  real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
+  for(int l=0; l < M.layers; ++l) {
+    for(int k=0; k < M.tiles.length; ++k){
+      filldraw(pic, M.tiles[k], p, scaling, l);
+    }
+  }
+}
+
+// Draw layer of mosaic.
+void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
   for(int k=0; k < M.tiles.length; ++k)
-    draw(pic, M.tiles[k], p, scaling, l);
+    draw(pic, M.tiles[k], p, scaling, layer);
+}
+
+void fill(picture pic=currentpicture, mosaic M, int layer, real inflation=inflation) {
+  for(int k=0; k < M.tiles.length; ++k)
+    draw(pic, M.tiles[k], layer);
+}
+
+void filldraw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
+          bool scalelinewidth=true, real inflation=inflation) {
+  fill(pic, M, layer);
+  draw(pic, M, layer, p, scalelinewidth, inflation);
 }
