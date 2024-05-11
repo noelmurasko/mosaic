@@ -430,6 +430,10 @@ mosaic operator *(transform T, mosaic M) {
   return M2;
 }
 
+real inflationscaling(bool scalelinewidth, real inflation, int n) {
+  return scalelinewidth ? (inflation)^(1-max(n,1)) : 1;
+}
+
 // draw tile t
 void draw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
   if(t.drawpen != nullpen) draw(pic, t.boundary, t.drawpen);
@@ -468,29 +472,45 @@ void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scalin
   draw(pic,T,p,scaling,layer);
 }
 
-// Draw substitution.
-void draw(picture pic=currentpicture, substitution s, pen p=currentpen) {
+// Draw substitution. If drawoutline == true, also draw the supertile with
+// outlinepen, scaled by inflation.
+void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
+              bool drawoutline=false,
+              pen outlinepen=linetype(new real[] {4,2})+1.5,
+              real inflation=inflation) {
   for(int k=0; k < s.patch.length; ++k) {
     draw(pic, s.patch[k], p, 1, 0);
   }
+  if(drawoutline)
+    draw(pic, scale(inflation)*s.supertile, outlinepen);
 }
 
-void fill(picture pic=currentpicture, substitution s) {
+void fill(picture pic=currentpicture, substitution s,
+          bool drawoutline=false,
+          pen outlinepen=linetype(new real[] {4,2})+1.5,
+          real inflation=inflation) {
   for(int k=0; k < s.patch.length; ++k) {
     fill(pic, s.patch[k], 0);
   }
+  if(drawoutline)
+    draw(pic, scale(inflation)*s.supertile, outlinepen);
 }
 
-void filldraw(picture pic=currentpicture, substitution s, pen p=currentpen) {
+void filldraw(picture pic=currentpicture, substitution s, pen p=currentpen,
+              bool drawoutline=false,
+              pen outlinepen=linetype(new real[] {4,2})+1.5,
+              real inflation=inflation) {
   for(int k=0; k < s.patch.length; ++k) {
     filldraw(pic, s.patch[k], p, 1, 0);
   }
+  if(drawoutline)
+    draw(pic, scale(inflation)*s.supertile, outlinepen);
 }
 
 // Draw mosaic. Layers are drawn in increasing order.
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
-  real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
+  real scaling=inflationscaling(scalelinewidth,inflation,M.n);
   for(int l=0; l < M.layers; ++l) {
     for(int k=0; k < M.tiles.length; ++k){
       draw(pic, M.tiles[k], p, scaling, l);
@@ -510,7 +530,7 @@ void fill(picture pic=currentpicture, mosaic M) {
 // Draw mosaic. Layers are drawn in increasing order.
 void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
-  real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
+  real scaling=inflationscaling(scalelinewidth,inflation,M.n);
   for(int l=0; l < M.layers; ++l) {
     for(int k=0; k < M.tiles.length; ++k){
       filldraw(pic, M.tiles[k], p, scaling, l);
@@ -521,7 +541,7 @@ void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
 // Draw layer of mosaic.
 void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
-  real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
+  real scaling=inflationscaling(scalelinewidth,inflation,M.n);
   for(int k=0; k < M.tiles.length; ++k)
     draw(pic, M.tiles[k], p, scaling, layer);
 }
