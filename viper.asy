@@ -11,7 +11,7 @@ tile tri=(0,0)--(1,0)--(1/2,h)--cycle;
 inflation=3;
 
 // number of iterations
-int n=5;
+int n=4;
 
 // pinwheel substitution tiles
 substitution viperSub=substitution(tri);
@@ -35,8 +35,4 @@ viperSub.addtile(shift(1,2h),brown);
 mosaic M=mosaic(n,viperSub);
 
 // draw the patch
-draw(M);
-
-
-
-
+filldraw(M);
