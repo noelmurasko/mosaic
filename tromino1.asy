@@ -27,4 +27,4 @@ rectRule.addtile(shift(2,1),rect);
 // draw patch
 int n=4;
 mosaic M=mosaic(rect,n,chairRule,rectRule);
-draw(M);
+filldraw(M);

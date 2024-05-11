@@ -20,4 +20,4 @@ squareRule.addtile(shift(0,1),square,paleyellow);
 int n=4;
 mosaic M=mosaic(square,n,squareRule);
 
-draw(M);
+filldraw(M);
