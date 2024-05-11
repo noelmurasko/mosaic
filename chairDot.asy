@@ -14,7 +14,7 @@ chairRule.addtile(shift(1,1),orange,id="B");
 chairRule.addtile(shift(4,0)*rotate(90),lightblue,id="C");
 chairRule.addtile(shift(0,4)*rotate(270),lightblue,id="D");
 
-int n=1;
+int n=3;
 mosaic M=mosaic(chair,n,chairRule);
 
 pair dot=(1/2,1/2);

@@ -444,8 +444,8 @@ void filldraw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
 }
 
 // Draw layer l of mtile.
-void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int l=0) {
-  tile Tdl=T.drawtile[l];
+void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
+  tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
   pen dpl=Tdl.drawpen;
   if(dpl != nullpen)
@@ -454,16 +454,16 @@ void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1,
     draw(pic,Td,p+scaling*linewidth(p));
 }
 
-void fill(picture pic=currentpicture, mtile T, int l=0) {
-  tile Tdl=T.drawtile[l];
+void fill(picture pic=currentpicture, mtile T, int layer=0) {
+  tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
   if(Tdl.fillable) fill(pic, Td, Tdl.fillpen);
   pen dpl=Tdl.drawpen;
 }
 
-void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int l=0) {
-  fill(pic,T,l);
-  draw(pic,T,p,scaling,l);
+void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
+  fill(pic,T,layer);
+  draw(pic,T,p,scaling,layer);
 }
 
 // Draw substitution.
@@ -516,22 +516,21 @@ void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
   }
 }
 
-// Draw layer l of mosaic.
-void draw(picture pic=currentpicture, mosaic M, int l, pen p=currentpen,
+// Draw layer of mosaic.
+void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
   real scaling=scalelinewidth ? (inflation)^(1-max(M.n,1)) : 1;
   for(int k=0; k < M.tiles.length; ++k)
-    draw(pic, M.tiles[k], p, scaling, l);
+    draw(pic, M.tiles[k], p, scaling, layer);
 }
 
-
-void fill(picture pic=currentpicture, mosaic M, int l, real inflation=inflation) {
+void fill(picture pic=currentpicture, mosaic M, int layer, real inflation=inflation) {
   for(int k=0; k < M.tiles.length; ++k)
-    draw(pic, M.tiles[k], l);
+    draw(pic, M.tiles[k], layer);
 }
 
-void filldraw(picture pic=currentpicture, mosaic M, int l, pen p=currentpen,
+void filldraw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
           bool scalelinewidth=true, real inflation=inflation) {
-  fill(pic, M, l);
-  draw(pic, M, l, p, scalelinewidth, inflation);
+  fill(pic, M, layer);
+  draw(pic, M, layer, p, scalelinewidth, inflation);
 }
