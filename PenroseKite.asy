@@ -11,7 +11,6 @@ real b=Cos(18);
 real c=Tan(54);
 
 tile dart=tile((0,0)--(b,1+a)--(0,1)--(-b,1+a)--cycle,red);
-tile dart2=tile((0,0)--(b,1+a)--(0,1)--(-b,1+a)--cycle,green);
 tile kite=tile((0,0)--(b,b*c)--(0,b*c+a)--(-b,b*c)--cycle,lightyellow);
 
 real A=b*tau;

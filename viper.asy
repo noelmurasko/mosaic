@@ -30,7 +30,6 @@ viperSub.addtile(shift(2,2h)*rotate(180),lightgray);
 viperSub.addtile(shift(3/2,h),brown);
 viperSub.addtile(shift(1,2h),brown);
 
-
 // build the patch
 mosaic M=mosaic(n,viperSub);
 
