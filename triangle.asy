@@ -10,7 +10,7 @@ tile tri=(0,0)--(1,0)--(1/2,sqrt(3)/2)--cycle;
 inflation=2;
 
 // number of iterations
-int n=6;
+int n=4;
 
 // pinwheel substitution tiles
 substitution triangleSub=substitution(tri);

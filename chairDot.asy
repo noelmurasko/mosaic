@@ -30,4 +30,4 @@ M.set(lightblue,"A");
 M.set(white,"B");
 M.set(orange,"C","D");
 
-draw(M);
+filldraw(M);
