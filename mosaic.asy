@@ -1,5 +1,10 @@
 real inflation=1;
 
+real tempinflation=1;
+
+real areasca;
+real areaiso;
+
 // Return the square of the scaling applied by a transform T
 // i.e. det(abs(M)), where M is the matrix (shiftless) part of T.
 real scale2(transform T) {
@@ -19,15 +24,20 @@ struct tile {
   restricted bool fillable;
   pen fillpen;
   pen drawpen;
+  real area;
 
-  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen) {
+  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, real area=1) {
     this.boundary=boundary;
     this.fillable=checkfillable(boundary);
     this.fillpen=fillpen;
     this.drawpen=drawpen;
     this.length=boundary.length;
+    this.area=area;
   }
 }
+
+tile iso;
+tile sca;
 
 tile operator cast(path[] p, pen fillpen=invisible, pen drawpen=nullpen) {
   return tile(p,fillpen,drawpen);
@@ -79,6 +89,17 @@ void write(string s="", explicit tile t) {
 }
 
 tile nulltile=tile(nullpath);
+
+
+real trianglearea(pair p1, pair p2, pair p3) {
+  return abs(((p2.x*p3.y-p2.y*p3.x)-(p1.x*p3.y-p1.y*p3.x)+(p1.x*p2.y-p1.y*p2.x)))/2;
+}
+
+real trianglearea(tile t) {
+  path p=t.boundary[0];
+  assert(cyclic(p) && length(p) == 3);
+  return trianglearea(point(p,0), point(p,1), point(p,2));
+}
 
 bool checkfillable(tile drawtile, int ind=0) {
   for(int i=0; i < drawtile.length; ++i)
@@ -155,7 +176,6 @@ struct mtile {
 bool lessinflated(mtile t1, mtile t2) {
   return scale2(t1.transform) < scale2(t2.transform);
 }
-
 
 struct substitution {
   tile supertile;
@@ -331,32 +351,6 @@ struct mosaic {
       tiles.push(scale(inflation)*T);
       //correctprototiles.push(patchi);
     }
-    /*
-    write(correctprototiles.length);
-    mtile[] sortedprototiles={correctprototiles[0]};
-
-    for(int i=1; i < correctprototiles.length; ++i) {
-      mtile correctpatchi=correctprototiles[i];
-      bool addon=true;
-      for(int j=0; j < sortedprototiles.length; ++j) {
-        if(sortedprototiles[j].prototile == correctpatchi.prototile) {
-          addon=false;
-          if(lessinflated(correctpatchi,sortedprototiles[j]))
-            sortedprototiles[j]=correctpatchi;
-        }
-      if(addon) sortedprototiles.push(correctpatchi);
-      }
-    }
-    write(sortedprototiles.length);
-
-    for(int i=0; i < sortedprototiles.length; ++i) {
-      tiles.push(scale(inflation)*T*sortedprototiles[i]);
-    }
-  */
-    //write(correctprototiles.length);
-
-    //mtile[] test=sort(correctprototiles, lessinflated);
-    //tiles.push(scale(inflation)*T*test[0]);
   }
 
   void substitute(int n, real inflation=inflation) {
@@ -374,6 +368,7 @@ struct mosaic {
   }
 
   void substituteMS(real inflation=inflation) {
+    this.n+=1;
     mtile[] tiles=new mtile[];
     int sTL=this.tiles.length;
     if(sTL == 0) {
@@ -381,6 +376,8 @@ struct mosaic {
       this.tiles=tiles;
     }
     else {
+      /*
+      // Only do biggest
       int[] indices={0};
       mtile[] sortedtiles={this.tiles[0]};
       for(int i=1; i < this.tiles.length; ++i) {
@@ -401,13 +398,32 @@ struct mosaic {
         }
         if(addon) indices.push(i);
       }
+      */
+      // Threshold
+      real threshold=0.09318;
+      //write(0.0400546044145059/0.0172172349940857);
+      //write(sqrt(2.32642491249408));
+      //write(tempinflation);
+
+
+      //write(1/threshold);
+      int[] indices;
+
+      mtile[] sortedtiles;
+      //write(this.n,n);
+      for(int i=0; i < this.tiles.length; ++i) {
+        //write(scale2(this.tiles[i].transform));
+        //write(scale2(this.tiles[i].transform)*this.tiles[i].prototile.area*tempinflation^(2*this.n));
+        //write(tempinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile));
+        if(tempinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile) >= threshold)
+            indices.push(i);
+      }
+
       bool[] applytransform = array(this.tiles.length,false);
       for(int i=0; i < indices.length; ++i) {
         applytransform[indices[i]]=true;
       }
 
-      write(applytransform);
-      write(indices);
 
       for(int i=0; i < applytransform.length; ++i) {
         this.loopMS(this.tiles[i],tiles,applytransform[i],inflation);
@@ -417,8 +433,6 @@ struct mosaic {
       //  this.loopMS(sortedtiles[indices[i]],tiles,iterate[i],inflation);
       this.tiles=tiles;
     }
-
-    this.n+=1;
   }
 
   void operator init(tile supertile=nulltile, int n=0, bool multiscale=false, real inflation=inflation ...substitution[] rules) {

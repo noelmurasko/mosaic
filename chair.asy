@@ -9,6 +9,7 @@ inflation=1;
 // prototile
 tile chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
 
+
 // substitution rule
 substitution chairRule=substitution(chair);
 chairRule.addtile(scale(0.5),white);
