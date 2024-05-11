@@ -215,24 +215,25 @@ struct mosaic {
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
   // The drawtile can be a pair, in which only the drawpen can be passed.
-  // TODO: what if the drawtiles comes with colours?
   void addlayer(tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen) {
     pen fp;
     pen dp;
     bool fpnull=fillpen == nullpen;
     bool dpnull=drawpen == nullpen;
+    bool tilehasfillpen=drawtile.fillpen != nullpen;
+    bool tilehasdrawpen=drawtile.drawpen != nullpen;
 
     if(drawtile.fillable) {
-      fp=fillpen;
-      dp=drawpen;
+      fp=tilehasfillpen ? drawtile.fillpen : fillpen;
+      dp=tilehasdrawpen ? drawtile.drawpen : drawpen;
     } else {
       if(fpnull & !dpnull) {
         fp=nullpen;
-        dp=drawpen;
+        dp=tilehasdrawpen ? drawtile.drawpen : drawpen;
       }
       else if(dpnull & !fpnull) {
         fp=nullpen;
-        dp=fillpen;
+        dp=tilehasfillpen ? drawtile.fillpen : fillpen;
       }
     }
 
@@ -296,7 +297,6 @@ struct mosaic {
     if(k < n)
       for(int i=0; i < patch.length; ++i) {
         mtile patchi=patch[i];
-        //write(patchi.supertile == T.prototile);
         if(patchi.supertile == T.prototile) {
           loop(T*patchi, n, k+1,tiles,inflation);
         }
@@ -320,8 +320,6 @@ struct mosaic {
   }
 
   void operator init(tile supertile=nulltile, int n=0, real inflation=inflation ...substitution[] rules) {
-
-    //this.rules=rules;
     int ind=0;
     int Lr=rules.length;
     for(int i=0; i < Lr; ++i) {
