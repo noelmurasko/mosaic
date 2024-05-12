@@ -13,15 +13,15 @@ tile tri=u--v--w--cycle;
 inflation=sqrt(5);
 
 // number of iterations
-int n=5;
+int n=3;
 
 // options
 bool drawTiles=true;  // draw the tiles
-bool drawCPs=true;  // draw critical points in each triangle
+bool drawCPs=false;  // draw critical points in each triangle
 bool drawFP=false;  // draw the fixed point of the tiling
-bool colourTiles=true;  // colour tiles by chirality
+bool colourTiles=false;  // colour tiles by chirality
 bool colourBorders=false;  // colour tile borders by chirality
-bool colourCPs=true;  // colour critical points by chirality
+bool colourCPs=false;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
 bool overlaySupertiles=true;  // overlay supertile borders
@@ -38,16 +38,16 @@ pen negCP_pen=orange+5;  // critical points of negative chirality
 pen posBorders=blue+2;  // borders of tiles of positive chirality
 pen negBorders=orange+2;  // borders of tiles of negative chirality
 pen FP_pen=heavymagenta+6;  // fixed point
-pen overlay=black+4;  // supertile borders
-pen posOverlay=blue+4;  // supertile borders of positive chirality
+pen overlay=black+1;  // supertile borders (TODO: broken)
+pen posOverlay=blue+1;  // supertile borders of positive chirality
 pen negOverlay=orange+4;  // supertile borders of negative chirality
 
 // overlay level n-k supertiles
-int k=1;
+int k=2;
 
 // clip settings (rectangle centered at the fixed point)
 real boxW=inflation^(max(n-2,0));  // clip box width
-real boxL=boxW;  // clip box length
+real boxL=((1+sqrt(5))/2)*boxW;  // clip box length
 real boxShiftX=0;  // shift clip box horizontally
 real boxShiftY=0;  // shift clip box vertically
 
@@ -131,3 +131,5 @@ pair topRight=(FP.x+boxL/2,FP.y+boxW/2)+boxShift;
 pair topLeft=(FP.x-boxL/2,FP.y+boxW/2)+boxShift;
 path box=bottomLeft--bottomRight--topRight--topLeft--cycle;
 if(clipPatch) clip(g=box);
+
+
