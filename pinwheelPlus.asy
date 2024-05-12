@@ -24,7 +24,7 @@ bool colourBorders=false;  // colour tile borders by chirality
 bool colourCPs=false;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
-bool overlaySupertiles=true;  // overlay supertile borders
+bool overlaySupertiles=false;  // overlay supertile borders
 bool colourSupertiles=true;  // colour supertile borders by chirality
 bool clipPatch=false;  // clip the patch with a box
 
@@ -95,10 +95,10 @@ if(rotatePatch) M=RotVarphi*M;
 if(reorientPatch) M=Rot90*M;
 
 // draw the patch
-if(drawTiles) draw(M, layer=0);
+if(drawTiles) filldraw(M, layer=0);
 if(colourBorders){
-		draw(M, layer=2);  // negative chirality tiles
-		draw(M, layer=3);  // positive chirallity tiles
+		draw(M, layer=1);  // negative chirality tiles
+		draw(M, layer=2);  // positive chirallity tiles
 	}
 if(drawCPs) draw(M, layer=3);
 

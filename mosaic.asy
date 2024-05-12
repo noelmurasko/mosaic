@@ -546,7 +546,7 @@ void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
 
 void fill(picture pic=currentpicture, mosaic M, int layer, real inflation=inflation) {
   for(int k=0; k < M.tiles.length; ++k)
-    draw(pic, M.tiles[k], layer);
+    fill(pic, M.tiles[k], layer);
 }
 
 void filldraw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
