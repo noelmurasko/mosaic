@@ -302,7 +302,7 @@ struct mosaic {
     for(int i=0; i < patch.length; ++i) {
       mtile patchi=patch[i];
       if(patchi.supertile == T.prototile) {
-        tiles.push(scale(inflation)^n*T*patchi);
+        tiles.push(scale(inflation)*T*patchi);
       }
     }
   }

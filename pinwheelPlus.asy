@@ -24,7 +24,7 @@ bool colourBorders=false;  // colour tile borders by chirality
 bool colourCPs=false;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
-bool overlaySupertiles=false;  // overlay supertile borders
+bool overlaySupertiles=true;  // overlay supertile borders
 bool colourSupertiles=true;  // colour supertile borders by chirality
 bool clipPatch=false;  // clip the patch with a box
 
