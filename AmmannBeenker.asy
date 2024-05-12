@@ -23,7 +23,6 @@ rhombusRule.addtile(shift(-sr,sr)*R45^5,square);
 rhombusRule.addtile(shift(0,2+sqrt2)*R45^4,square);
 rhombusRule.addtile(shift(0,2+sqrt2)*R45,square);
 
-
 substitution squareRule=substitution(square); // square substitution rule
 
 squareRule.addtile(rhombus);

@@ -38,16 +38,16 @@ pen negCP_pen=orange+5;  // critical points of negative chirality
 pen posBorders=blue+2;  // borders of tiles of positive chirality
 pen negBorders=orange+2;  // borders of tiles of negative chirality
 pen FP_pen=heavymagenta+6;  // fixed point
-pen overlay=black+4;  // supertile borders
-pen posOverlay=blue+4;  // supertile borders of positive chirality
+pen overlay=black+1;  // supertile borders (TODO: broken)
+pen posOverlay=blue+1;  // supertile borders of positive chirality
 pen negOverlay=orange+4;  // supertile borders of negative chirality
 
 // overlay level n-k supertiles
-int k=1;
+int k=2;
 
 // clip settings (rectangle centered at the fixed point)
 real boxW=inflation^(max(n-2,0));  // clip box width
-real boxL=boxW;  // clip box length
+real boxL=((1+sqrt(5))/2)*boxW;  // clip box length
 real boxShiftX=0;  // shift clip box horizontally
 real boxShiftY=0;  // shift clip box vertically
 
@@ -95,10 +95,10 @@ if(rotatePatch) M=RotVarphi*M;
 if(reorientPatch) M=Rot90*M;
 
 // draw the patch
-if(drawTiles) draw(M, layer=0);
+if(drawTiles) filldraw(M, layer=0);
 if(colourBorders){
-		draw(M, layer=2);  // negative chirality tiles
-		draw(M, layer=3);  // positive chirallity tiles
+		draw(M, layer=1);  // negative chirality tiles
+		draw(M, layer=2);  // positive chirallity tiles
 	}
 if(drawCPs) draw(M, layer=3);
 

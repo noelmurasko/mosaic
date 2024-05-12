@@ -13,7 +13,7 @@ inflation=3;
 // number of iterations
 int n=4;
 
-// pinwheel substitution tiles
+// initialize viper substitution
 substitution viperSub=substitution(tri);
 
 // define the substitution rule

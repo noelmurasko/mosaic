@@ -1,4 +1,5 @@
 real inflation=1;
+private real globalinflation() {return inflation;}
 
 real newinflation=1;
 
@@ -31,7 +32,7 @@ struct tile {
   }
 }
 
-tile operator cast(path[] p, pen fillpen=invisible, pen drawpen=nullpen) {
+tile operator cast(path[] p, pen fillpen=nullpen, pen drawpen=nullpen) {
   return tile(p,fillpen,drawpen);
 }
 
@@ -39,7 +40,7 @@ tile operator cast(path[] p) {
   return tile(p);
 }
 
-tile operator cast(pair p, pen fillpen=invisible, pen drawpen=nullpen) {
+tile operator cast(pair p, pen fillpen=nullpen, pen drawpen=nullpen) {
   return tile((path) p,fillpen,drawpen);
 }
 
@@ -47,7 +48,7 @@ tile operator cast(pair p) {
   return tile((path) p);
 }
 
-tile operator cast(path p, pen fillpen=invisible, pen drawpen=nullpen) {
+tile operator cast(path p, pen fillpen=nullpen, pen drawpen=nullpen) {
   return tile(p,fillpen,drawpen);
 }
 
@@ -55,7 +56,7 @@ tile operator cast(path p) {
   return tile(p);
 }
 
-tile operator cast(guide g, pen fillpen=invisible, pen drawpen=nullpen) {
+tile operator cast(guide g, pen fillpen=nullpen, pen drawpen=nullpen) {
   return tile(g,fillpen,drawpen);
 }
 
@@ -74,10 +75,6 @@ tile operator *(transform T, tile t) {
 // Note that the fillpen and drawpen the new tile is the same as t1.
 tile operator ^^(tile t1, tile t2) {
   return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen);
-}
-
-bool operator ==(tile T1, tile T2) {
-  return alias(T1,T2);
 }
 
 // write tiles (just writes boundary)
@@ -113,21 +110,23 @@ struct mtile {
 
   restricted int layers;
   string id;
-  int index;
+  int index; // Used to determine location of tile in a patch
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
 
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    pen fp=dt.fillpen == nullpen ? fillpen : dt.fillpen;
-    pen dp=dt.drawpen == nullpen ? drawpen : dt.drawpen;
+    pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
+    pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
+
     this.drawtile.push(tile(dt.boundary, fp, dp));
 
     this.layers=1;
     this.id=id;
+    this.index=0;
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
@@ -177,23 +176,27 @@ bool lessinflated(mtile t1, mtile t2) {
 struct substitution {
   tile supertile;
   mtile[] patch;
+  real inflation;
 
   void operator init(explicit tile supertile) {
     this.supertile=supertile;
+    this.inflation=globalinflation();
+  }
+
+  void operator init(explicit tile supertile, real inflation) {
+    this.supertile=supertile;
+    this.inflation=inflation;
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
-                     pen fillpen=invisible, pen drawpen=nullpen, string id="") {
+                     pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
     m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
     this.patch.push(m);
   }
 }
 
-mtile duplicate(mtile mt) {
-  return mtile(mt.transform, mt.supertile, mt.prototile, mt.drawtile, mt.index, mt.id);
-}
-
+// Create a deep copy of the mtile mt.
 mtile copy(mtile mt) {
   int L=mt.drawtile.length;
   tile[] dtcopy=new tile[L];
@@ -202,15 +205,32 @@ mtile copy(mtile mt) {
   // If supertile and prototile are the same, make only one copy
   if(mt.supertile == mt.prototile) {
     tile super2=copy(mt.supertile);
-    return mtile(mt.transform, super2, super2, dtcopy, mt.index,mt.id);
+    return mtile(mt.transform, super2, super2, dtcopy, mt.index, mt.id);
   } else
     return mtile(mt.transform, copy(mt.supertile), copy(mt.prototile), dtcopy,
       mt.index, mt.id);
 }
 
+// Create a deep copy of the substitution s1.
+substitution copy(substitution s1) {
+  substitution s2=substitution(copy(s1.supertile),s1.inflation);
+  for(int i=0; i < s1.patch.length; ++i)
+    s2.patch.push(copy(s1.patch[i]));
+  return s2;
+}
+
+// Create a new mtile mt2 from mt1 with a shallow copy of the supertile,
+// prototile, and  drawtile.
+mtile duplicate(mtile mt1) {
+  mtile mt2=mtile(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile, mt1.index, mt1.id);
+  return mt2;
+}
+
+// Create a new substitution s2 from s1 with a shallow copy of the patch.
 substitution duplicate(substitution s1) {
   substitution s2=substitution(s1.supertile);
   s2.patch=s1.patch;
+  s2.inflation=s1.inflation;
   return s2;
 }
 
@@ -238,13 +258,19 @@ struct mosaic {
   mtile[] tiles;
   tile supertile;
   int n=0;
-
   mtile[] patch;
   int layers;
+  real inflation;
+
+  // tilecount[k] is the number of tiles in iteration k
+  int[] tilecount;
+
+  // tilegrowth[k] = tilecount[k+1]/tilecount[k] (empty if n=0)
+  real[] tilegrowth;
 
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
-  void addlayer(tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen) {
+  void addlayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen) {
     pen fp;
     pen dp;
     bool fpnull=fillpen == nullpen;
@@ -323,10 +349,11 @@ struct mosaic {
 
   private void iterate(mtile T, mtile[] tiles,
           real inflation=inflation) {
+    mtile patchi;
     for(int i=0; i < patch.length; ++i) {
-      mtile patchi=patch[i];
+      patchi=patch[i];
       if(patchi.supertile == T.prototile) {
-        tiles.push(scale(inflation)^n*T*patchi);
+        tiles.push(scale(inflation)*T*patchi);
       }
     else
       tiles.push(scale(inflation)^n*T);
@@ -355,6 +382,7 @@ struct mosaic {
     mtile[] tiles=new mtile[];
     int sTL=this.tiles.length;
     if(sTL == 0) {
+      this.tilecount.push(1);
       this.loopMS(mtile(this.supertile),tiles,inflation);
       this.tiles=tiles;
     }
@@ -410,35 +438,52 @@ struct mosaic {
       for(int i=0; i < applytransform.length; ++i) {
         this.loopMS(this.tiles[i],tiles,applytransform[i],inflation);
       }
-      write(tiles.length/this.tiles.length);
       this.tiles=tiles;
+      int tilesl=tiles.length;
+      this.tilecount.push(tilesl);
+      this.tilegrowth.push(tilesl/tilecount[tilecount.length-2]);
     }
   }
 
-  void operator init(tile supertile=nulltile, int n=0, bool multiscale=false, real inflation=inflation ...substitution[] rules) {
+  void operator init(tile supertile=nulltile, int n=0, bool multiscale=false ...substitution[] rules) {
     int ind=0;
     int Lr=rules.length;
-    for(int i=0; i < Lr; ++i) {
-      mtile[] rpi=rules[i].patch;
-      for(int j=0; j < rpi.length; ++j) {
-        mtile pj=duplicate(rules[i].patch[j]);
-        pj.index=ind;
+    assert(rules.length > 0,"Mosaics must have at least one substitution.");
+
+    this.inflation=rules[0].inflation;
+    substitution rulesi=rules[0];
+    mtile[] rulesipatch=rulesi.patch;
+    mtile rulesipatchj;
+    for(int j=0; j < rulesipatch.length; ++j) {
+      rulesipatchj=duplicate(rulesipatch[j]);
+      rulesipatchj.index=ind;
+      ind+=1;
+      this.patch.push(rulesipatchj);
+    }
+    for(int i=1; i < Lr; ++i) {
+      rulesi=rules[i];
+      rulesipatch=rulesi.patch;
+      assert(rulesi.inflation == this.inflation,"All substitutions in a mosaic must have the same inflation factor.");
+      for(int j=0; j < rulesipatch.length; ++j) {
+        rulesipatchj=duplicate(rulesipatch[j]);
+        rulesipatchj.index=ind;
         ind+=1;
-        this.patch.push(pj); // Needs duplicate
+        this.patch.push(rulesipatchj);
       }
     }
     int Lp=this.patch.length;
     real deflation=1/inflation;
+    mtile patchi;
     for(int i=0; i < Lp; ++i) {
-      mtile T=patch[i];
-      if(T.prototile == nulltile) {
-        T.prototile=this.supertile;
+      patchi=patch[i];
+      if(patchi.prototile == nulltile) {
+        patchi.prototile=this.supertile;
       }
-      if(T.supertile == nulltile) {
-        T.supertile=this.supertile;
+      if(patchi.supertile == nulltile) {
+        patchi.supertile=this.supertile;
       }
       transform Ti=patch[i].transform;
-      patch[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+      patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
     }
     // If supertile is not specified, use supertile from first specified rule.
     if(supertile == nulltile) {
@@ -470,6 +515,7 @@ struct mosaic {
           mtile[] tiles=new mtile[];
           int sTL=this.tiles.length;
           if(sTL == 0) {
+            this.tilecount.push(1);
             this.iterate(mtile(this.supertile),tiles,inflation);
           }
           else {
@@ -477,6 +523,9 @@ struct mosaic {
               this.iterate(this.tiles[i],tiles,inflation);
           }
           this.tiles=tiles;
+          int tilesl=tiles.length;
+          this.tilecount.push(tilesl);
+          this.tilegrowth.push(tilesl/tilecount[tilecount.length-2]);
         }
         this.n+=n;
       }
@@ -495,11 +544,13 @@ int searchtile(tile[] ts, tile t) {
   return -1;
 }
 
+// Create a deep copy of the mosaic M.
 mosaic copy(mosaic M) {
   mosaic M2;
 
   M2.n=M.n;
   M2.layers=M.layers;
+  M2.inflation=M.inflation;
 
   int Lt=M.tiles.length;
   int Lp=M.patch.length;
@@ -511,20 +562,21 @@ mosaic copy(mosaic M) {
   Msupertiles.push(M.patch[0].supertile);
   Mprototiles.push(M.patch[0].prototile);
 
+  mtile patchj;
   for(int j=1; j < Lp; ++j) {
-    mtile pj=copy(M.patch[j]);
+    patchj=copy(M.patch[j]);
     int is=searchtile(Msupertiles, M.patch[j].supertile);
     if(is != -1)
-      pj.supertile=M2.patch[is].supertile;
+      patchj.supertile=M2.patch[is].supertile;
     Msupertiles.push(M.patch[j].supertile);
 
     int ip=searchtile(Mprototiles, M.patch[j].prototile);
     if(ip != -1)
-      pj.prototile=M2.patch[ip].prototile;
+      patchj.prototile=M2.patch[ip].prototile;
 
     Mprototiles.push(M.patch[j].supertile);
 
-    M2.patch.push(pj);
+    M2.patch.push(patchj);
   }
 
   for(int j=0; j < Lp; ++j) {
@@ -583,7 +635,6 @@ void fill(picture pic=currentpicture, mtile T, int layer=0) {
   tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
   if(Tdl.fillable) fill(pic, Td, Tdl.fillpen);
-  pen dpl=Tdl.drawpen;
 }
 
 void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
@@ -595,83 +646,75 @@ void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scalin
 // outlinepen, scaled by inflation.
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
               bool drawoutline=false,
-              pen outlinepen=linetype(new real[] {4,2})+1.5,
-              real inflation=inflation) {
-  for(int k=0; k < s.patch.length; ++k) {
+              pen outlinepen=linetype(new real[] {4,2})+1.5) {
+  for(int k=0; k < s.patch.length; ++k)
     draw(pic, s.patch[k], p, 1, 0);
-  }
   if(drawoutline)
-    draw(pic, scale(inflation)*s.supertile, outlinepen);
+    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
 void fill(picture pic=currentpicture, substitution s,
           bool drawoutline=false,
-          pen outlinepen=linetype(new real[] {4,2})+1.5,
-          real inflation=inflation) {
-  for(int k=0; k < s.patch.length; ++k) {
+          pen outlinepen=linetype(new real[] {4,2})+1.5) {
+  for(int k=0; k < s.patch.length; ++k)
     fill(pic, s.patch[k], 0);
-  }
   if(drawoutline)
-    draw(pic, scale(inflation)*s.supertile, outlinepen);
+    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
 void filldraw(picture pic=currentpicture, substitution s, pen p=currentpen,
               bool drawoutline=false,
-              pen outlinepen=linetype(new real[] {4,2})+1.5,
-              real inflation=inflation) {
-  for(int k=0; k < s.patch.length; ++k) {
+              pen outlinepen=linetype(new real[] {4,2})+1.5) {
+  for(int k=0; k < s.patch.length; ++k)
     filldraw(pic, s.patch[k], p, 1, 0);
-  }
   if(drawoutline)
-    draw(pic, scale(inflation)*s.supertile, outlinepen);
+    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
 // Draw mosaic. Layers are drawn in increasing order.
+// If scalelinewidth == true, the linewidth of the pen is scaled by the
+// inflation nscale times. The default value of nscale is the number of
+// iterations in the mosaic. When drawing a mosaic several times one mosaic
+// multiple times (with different iterations) nscale provides a convenient way
+// to use the same linewidth each time.
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
-          bool scalelinewidth=true, real inflation=inflation) {
-  real scaling=inflationscaling(scalelinewidth,inflation,M.n);
-  for(int l=0; l < M.layers; ++l) {
-    for(int k=0; k < M.tiles.length; ++k){
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
+  for(int l=0; l < M.layers; ++l)
+    for(int k=0; k < M.tiles.length; ++k)
       draw(pic, M.tiles[k], p, scaling, l);
-    }
-  }
 }
 
-// Draw mosaic. Layers are drawn in increasing order.
 void fill(picture pic=currentpicture, mosaic M) {
-  for(int l=0; l < M.layers; ++l) {
-    for(int k=0; k < M.tiles.length; ++k){
+  for(int l=0; l < M.layers; ++l)
+    for(int k=0; k < M.tiles.length; ++k)
       fill(pic, M.tiles[k], l);
-    }
-  }
 }
 
-// Draw mosaic. Layers are drawn in increasing order.
 void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
-          bool scalelinewidth=true, real inflation=inflation) {
-  real scaling=inflationscaling(scalelinewidth,inflation,M.n);
-  for(int l=0; l < M.layers; ++l) {
-    for(int k=0; k < M.tiles.length; ++k){
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
+  for(int l=0; l < M.layers; ++l)
+    for(int k=0; k < M.tiles.length; ++k)
       filldraw(pic, M.tiles[k], p, scaling, l);
-    }
-  }
 }
 
 // Draw layer of mosaic.
 void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
-          bool scalelinewidth=true, real inflation=inflation) {
-  real scaling=inflationscaling(scalelinewidth,inflation,M.n);
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
   for(int k=0; k < M.tiles.length; ++k)
     draw(pic, M.tiles[k], p, scaling, layer);
 }
 
-void fill(picture pic=currentpicture, mosaic M, int layer, real inflation=inflation) {
+void fill(picture pic=currentpicture, mosaic M, int layer) {
   for(int k=0; k < M.tiles.length; ++k)
-    draw(pic, M.tiles[k], layer);
+    fill(pic, M.tiles[k], layer);
 }
 
 void filldraw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
-          bool scalelinewidth=true, real inflation=inflation) {
-  fill(pic, M, layer);
-  draw(pic, M, layer, p, scalelinewidth, inflation);
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
+  for(int k=0; k < M.tiles.length; ++k)
+    filldraw(pic, M.tiles[k], p, scaling, layer);
 }
