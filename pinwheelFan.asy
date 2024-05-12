@@ -30,13 +30,36 @@ pair sepY=(0,1);
 for(int k=0; k<n+1; ++k){
 	
 	mosaic M=mosaic(k,pinSub);
-
-	transform RotVarphi=rotate(-varphi)^k;
+	transform RotVarphi=rotate(-varphi)^(k);
 	transform Rot90=rotate(-90);
+
+	if(k==0){
+
+		path starttile=(0,0)--(2,0)--(2,1)--cycle;
+		starttile=shift(sepX)*Rot90*starttile;
+		filldraw(starttile,drawpen=black+0.1,fillpen=paleblue);
+
+	}else{
+
 	M=shift(sepX)*RotVarphi*Rot90*M;
+	filldraw(M,p=black+0.1,scalelinewidth=false);
+	
+	}
+
+
+}
+
+for(int k=0; k<n+1; ++k){
+	
+	mosaic superM=mosaic(0,pinSub);
+	superM.set(invisible);
+	superM=scale(inflation^k)*superM;
+	transform RotVarphi=rotate(-varphi)^(k);
+	transform Rot90=rotate(-90);
+	superM=shift(sepX)*RotVarphi*Rot90*superM;
 
 	// draw the patch
-	filldraw(M);
+	filldraw(superM,p=black+0.66,scalelinewidth=false);
 }
 
 
