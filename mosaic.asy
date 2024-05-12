@@ -320,8 +320,9 @@ struct mosaic {
 
   private void iterate(mtile T, mtile[] tiles,
           real inflation=inflation) {
+    mtile patchi;
     for(int i=0; i < patch.length; ++i) {
-      mtile patchi=patch[i];
+      patchi=patch[i];
       if(patchi.supertile == T.prototile) {
         tiles.push(scale(inflation)*T*patchi);
       }
@@ -334,36 +335,39 @@ struct mosaic {
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
 
     this.inflation=rules[0].inflation;
-    mtile[] rip=rules[0].patch;
-
-    for(int j=0; j < rip.length; ++j) {
-      mtile pj=duplicate(rip[j]);
-      pj.index=ind;
+    substitution rulesi=rules[0];
+    mtile[] rulesipatch=rulesi.patch;
+    mtile rulesipatchj;
+    for(int j=0; j < rulesipatch.length; ++j) {
+      rulesipatchj=duplicate(rulesipatch[j]);
+      rulesipatchj.index=ind;
       ind+=1;
-      this.patch.push(pj); // Needs duplicate
+      this.patch.push(rulesipatchj);
     }
     for(int i=1; i < Lr; ++i) {
-      assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic must have the same inflation factor.");
-      rip=rules[i].patch;
-      for(int j=0; j < rip.length; ++j) {
-        mtile pj=duplicate(rip[j]);
-        pj.index=ind;
+      rulesi=rules[i];
+      rulesipatch=rulesi.patch;
+      assert(rulesi.inflation == this.inflation,"All substitutions in a mosaic must have the same inflation factor.");
+      for(int j=0; j < rulesipatch.length; ++j) {
+        rulesipatchj=duplicate(rulesipatch[j]);
+        rulesipatchj.index=ind;
         ind+=1;
-        this.patch.push(pj); // Needs duplicate
+        this.patch.push(rulesipatchj);
       }
     }
     int Lp=this.patch.length;
     real deflation=1/inflation;
+    mtile patchi;
     for(int i=0; i < Lp; ++i) {
-      mtile T=patch[i];
-      if(T.prototile == nulltile) {
-        T.prototile=this.supertile;
+      patchi=patch[i];
+      if(patchi.prototile == nulltile) {
+        patchi.prototile=this.supertile;
       }
-      if(T.supertile == nulltile) {
-        T.supertile=this.supertile;
+      if(patchi.supertile == nulltile) {
+        patchi.supertile=this.supertile;
       }
       transform Ti=patch[i].transform;
-      patch[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+      patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
     }
     // If supertile is not specified, use supertile from first specified rule.
     if(supertile == nulltile) {
@@ -425,20 +429,21 @@ mosaic copy(mosaic M) {
   Msupertiles.push(M.patch[0].supertile);
   Mprototiles.push(M.patch[0].prototile);
 
+  mtile patchj;
   for(int j=1; j < Lp; ++j) {
-    mtile pj=copy(M.patch[j]);
+    patchj=copy(M.patch[j]);
     int is=searchtile(Msupertiles, M.patch[j].supertile);
     if(is != -1)
-      pj.supertile=M2.patch[is].supertile;
+      patchj.supertile=M2.patch[is].supertile;
     Msupertiles.push(M.patch[j].supertile);
 
     int ip=searchtile(Mprototiles, M.patch[j].prototile);
     if(ip != -1)
-      pj.prototile=M2.patch[ip].prototile;
+      patchj.prototile=M2.patch[ip].prototile;
 
     Mprototiles.push(M.patch[j].supertile);
 
-    M2.patch.push(pj);
+    M2.patch.push(patchj);
   }
 
   for(int j=0; j < Lp; ++j) {
