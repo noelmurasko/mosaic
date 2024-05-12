@@ -40,7 +40,7 @@ s2Rule.addtile(shift(2,ishift),s2);
 s2Rule.addtile(shift(2,ishift-1),s1);
 
 
-int n=5;
+int n=4;
 mosaic M=mosaic(n,s1Rule,s2Rule);
 
-draw(M);
+filldraw(M);

@@ -11,7 +11,7 @@ tile tri=(0,0)--(1,0)--(1/2,h)--cycle;
 inflation=3;
 
 // number of iterations
-int n=1;
+int n=4;
 
 // initialize viper substitution
 substitution viperSub=substitution(tri);
@@ -30,13 +30,8 @@ viperSub.addtile(shift(2,2h)*rotate(180),lightgray);
 viperSub.addtile(shift(3/2,h),brown);
 viperSub.addtile(shift(1,2h),brown);
 
-
 // build the patch
 mosaic M=mosaic(n,viperSub);
 
 // draw the patch
-draw(M);
-
-
-
-
+filldraw(M);

@@ -19,6 +19,6 @@ substitution l2Rule=substitution(l2); // l2 substitution rule
 l2Rule.addtile(l1,drawpen=l1pen);
 l2Rule.addtile(shift(1,1),l1,drawpen=l1pen);
 
-int n=6;
+int n=4;
 mosaic M=mosaic(l1,n,l1Rule,l2Rule);
 draw(M);

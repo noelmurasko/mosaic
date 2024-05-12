@@ -95,12 +95,12 @@ if(rotatePatch) M=RotVarphi*M;
 if(reorientPatch) M=Rot90*M;
 
 // draw the patch
-if(drawTiles) draw(M, l=0);
+if(drawTiles) draw(M, layer=0);
 if(colourBorders){
-		draw(M, l=2);  // negative chirality tiles
-		draw(M, l=3);  // positive chirallity tiles
+		draw(M, layer=2);  // negative chirality tiles
+		draw(M, layer=3);  // positive chirallity tiles
 	}
-if(drawCPs) draw(M, l=3);
+if(drawCPs) draw(M, layer=3);
 
 // draw fixed point
 pair FP=(inflation^n)*CP;
@@ -111,7 +111,7 @@ if(drawFP) draw(FP, p=FP_pen);
 // overlay level n-k supertiles
 mosaic superM=mosaic(max(n-k,0),pinSub);
 superM.set(invisible, layer=0);
-if(superM.layers>1) superM.set(invisible, layer=1); 
+if(superM.layers>1) superM.set(invisible, layer=1);
 if(colourSupertiles) {
 	superM.addlayer();
 	superM.set(tri, drawpen=negOverlay, "1", "2", "5");

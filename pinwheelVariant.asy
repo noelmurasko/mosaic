@@ -28,4 +28,4 @@ int n=4;
 mosaic M=mosaic(n,pinSub);
 
 // draw the patch
-draw(M);
+filldraw(M);
