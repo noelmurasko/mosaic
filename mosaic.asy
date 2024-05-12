@@ -234,10 +234,15 @@ struct mosaic {
   mtile[] tiles;
   tile supertile;
   int n=0;
-
   mtile[] patch;
   int layers;
   real inflation;
+
+  // tilecount[k] is the number of tiles in iteration k
+  int[] tilecount;
+
+  // tilegrowth[k] = tilecount[k+1]/tilecount[k] (empty if n=0)
+  real[] tilegrowth;
 
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
@@ -386,6 +391,7 @@ struct mosaic {
         mtile[] tiles=new mtile[];
         int sTL=this.tiles.length;
         if(sTL == 0) {
+          this.tilecount.push(1);
           this.iterate(mtile(this.supertile),tiles,inflation);
         }
         else {
@@ -393,6 +399,9 @@ struct mosaic {
             this.iterate(this.tiles[i],tiles,inflation);
         }
         this.tiles=tiles;
+        int tilesl=tiles.length;
+        this.tilecount.push(tilesl);
+        this.tilegrowth.push(tilesl/tilecount[tilecount.length-2]);
       }
       this.n+=n;
     } else {
