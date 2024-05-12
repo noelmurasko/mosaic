@@ -22,7 +22,7 @@ struct tile {
   }
 }
 
-tile operator cast(path[] p, pen fillpen=invisible, pen drawpen=nullpen) {
+tile operator cast(path[] p, pen fillpen=nullpen, pen drawpen=nullpen) {
   return tile(p,fillpen,drawpen);
 }
 
@@ -30,7 +30,7 @@ tile operator cast(path[] p) {
   return tile(p);
 }
 
-tile operator cast(pair p, pen fillpen=invisible, pen drawpen=nullpen) {
+tile operator cast(pair p, pen fillpen=nullpen, pen drawpen=nullpen) {
   return tile((path) p,fillpen,drawpen);
 }
 
@@ -38,7 +38,7 @@ tile operator cast(pair p) {
   return tile((path) p);
 }
 
-tile operator cast(path p, pen fillpen=invisible, pen drawpen=nullpen) {
+tile operator cast(path p, pen fillpen=nullpen, pen drawpen=nullpen) {
   return tile(p,fillpen,drawpen);
 }
 
@@ -46,7 +46,7 @@ tile operator cast(path p) {
   return tile(p);
 }
 
-tile operator cast(guide g, pen fillpen=invisible, pen drawpen=nullpen) {
+tile operator cast(guide g, pen fillpen=nullpen, pen drawpen=nullpen) {
   return tile(g,fillpen,drawpen);
 }
 
@@ -93,21 +93,23 @@ struct mtile {
 
   restricted int layers;
   string id;
-  int index;
+  int index; // Used to determine location of tile in a patch
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
 
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    pen fp=dt.fillpen == nullpen ? fillpen : dt.fillpen;
-    pen dp=dt.drawpen == nullpen ? drawpen : dt.drawpen;
+    pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
+    pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
+
     this.drawtile.push(tile(dt.boundary, fp, dp));
 
     this.layers=1;
     this.id=id;
+    this.index=0;
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
@@ -159,7 +161,7 @@ struct substitution {
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
-                     pen fillpen=invisible, pen drawpen=nullpen, string id="") {
+                     pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
     m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
     this.patch.push(m);
@@ -178,7 +180,7 @@ mtile copy(mtile mt) {
   // If supertile and prototile are the same, make only one copy
   if(mt.supertile == mt.prototile) {
     tile super2=copy(mt.supertile);
-    return mtile(mt.transform, super2, super2, dtcopy, mt.index,mt.id);
+    return mtile(mt.transform, super2, super2, dtcopy, mt.index, mt.id);
   } else
     return mtile(mt.transform, copy(mt.supertile), copy(mt.prototile), dtcopy,
       mt.index, mt.id);
@@ -220,7 +222,7 @@ struct mosaic {
 
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
-  void addlayer(tile drawtile=nulltile, pen fillpen=invisible, pen drawpen=nullpen) {
+  void addlayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen) {
     pen fp;
     pen dp;
     bool fpnull=fillpen == nullpen;
@@ -462,7 +464,6 @@ void fill(picture pic=currentpicture, mtile T, int layer=0) {
   tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
   if(Tdl.fillable) fill(pic, Td, Tdl.fillpen);
-  pen dpl=Tdl.drawpen;
 }
 
 void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {

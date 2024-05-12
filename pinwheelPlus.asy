@@ -13,15 +13,15 @@ tile tri=u--v--w--cycle;
 inflation=sqrt(5);
 
 // number of iterations
-int n=3;
+int n=5;
 
 // options
 bool drawTiles=true;  // draw the tiles
-bool drawCPs=false;  // draw critical points in each triangle
+bool drawCPs=true;  // draw critical points in each triangle
 bool drawFP=false;  // draw the fixed point of the tiling
-bool colourTiles=false;  // colour tiles by chirality
+bool colourTiles=true;  // colour tiles by chirality
 bool colourBorders=false;  // colour tile borders by chirality
-bool colourCPs=false;  // colour critical points by chirality
+bool colourCPs=true;  // colour critical points by chirality
 bool rotatePatch=true; // rotate the patch by arctan(1/2) each iteration
 bool reorientPatch=true;  // rotate the final patch by 90 degrees
 bool overlaySupertiles=true;  // overlay supertile borders
@@ -131,5 +131,3 @@ pair topRight=(FP.x+boxL/2,FP.y+boxW/2)+boxShift;
 pair topLeft=(FP.x-boxL/2,FP.y+boxW/2)+boxShift;
 path box=bottomLeft--bottomRight--topRight--topLeft--cycle;
 if(clipPatch) clip(g=box);
-
-
