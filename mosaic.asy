@@ -68,10 +68,6 @@ tile operator ^^(tile t1, tile t2) {
   return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen);
 }
 
-bool operator ==(tile T1, tile T2) {
-  return alias(T1,T2);
-}
-
 // write tiles (just writes boundary)
 void write(string s="", explicit tile t) {
   write(s,t.boundary);
@@ -176,10 +172,7 @@ struct substitution {
   }
 }
 
-mtile duplicate(mtile mt) {
-  return mtile(mt.transform, mt.supertile, mt.prototile, mt.drawtile, mt.index, mt.id);
-}
-
+// Create a deep copy of the mtile mt.
 mtile copy(mtile mt) {
   int L=mt.drawtile.length;
   tile[] dtcopy=new tile[L];
@@ -194,6 +187,22 @@ mtile copy(mtile mt) {
       mt.index, mt.id);
 }
 
+// Create a deep copy of the substitution s1.
+substitution copy(substitution s1) {
+  substitution s2=substitution(copy(s1.supertile),s1.inflation);
+  for(int i=0; i < s1.patch.length; ++i)
+    s2.patch.push(copy(s1.patch[i]));
+  return s2;
+}
+
+// Create a new mtile mt2 from mt1 with a shallow copy of the supertile,
+// prototile, and  drawtile.
+mtile duplicate(mtile mt1) {
+  mtile mt2=mtile(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile, mt1.index, mt1.id);
+  return mt2;
+}
+
+// Create a new substitution s2 from s1 with a shallow copy of the patch.
 substitution duplicate(substitution s1) {
   substitution s2=substitution(s1.supertile);
   s2.patch=s1.patch;
@@ -398,6 +407,7 @@ int searchtile(tile[] ts, tile t) {
   return -1;
 }
 
+// Create a deep copy of the mosaic M.
 mosaic copy(mosaic M) {
   mosaic M2;
 
