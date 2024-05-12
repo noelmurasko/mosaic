@@ -95,10 +95,10 @@ if(rotatePatch) M=RotVarphi*M;
 if(reorientPatch) M=Rot90*M;
 
 // draw the patch
-if(drawTiles) draw(M, layer=0);
+if(drawTiles) filldraw(M, layer=0);
 if(colourBorders){
-		draw(M, layer=2);  // negative chirality tiles
-		draw(M, layer=3);  // positive chirallity tiles
+		draw(M, layer=1);  // negative chirality tiles
+		draw(M, layer=2);  // positive chirallity tiles
 	}
 if(drawCPs) draw(M, layer=3);
 
