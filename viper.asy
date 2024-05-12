@@ -11,9 +11,9 @@ tile tri=(0,0)--(1,0)--(1/2,h)--cycle;
 inflation=3;
 
 // number of iterations
-int n=5;
+int n=1;
 
-// pinwheel substitution tiles
+// initialize viper substitution
 substitution viperSub=substitution(tri);
 
 // define the substitution rule
