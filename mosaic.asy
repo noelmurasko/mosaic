@@ -428,6 +428,9 @@ mosaic copy(mosaic M) {
   M2.layers=M.layers;
   M2.inflation=M.inflation;
 
+  M2.tilecount=M.tilecount;
+  M2.tilegrowth=M.tilegrowth;
+
   int Lt=M.tiles.length;
   int Lp=M.patch.length;
 
