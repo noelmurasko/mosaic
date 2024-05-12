@@ -157,7 +157,6 @@ if(drawall) {
   int n=10;
   //mosaic m1=mosaic(sca,n,scaSub,isoSub);
   mosaic m1=mosaic(iso,n,true,scaSub,isoSub);
-  write(m1.tilegrowth);
   draw(shift(sepX,0)*m1);
 
 }
