@@ -350,7 +350,7 @@ struct mosaic {
     }
   }
 
-  void substituteMS(real inflation=inflation) {
+  void substituteMS(real threshold=1, real inflation=inflation) {
     this.n+=1;
     mtile[] tiles=new mtile[];
     int sTL=this.tiles.length;
@@ -390,8 +390,6 @@ struct mosaic {
 
       // Iterate when bigger than threshold
       if(rule == "threshold") {
-        real threshold=0.09318;
-
         mtile[] sortedtiles;
         for(int i=0; i < this.tiles.length; ++i) {
           //write(scale2(this.tiles[i].transform));
@@ -412,7 +410,7 @@ struct mosaic {
       for(int i=0; i < applytransform.length; ++i) {
         this.loopMS(this.tiles[i],tiles,applytransform[i],inflation);
       }
-
+      write(tiles.length/this.tiles.length);
       this.tiles=tiles;
     }
   }
@@ -456,9 +454,16 @@ struct mosaic {
     }
     if(n > 0) {
       if(multiscale) {
+        real threshold=0;
+        for(int i=4; i < patch.length; ++i) {
+          real area=newinflation^2*trianglearea(this.patch[i].transform*this.patch[i].prototile);
+          if(area > threshold) threshold = area;
+        }
+        //write();
+        threshold-=1e-14;
         //this.substitute(1,inflation);
         for(int k=0; k < n; ++k) {
-          this.substituteMS(inflation);
+          this.substituteMS(threshold, inflation);
         }
       } else {
         for(int k=0; k < n; ++k) {

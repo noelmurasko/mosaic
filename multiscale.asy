@@ -8,7 +8,7 @@ import mosaic;
 // angles (radians)
 real w=(sqrt(5)-1)/2;
 real alph=pi*w^3;  // Ex.1
-//real alph=pi*w;  // Ex.2
+real alph=pi*w;  // Ex.2
 //real alph=pi/4;  // Ex.3
 //real beta=(1-epsi)*alph;
 //real epsi=0.6;  // general case (use 0.38196<epsi<1/2)
@@ -30,7 +30,9 @@ real b = sin(alph)/sin(beta);
 real c = 2a*b^2*cos(gamm);
 
 
-newinflation=1+b^2;
+//newinflation=1+b^2; // Ex.1
+newinflation=(1+b^2)/b^2; // Ex.2
+
 // image settings
 // real sepX=1.25;
 real sepX=1.25*c;
@@ -153,7 +155,7 @@ if(drawall) {
   mosaic m8=mosaic(iso,n,true,scaSub,isoSub);
   draw(shift(2sepX,-2sepY)*m8);
 } else {
-  int n=3;
+  int n=10;
   //mosaic m1=mosaic(sca,n,scaSub,isoSub);
   mosaic m1=mosaic(iso,n,true,scaSub,isoSub);
   draw(shift(sepX,0)*m1);
