@@ -524,25 +524,28 @@ void filldraw(picture pic=currentpicture, substitution s, pen p=currentpen,
 }
 
 // Draw mosaic. Layers are drawn in increasing order.
+// If scalelinewidth == true, the linewidth of the pen is scaled by the
+// inflation nscale times. The default value of nscale is the number of
+// iterations in the mosaic. When drawing a mosaic several times one mosaic
+// multiple times (with different iterations) nscale provides a convenient way
+// to use the same linewidth each time.
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
-          bool scalelinewidth=true) {
-  real scaling=inflationscaling(scalelinewidth,M.inflation,M.n);
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
   for(int l=0; l < M.layers; ++l)
     for(int k=0; k < M.tiles.length; ++k)
       draw(pic, M.tiles[k], p, scaling, l);
 }
 
-// Draw mosaic. Layers are drawn in increasing order.
 void fill(picture pic=currentpicture, mosaic M) {
   for(int l=0; l < M.layers; ++l)
     for(int k=0; k < M.tiles.length; ++k)
       fill(pic, M.tiles[k], l);
 }
 
-// Draw mosaic. Layers are drawn in increasing order.
 void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
-          bool scalelinewidth=true) {
-  real scaling=inflationscaling(scalelinewidth,M.inflation,M.n);
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
   for(int l=0; l < M.layers; ++l)
     for(int k=0; k < M.tiles.length; ++k)
       filldraw(pic, M.tiles[k], p, scaling, l);
@@ -550,8 +553,8 @@ void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
 
 // Draw layer of mosaic.
 void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
-          bool scalelinewidth=true) {
-  real scaling=inflationscaling(scalelinewidth,M.inflation,M.n);
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
   for(int k=0; k < M.tiles.length; ++k)
     draw(pic, M.tiles[k], p, scaling, layer);
 }
@@ -562,8 +565,8 @@ void fill(picture pic=currentpicture, mosaic M, int layer) {
 }
 
 void filldraw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
-          bool scalelinewidth=true) {
-  real scaling=inflationscaling(scalelinewidth,M.inflation,M.n);
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
   for(int k=0; k < M.tiles.length; ++k)
     filldraw(pic, M.tiles[k], p, scaling, layer);
 }
