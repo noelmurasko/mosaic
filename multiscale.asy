@@ -104,7 +104,7 @@ isoSub.addtile(shift(isoDefl*q4)*scale(b)*rotate(Alph)*r*scale(isoDefl),sca,scaP
 
 // draw the starting tile and first 5 iterations
 
-bool drawall=true;
+bool drawall=false;
 
 if(drawall) {
   int n=0;

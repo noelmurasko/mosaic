@@ -362,7 +362,7 @@ struct mosaic {
       int[] indices;
 
       // rule can be either "biggest" or "threshold"
-      string rule="biggest";
+      string rule="threshold";
 
       // Only iterate biggest (of same tile type)
       if(rule == "biggest") {
@@ -397,6 +397,8 @@ struct mosaic {
           //write(scale2(this.tiles[i].transform));
           //write(scale2(this.tiles[i].transform)*this.tiles[i].prototile.area*newinflation^(2*this.n));
           //write(newinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile));
+          //write(newinflation^((this.n-1))*sqrt(scale2(this.tiles[i].transform))*trianglearea(this.tiles[i].prototile));
+          //write();
           if(newinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile) >= threshold)
               indices.push(i);
         }
