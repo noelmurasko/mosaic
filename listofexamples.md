@@ -15,6 +15,7 @@ As of May 11, 2024.
 - PenroseRhomb.asy
 - periodDoubling.asy
 - pinwheel.asy
+  - The epidome of a tiling with statistical circular symmetry.
 - pinwheelPlus.asy
   - The pinwheel tiling with several decorations.
 - pinwheelVariant.asy
@@ -25,3 +26,4 @@ As of May 11, 2024.
   - A variation of the chair tiling using trominos (see https://tilings.math.uni-bielefeld.de/substitution/tromino1/).
 - triangle.asy
 - viper.asy
+  - Another tiling with statistical circular symmetry.
