@@ -436,9 +436,9 @@ struct mosaic {
         this.loopMS(this.tiles[i],tiles,applytransform[i],inflation);
       }
       this.tiles=tiles;
-      int tilesl=tiles.length;
-      this.tilecount.push(tilesl);
     }
+    int tilesl=tiles.length;
+    this.tilecount.push(tilesl);
   }
 
   void operator init(tile supertile=nulltile, int n=0, bool multiscale=false ...substitution[] rules) {
