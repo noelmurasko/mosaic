@@ -441,7 +441,7 @@ struct mosaic {
     this.tilecount.push(tilesl);
   }
 
-  void operator init(tile supertile=nulltile, int n=0, bool multiscale=false ...substitution[] rules) {
+  void operator init(tile supertile=nulltile, int n=0, bool multiscale=false, real threshold=1 ...substitution[] rules) {
     int ind=0;
     int Lr=rules.length;
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
@@ -495,13 +495,13 @@ struct mosaic {
     }
     if(n > 0) {
       if(multiscale) {
-        real threshold=0;
-        for(int i=4; i < patch.length; ++i) {
-          real area=newinflation^2*trianglearea(this.patch[i].transform*this.patch[i].prototile);
-          if(area > threshold) threshold = area;
-        }
+        //real threshold=0;
+        //for(int i=4; i < patch.length; ++i) {
+        //  real area=newinflation^2*trianglearea(this.patch[i].transform*this.patch[i].prototile);
+        //  if(area > threshold) threshold = area;
+        //}
         //write();
-        threshold-=1e-14;
+        //threshold-=1e-14;
         //this.substitute(1,inflation);
         for(int k=0; k < n; ++k) {
           this.substituteMS(threshold, inflation);
