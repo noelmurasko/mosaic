@@ -1,12 +1,6 @@
 real inflation=1;
 private real globalinflation() {return inflation;}
 
-bool checkfillable(path[] drawtile, int ind=0) {
-  for(int i=0; i < drawtile.length; ++i)
-    if(!cyclic(drawtile[i])) return false;
-  return true;
-}
-
 struct tile {
   restricted path[] boundary;
   restricted int length; //Remove
@@ -16,7 +10,9 @@ struct tile {
 
   void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen) {
     this.boundary=boundary;
-    this.fillable=checkfillable(boundary);
+    this.fillable=true;
+    for(int i=0; i < boundary.length; ++i)
+      if(!cyclic(boundary[i])) this.fillable=false;
     this.fillpen=fillpen;
     this.drawpen=drawpen;
     this.length=boundary.length;
