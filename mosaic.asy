@@ -7,44 +7,59 @@ struct tile {
   restricted bool fillable;
   pen fillpen;
   pen drawpen;
+  
+  pen shadepena;
+  pen shadepenb;
+  pair shadepointa;
+  pair shadepointb;
+  real shaderadiusa;
+  real shaderadiusb;
 
-  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen) {
+  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
     this.boundary=boundary;
     this.fillable=true;
     for(int i=0; i < boundary.length; ++i)
       if(!cyclic(boundary[i])) this.fillable=false;
     this.fillpen=fillpen;
     this.drawpen=drawpen;
+
+    this.shadepena=shadepena;
+    this.shadepenb=shadepenb;
+    this.shadepointa=shadepointa;
+    this.shadepointb=shadepointb;
+    this.shaderadiusa=shaderadiusa;
+    this.shaderadiusb=shaderadiusb;
+
     this.length=boundary.length;
   }
 }
 
-tile operator cast(path[] p, pen fillpen=nullpen, pen drawpen=nullpen) {
-  return tile(p,fillpen,drawpen);
+tile operator cast(path[] p, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
+  return tile(p,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb);
 }
 
 tile operator cast(path[] p) {
   return tile(p);
 }
 
-tile operator cast(pair p, pen fillpen=nullpen, pen drawpen=nullpen) {
-  return tile((path) p,fillpen,drawpen);
+tile operator cast(pair p, pen fillpen=nullpen, pen drawpen=nullpen,pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
+  return tile((path) p,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb);
 }
 
 tile operator cast(pair p) {
   return tile((path) p);
 }
 
-tile operator cast(path p, pen fillpen=nullpen, pen drawpen=nullpen) {
-  return tile(p,fillpen,drawpen);
+tile operator cast(path p, pen fillpen=nullpen, pen drawpen=nullpen,pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
+  return tile(p,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb);
 }
 
 tile operator cast(path p) {
   return tile(p);
 }
 
-tile operator cast(guide g, pen fillpen=nullpen, pen drawpen=nullpen) {
-  return tile(g,fillpen,drawpen);
+tile operator cast(guide g, pen fillpen=nullpen, pen drawpen=nullpen,pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
+  return tile(g,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb);
 }
 
 tile operator cast(guide g) {
@@ -52,16 +67,16 @@ tile operator cast(guide g) {
 }
 
 tile copy(tile t) {
-  return tile(copy(t.boundary),t.fillpen, t.drawpen);
+  return tile(copy(t.boundary),t.fillpen,t.drawpen,t.shadepena, t.shadepointa,t.shaderadiusa,t.shadepenb,t.shadepointb,t.shaderadiusb);
 }
 
 tile operator *(transform T, tile t) {
-  return tile(T*t.boundary, t.fillpen, t.drawpen);
+  return tile(T*t.boundary, t.fillpen, t.drawpen, t.shadepena, T*t.shadepointa,t.shaderadiusa,t.shadepenb,T*t.shadepointb,t.shaderadiusb);
 }
 
-// Note that the fillpen and drawpen the new tile is the same as t1.
+// Note that pens of the new tile are the same as t1.
 tile operator ^^(tile t1, tile t2) {
-  return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen);
+  return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen,t1.shadepointa,t1.shaderadiusa,t1.shadepenb,t1.shadepointb,t1.shaderadiusb);
 }
 
 // write tiles (just writes boundary)
@@ -98,7 +113,7 @@ struct mtile {
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
 
-    this.drawtile.push(tile(dt.boundary, fp, dp));
+    this.drawtile.push(tile(dt.boundary, fp, dp,dt.shadepena, dt.shadepointa,dt.shaderadiusa,dt.shadepenb,dt.shadepointb,dt.shaderadiusb));
 
     this.layers=1;
     this.id=id;
@@ -490,6 +505,16 @@ void filldraw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
   fill(pic, t.boundary, t.fillpen);
 }
 
+void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
+  axialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.shadepena
+    ,t.shadepointa,t.shadepenb,t.shadepointb);
+}
+
+void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
+  radialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.shadepena
+    ,t.shadepointa,t.shaderadiusa, t.shadepenb,t.shadepointb,t.shaderadiusb);
+}
+
 // Draw layer l of mtile.
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
   tile Tdl=T.drawtile[layer];
@@ -510,6 +535,18 @@ void fill(picture pic=currentpicture, mtile T, int layer=0) {
 void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
   fill(pic,T,layer);
   draw(pic,T,p,scaling,layer);
+}
+
+void axialshade(picture pic=currentpicture, mtile T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
+  tile Tdl=T.drawtile[layer];
+  path[] Td=T.transform*Tdl.boundary;
+  if(Tdl.fillable) axialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.shadepena ,T.transform*Tdl.shadepointa,Tdl.shadepenb,T.transform*Tdl.shadepointb);
+}
+
+void radialshade(picture pic=currentpicture, mtile T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
+  tile Tdl=T.drawtile[layer];
+  path[] Td=T.transform*Tdl.boundary;
+  if(Tdl.fillable) radialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.shadepena ,T.transform*Tdl.shadepointa,Tdl.shaderadiusa, Tdl.shadepenb,T.transform*Tdl.shadepointb,Tdl.shaderadiusb);
 }
 
 // Draw substitution. If drawoutline == true, also draw the supertile with
@@ -569,6 +606,18 @@ void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
       filldraw(pic, M.tiles[k], p, scaling, l);
 }
 
+void axialshade(picture pic=currentpicture, mosaic M, bool stroke=false, bool extenda=true, bool extendb=true) {
+  for(int l=0; l < M.layers; ++l)
+    for(int k=0; k < M.tiles.length; ++k)
+      axialshade(pic, M.tiles[k], l,stroke,extenda,extendb);
+}
+
+void radialshade(picture pic=currentpicture, mosaic M, bool stroke=false, bool extenda=true, bool extendb=true) {
+  for(int l=0; l < M.layers; ++l)
+    for(int k=0; k < M.tiles.length; ++k)
+      radialshade(pic, M.tiles[k], l,stroke,extenda,extendb);
+}
+
 // Draw layer of mosaic.
 void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
           bool scalelinewidth=true, int nscale=M.n) {
@@ -587,4 +636,14 @@ void filldraw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
   real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
   for(int k=0; k < M.tiles.length; ++k)
     filldraw(pic, M.tiles[k], p, scaling, layer);
+}
+
+void axialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
+  for(int k=0; k < M.tiles.length; ++k)
+    axialshade(pic, M.tiles[k], layer,stroke,extenda,extendb);
+}
+
+void radialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
+  for(int k=0; k < M.tiles.length; ++k)
+    radialshade(pic, M.tiles[k], layer,stroke,extenda,extendb);
 }
