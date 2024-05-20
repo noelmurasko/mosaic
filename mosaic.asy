@@ -7,7 +7,7 @@ struct tile {
   restricted bool fillable;
   pen fillpen;
   pen drawpen;
-  
+
   pen shadepena;
   pen shadepenb;
   pair shadepointa;
@@ -76,7 +76,7 @@ tile operator *(transform T, tile t) {
 
 // Note that pens of the new tile are the same as t1.
 tile operator ^^(tile t1, tile t2) {
-  return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen,t1.shadepointa,t1.shaderadiusa,t1.shadepenb,t1.shadepointb,t1.shaderadiusb);
+  return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen,t1.shadepena,t1.shadepointa,t1.shaderadiusa,t1.shadepenb,t1.shadepointb,t1.shaderadiusb);
 }
 
 // write tiles (just writes boundary)
@@ -120,6 +120,41 @@ struct mtile {
     this.index=0;
   }
 
+  void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
+                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena, pair shadepointa, pen shadepenb, pair shadepointb, string id="") {
+    this.transform=transform;
+    this.supertile=supertile;
+    this.prototile = prototile == nulltile ? supertile : prototile;
+
+    tile dt=drawtile == nulltile ? this.prototile : drawtile;
+    pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
+    pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
+
+    this.drawtile.push(tile(dt.boundary, fp, dp,shadepena, shadepointa,dt.shaderadiusa,shadepenb,shadepointb,dt.shaderadiusb));
+
+    this.layers=1;
+    this.id=id;
+    this.index=0;
+  }
+
+  void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
+                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb, string id="") {
+    this.transform=transform;
+    this.supertile=supertile;
+    this.prototile = prototile == nulltile ? supertile : prototile;
+
+    tile dt=drawtile == nulltile ? this.prototile : drawtile;
+    pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
+    pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
+
+    this.drawtile.push(tile(dt.boundary, fp, dp, shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb));
+
+    this.layers=1;
+    this.id=id;
+    this.index=0;
+  }
+
+  // Can this be removed?
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
                      tile[] drawtile, int index, string id="") {
     this.transform=transform;
@@ -179,6 +214,20 @@ struct substitution {
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
     m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
+    this.patch.push(m);
+  }
+
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
+                      pen shadepena, pair shadepointa, pen shadepenb, pair shadepointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    mtile m;
+    m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,shadepena, shadepointa,shadepenb,shadepointb,id);
+    this.patch.push(m);
+  }
+
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb,
+                     pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    mtile m;
+    m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb,id);
     this.patch.push(m);
   }
 }
