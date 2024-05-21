@@ -19,32 +19,16 @@ struct tile {
   }
 }
 
-tile operator cast(path[] p, pen fillpen=nullpen, pen drawpen=nullpen) {
-  return tile(p,fillpen,drawpen);
-}
-
 tile operator cast(path[] p) {
   return tile(p);
-}
-
-tile operator cast(pair p, pen fillpen=nullpen, pen drawpen=nullpen) {
-  return tile((path) p,fillpen,drawpen);
 }
 
 tile operator cast(pair p) {
   return tile((path) p);
 }
 
-tile operator cast(path p, pen fillpen=nullpen, pen drawpen=nullpen) {
-  return tile(p,fillpen,drawpen);
-}
-
 tile operator cast(path p) {
   return tile(p);
-}
-
-tile operator cast(guide g, pen fillpen=nullpen, pen drawpen=nullpen) {
-  return tile(g,fillpen,drawpen);
 }
 
 tile operator cast(guide g) {
