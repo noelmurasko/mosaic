@@ -15,7 +15,7 @@ struct tile {
   real shaderadiusa;
   real shaderadiusb;
 
-  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
+  private void initializer(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
     this.boundary=boundary;
     this.fillable=true;
     for(int i=0; i < boundary.length; ++i)
@@ -33,14 +33,12 @@ struct tile {
     this.length=boundary.length;
   }
 
+  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
+    this.initializer(boundary, fillpen, drawpen, shadepena, shadepointa, shaderadiusa, shadepenb, shadepointb, shaderadiusb);
+  }
+
   void operator init(pair boundary, pen drawpen=nullpen) {
-    this.boundary=(path) boundary;
-    this.fillable=false;
-    this.fillpen=nullpen;
-    this.drawpen=drawpen;
-    this.length=1;
-    this.shadepena=nullpen;
-    this.shadepenb=nullpen;
+    this.initializer((path) boundary, drawpen=drawpen);
   }
 }
 
