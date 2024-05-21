@@ -378,7 +378,7 @@ struct mosaic {
     for(int i=0; i < patch.length; ++i) {
       patchi=patch[i];
       if(patchi.supertile == T.prototile) {
-        tiles.push(scale(inflation)*T*patchi);
+        tiles.push(T*patchi);
       }
     }
   }
@@ -451,6 +451,8 @@ struct mosaic {
         int tilesl=tiles.length;
         this.tilecount.push(tilesl);
       }
+      for(int i=0; i < this.tiles.length; ++i)
+        this.tiles[i]=scale(inflation^n)*this.tiles[i];
       this.n+=n;
     } else {
       this.tiles.push(mtile(this.supertile));
