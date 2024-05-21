@@ -17,14 +17,18 @@ struct tile {
     this.drawpen=drawpen;
     this.length=boundary.length;
   }
-}
 
+  void operator init(pair boundary, pen drawpen=nullpen) {
+    this.boundary=(path) boundary;
+    this.fillable=false;
+    this.fillpen=nullpen;
+    this.drawpen=drawpen;
+    this.length=1;
+  }
+
+}
 tile operator cast(path[] p) {
   return tile(p);
-}
-
-tile operator cast(pair p) {
-  return tile((path) p);
 }
 
 tile operator cast(path p) {
@@ -33,6 +37,10 @@ tile operator cast(path p) {
 
 tile operator cast(guide g) {
   return tile(g);
+}
+
+tile operator cast(pair p) {
+  return tile(p);
 }
 
 tile copy(tile t) {
