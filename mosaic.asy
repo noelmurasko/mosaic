@@ -34,34 +34,46 @@ struct tile {
   }
 }
 
+<<<<<<< HEAD
 tile operator cast(path[] p, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
   return tile(p,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb);
 }
 
+=======
+>>>>>>> master
 tile operator cast(path[] p) {
   return tile(p);
 }
 
+<<<<<<< HEAD
 tile operator cast(pair p, pen fillpen=nullpen, pen drawpen=nullpen,pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
   return tile((path) p,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb);
 }
 
+=======
+>>>>>>> master
 tile operator cast(pair p) {
   return tile((path) p);
 }
 
+<<<<<<< HEAD
 tile operator cast(path p, pen fillpen=nullpen, pen drawpen=nullpen,pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
   return tile(p,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb);
 }
 
+=======
+>>>>>>> master
 tile operator cast(path p) {
   return tile(p);
 }
 
+<<<<<<< HEAD
 tile operator cast(guide g, pen fillpen=nullpen, pen drawpen=nullpen,pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
   return tile(g,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb);
 }
 
+=======
+>>>>>>> master
 tile operator cast(guide g) {
   return tile(g);
 }
