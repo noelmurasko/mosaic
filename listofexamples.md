@@ -7,6 +7,8 @@ As of May 11, 2024.
 - chair.asy
 - chairDot.asy
   - A modification of chair.asy, which uses the decoration/layer features of mosaic.
+- chairlabel.asy
+  - A modification of chair.asy, which uses the letter L (created from a Label) as a tile.
 - domino.asy
 - fudgeflake.asy
 - Hilbertcurve.asy
