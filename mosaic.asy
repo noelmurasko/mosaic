@@ -103,64 +103,49 @@ struct mtile {
   string id;
   int index; // Used to determine location of tile in a patch
 
-  void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+  private void initializer(transform transform=identity, tile supertile, tile prototile=nulltile,
+                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb, string id="") {
     this.transform=transform;
     this.supertile=supertile;
-    this.prototile = prototile == nulltile ? supertile : prototile;
 
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
 
-    this.drawtile.push(tile(dt.boundary, fillpen=fp, drawpen=dp,dt.shadepena, dt.shadepointa,dt.shaderadiusa,dt.shadepenb,dt.shadepointb,dt.shaderadiusb));
+    this.drawtile.push(tile(dt.boundary,fillpen=fp,drawpen=dp,shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb));
 
     this.layers=1;
     this.id=id;
     this.index=0;
+  }
+
+
+  void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
+                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.prototile = prototile == nulltile ? supertile : prototile;
+    tile dt=drawtile == nulltile ? this.prototile : drawtile;
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.shadepena,dt.shadepointa,dt.shaderadiusa,dt.shadepenb,dt.shadepointb,dt.shaderadiusb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
                      tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena, pair shadepointa, pen shadepenb, pair shadepointb, string id="") {
-    this.transform=transform;
-    this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
-
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
-    pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
-
-    this.drawtile.push(tile(dt.boundary, fillpen=fp, drawpen=dp,shadepena, shadepointa,dt.shaderadiusa,shadepenb,shadepointb,dt.shaderadiusb));
-
-    this.layers=1;
-    this.id=id;
-    this.index=0;
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,shadepena,shadepointa,dt.shaderadiusa,shadepenb,shadepointb,dt.shaderadiusb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
                      tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb, string id="") {
-    this.transform=transform;
-    this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
-
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
-    pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
-
-    this.drawtile.push(tile(dt.boundary, fillpen=fp, drawpen=dp, shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb));
-
-    this.layers=1;
-    this.id=id;
-    this.index=0;
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb,id);
   }
 
-  // Can this be removed?
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
                      tile[] drawtile, int index, string id="") {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
-
 
     this.drawtile=drawtile;
 
