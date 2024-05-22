@@ -19,7 +19,9 @@ struct tile {
   real rsradiusa;
   real rsradiusb;
 
-  private void initializer(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa=(0,0), pen aspenb=nullpen, pair aspointb=(0,0), pen rspena=nullpen, pair rspointa=(0,0), real rsradiusa=0, pen rspenb=nullpen, pair rspointb=(0,0),real rsradiusb=0) {
+  string id;
+
+  private void initializer(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa=(0,0), pen aspenb=nullpen, pair aspointb=(0,0), pen rspena=nullpen, pair rspointa=(0,0), real rsradiusa=0, pen rspenb=nullpen, pair rspointb=(0,0),real rsradiusb=0, string id="") {
     this.boundary=boundary;
 
     this.fillpen=fillpen;
@@ -36,26 +38,28 @@ struct tile {
     this.rspointb=rspointb;
     this.rsradiusa=rsradiusa;
     this.rsradiusb=rsradiusb;
+
+    this.id=id;
   }
 
-  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen) {
-    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen);
+  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen,id);
   }
 
-  void operator init(path[] boundary, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen) {
-    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb);
+  void operator init(path[] boundary, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb,id);
   }
 
-  void operator init(path[] boundary, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen) {
-    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb);
+  void operator init(path[] boundary, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
-  void operator init(path[] boundary, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen) {
-    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb);
+  void operator init(path[] boundary, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
-  void operator init(pair boundary, pen drawpen=nullpen) {
-    this.initializer((path) boundary, drawpen=drawpen);
+  void operator init(pair boundary, pen drawpen=nullpen,string id="") {
+    this.initializer((path) boundary, drawpen=drawpen,id);
   }
 
   bool fillable() {
@@ -82,7 +86,7 @@ tile operator cast(pair p) {
 }
 
 tile copy(tile t) {
-  return tile(copy(t.boundary),fillpen=t.fillpen,drawpen=t.drawpen,aspena=t.aspena,aspointa=t.aspointa,aspenb=t.aspenb,aspointb=t.aspointb,rspena=t.rspena,rspointa=t.rspointa,rsradiusa=t.rsradiusa,rspenb=t.rspenb,rspointb=t.rspointb,rsradiusb=t.rsradiusb);
+  return tile(copy(t.boundary),fillpen=t.fillpen,drawpen=t.drawpen,aspena=t.aspena,aspointa=t.aspointa,aspenb=t.aspenb,aspointb=t.aspointb,rspena=t.rspena,rspointa=t.rspointa,rsradiusa=t.rsradiusa,rspenb=t.rspenb,rspointb=t.rspointb,rsradiusb=t.rsradiusb,id=t.id);
 }
 
 tile operator *(transform T, tile t1) {
@@ -138,7 +142,10 @@ struct mtile {
     this.drawtile.push(tile(dt.boundary,fillpen=fp,drawpen=dp,aspena, aspointa, aspenb, aspointb,rspena, rspointa,rsradiusa,rspenb,rspointb,rsradiusb));
 
     this.layers=1;
-    this.id=id;
+    if(length(id) == 0)
+      this.id=prototile.id;
+    else
+      this.id=id;
     this.index=0;
   }
 
