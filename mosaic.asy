@@ -88,6 +88,10 @@ tile copy(tile t) {
 tile operator *(transform T, tile t1) {
   tile t2=copy(t1);
   t2.boundary=T*t1.boundary;
+  t2.aspointa=T*t1.aspointa;
+  t2.aspointb=T*t1.aspointb;
+  t2.rspointa=T*t1.rspointa;
+  t2.rspointb=T*t1.rspointb;
   return t2;
 }
 
@@ -565,7 +569,7 @@ void draw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
 }
 
 void fill(picture pic=currentpicture, explicit tile t) {
-  fill(pic, t.boundary, t.fillpen);
+  if(t.fillable()) fill(pic, t.boundary, t.fillpen);
 }
 
 void filldraw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
@@ -574,30 +578,28 @@ void filldraw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  axialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.aspena
+  if(t.fillable()) axialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.aspena
     ,t.aspointa,t.aspenb,t.aspointb);
 }
 
 void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  radialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.rspena
+  if(t.fillable()) radialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.rspena
     ,t.rspointa,t.rsradiusa, t.rspenb,t.rspointb,t.rsradiusb);
 }
 
 // Draw layer l of mtile.
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
   tile Tdl=T.drawtile[layer];
-  path[] Td=T.transform*Tdl.boundary;
   pen dpl=Tdl.drawpen;
   if(dpl != nullpen)
-    draw(pic,Td,dpl+scaling*linewidth(dpl));
+    draw(pic,T.transform*Tdl,dpl+scaling*linewidth(dpl));
   else
-    draw(pic,Td,p+scaling*linewidth(p));
+    draw(pic,T.transform*Tdl,p+scaling*linewidth(p));
 }
 
 void fill(picture pic=currentpicture, mtile T, int layer=0) {
   tile Tdl=T.drawtile[layer];
-  path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable()) fill(pic, Td, Tdl.fillpen);
+  fill(pic, T.transform*Tdl);
 }
 
 void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
@@ -607,14 +609,12 @@ void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scalin
 
 void axialshade(picture pic=currentpicture, mtile T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
-  path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable()) axialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.aspena ,T.transform*Tdl.aspointa,Tdl.aspenb,T.transform*Tdl.aspointb);
+  axialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda, extendb=extendb);
 }
 
 void radialshade(picture pic=currentpicture, mtile T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
-  path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable()) radialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.rspena ,T.transform*Tdl.rspointa,Tdl.rsradiusa, Tdl.rspenb,T.transform*Tdl.rspointb,Tdl.rsradiusb);
+  radialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda, extendb=extendb);
 }
 
 // Draw substitution. If drawoutline == true, also draw the supertile with
@@ -646,47 +646,12 @@ void filldraw(picture pic=currentpicture, substitution s, pen p=currentpen,
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
-// Draw mosaic. Layers are drawn in increasing order.
+// Draw layer of mosaic.
 // If scalelinewidth == true, the linewidth of the pen is scaled by the
 // inflation nscale times. The default value of nscale is the number of
 // iterations in the mosaic. When drawing a mosaic several times one mosaic
 // multiple times (with different iterations) nscale provides a convenient way
 // to use the same linewidth each time.
-void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
-          bool scalelinewidth=true, int nscale=M.n) {
-  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
-  for(int l=0; l < M.layers; ++l)
-    for(int k=0; k < M.tiles.length; ++k)
-      draw(pic, M.tiles[k], p, scaling, l);
-}
-
-void fill(picture pic=currentpicture, mosaic M) {
-  for(int l=0; l < M.layers; ++l)
-    for(int k=0; k < M.tiles.length; ++k)
-      fill(pic, M.tiles[k], l);
-}
-
-void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
-          bool scalelinewidth=true, int nscale=M.n) {
-  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
-  for(int l=0; l < M.layers; ++l)
-    for(int k=0; k < M.tiles.length; ++k)
-      filldraw(pic, M.tiles[k], p, scaling, l);
-}
-
-void axialshade(picture pic=currentpicture, mosaic M, bool stroke=false, bool extenda=true, bool extendb=true) {
-  for(int l=0; l < M.layers; ++l)
-    for(int k=0; k < M.tiles.length; ++k)
-      axialshade(pic, M.tiles[k], l,stroke,extenda,extendb);
-}
-
-void radialshade(picture pic=currentpicture, mosaic M, bool stroke=false, bool extenda=true, bool extendb=true) {
-  for(int l=0; l < M.layers; ++l)
-    for(int k=0; k < M.tiles.length; ++k)
-      radialshade(pic, M.tiles[k], l,stroke,extenda,extendb);
-}
-
-// Draw layer of mosaic.
 void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
           bool scalelinewidth=true, int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
@@ -714,4 +679,35 @@ void axialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=fal
 void radialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
   for(int k=0; k < M.tiles.length; ++k)
     radialshade(pic, M.tiles[k], layer,stroke,extenda,extendb);
+}
+
+// Draw all layers of mosaic. Layers are drawn in increasing order.
+void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
+          bool scalelinewidth=true, int nscale=M.n) {
+  for(int layer=0; layer < M.layers; ++layer)
+    draw(pic,M,layer,p,scalelinewidth,nscale);
+}
+
+void fill(picture pic=currentpicture, mosaic M) {
+  for(int layer=0; layer < M.layers; ++layer)
+    fill(pic,M,layer);
+}
+
+void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
+          bool scalelinewidth=true, int nscale=M.n) {
+  real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
+  for(int layer=0; layer < M.layers; ++layer) {
+    fill(pic,M,layer);
+    draw(pic,M,layer,p,scalelinewidth,nscale);
+  }
+}
+
+void axialshade(picture pic=currentpicture, mosaic M, bool stroke=false, bool extenda=true, bool extendb=true) {
+  for(int layer=0; layer < M.layers; ++layer)
+    axialshade(pic,M,layer,stroke,extenda,extendb);
+}
+
+void radialshade(picture pic=currentpicture, mosaic M, bool stroke=false, bool extenda=true, bool extendb=true) {
+  for(int layer=0; layer < M.layers; ++layer)
+    radialshade(pic,M,layer,stroke,extenda,extendb);
 }
