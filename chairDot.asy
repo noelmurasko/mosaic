@@ -17,9 +17,8 @@ chairRule.addtile(shift(0,4)*rotate(270),lightblue,id="D");
 int n=4;
 mosaic M=mosaic(chair,n,chairRule);
 
-pair dot=(1/2,1/2);
-M.addlayer(dot,black+10);
-
+tile dot=tile((1/2,1/2),black+10);
+M.addlayer(dot);
 
 tile pentagon=shift(7/5,1/2)*rotate(30)*scale(1/5)*polygon(5);
 tile hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);

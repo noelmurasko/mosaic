@@ -190,8 +190,8 @@ struct mtile {
     this.id=id;
   }
 
-  void addlayer(tile drawtile, pen fillpen, pen drawpen) {
-    this.drawtile.push(tile(drawtile.boundary, fillpen, drawpen));
+  void addlayer(tile drawtile) {
+    this.drawtile.push(copy(drawtile));
     this.layers+=1;
   }
 
@@ -200,19 +200,8 @@ struct mtile {
   }
 
   void setpen(pen fillpen, pen drawpen, int ind) {
-    bool fpnull=fillpen == nullpen;
-    bool dpnull=drawpen == nullpen;
-    if(drawtile[ind].fillable()) {
-      if(!fpnull) drawtile[ind].fillpen=fillpen;
-      if(!dpnull) drawtile[ind].drawpen=drawpen;
-    } else {
-      if(fpnull & !dpnull) {
-        drawtile[ind].drawpen=drawpen;
-      }
-      else if(dpnull & !fpnull) {
-        drawtile[ind].drawpen=fillpen;
-      }
-    }
+    if(fillpen != nullpen) drawtile[ind].fillpen=fillpen;
+    if(drawpen != nullpen) drawtile[ind].drawpen=drawpen;
   }
 }
 
@@ -331,31 +320,9 @@ struct mosaic {
 
   // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
   // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
-  void addlayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen) {
-    pen fp;
-    pen dp;
-    bool fpnull=fillpen == nullpen;
-    bool dpnull=drawpen == nullpen;
-    bool tilehasfillpen=drawtile.fillpen != nullpen;
-    bool tilehasdrawpen=drawtile.drawpen != nullpen;
-
-    if(drawtile.fillable()) {
-      fp=tilehasfillpen ? drawtile.fillpen : fillpen;
-      dp=tilehasdrawpen ? drawtile.drawpen : drawpen;
-    } else {
-      if(fpnull & !dpnull) {
-        fp=nullpen;
-        dp=tilehasdrawpen ? drawtile.drawpen : drawpen;
-      }
-      else if(dpnull & !fpnull) {
-        fp=nullpen;
-        dp=tilehasfillpen ? drawtile.fillpen : fillpen;
-      }
-    }
-
-    int L=patch.length;
-    for(int i=0; i < L; ++i) {
-      patch[i].addlayer(drawtile,fp,dp);
+  void addlayer(tile drawtile=nulltile) {
+    for(int i=0; i < patch.length; ++i) {
+      patch[i].addlayer(drawtile);
     }
     layers+=1;
   }
