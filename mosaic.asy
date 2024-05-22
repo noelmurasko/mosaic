@@ -33,7 +33,15 @@ struct tile {
     this.length=boundary.length;
   }
 
-  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
+  void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen) {
+    this.initializer(boundary, fillpen, drawpen);
+  }
+
+  void operator init(path[] boundary, pen shadepena=nullpen, pair shadepointa, pen shadepenb=nullpen, pair shadepointb, pen fillpen=nullpen, pen drawpen=nullpen) {
+    this.initializer(boundary, fillpen, drawpen, shadepena, shadepointa, shadepenb, shadepointb);
+  }
+
+  void operator init(path[] boundary, pen shadepena=nullpen, pair shadepointa, real shaderadiusa, pen shadepenb=nullpen, pair shadepointb,real shaderadiusb, pen fillpen=nullpen, pen drawpen=nullpen) {
     this.initializer(boundary, fillpen, drawpen, shadepena, shadepointa, shaderadiusa, shadepenb, shadepointb, shaderadiusb);
   }
 
@@ -59,16 +67,16 @@ tile operator cast(pair p) {
 }
 
 tile copy(tile t) {
-  return tile(copy(t.boundary),t.fillpen,t.drawpen,t.shadepena, t.shadepointa,t.shaderadiusa,t.shadepenb,t.shadepointb,t.shaderadiusb);
+  return tile(copy(t.boundary),fillpen=t.fillpen,drawpen=t.drawpen,t.shadepena, t.shadepointa,t.shaderadiusa,t.shadepenb,t.shadepointb,t.shaderadiusb);
 }
 
 tile operator *(transform T, tile t) {
-  return tile(T*t.boundary, t.fillpen, t.drawpen, t.shadepena, T*t.shadepointa,t.shaderadiusa,t.shadepenb,T*t.shadepointb,t.shaderadiusb);
+  return tile(T*t.boundary, fillpen=t.fillpen,drawpen=t.drawpen, t.shadepena, T*t.shadepointa,t.shaderadiusa,t.shadepenb,T*t.shadepointb,t.shaderadiusb);
 }
 
 // Note that pens of the new tile are the same as t1.
 tile operator ^^(tile t1, tile t2) {
-  return tile(t1.boundary^^t2.boundary, t1.fillpen, t1.drawpen,t1.shadepena,t1.shadepointa,t1.shaderadiusa,t1.shadepenb,t1.shadepointb,t1.shaderadiusb);
+  return tile(t1.boundary^^t2.boundary, fillpen=t1.fillpen, drawpen=t1.drawpen,t1.shadepena,t1.shadepointa,t1.shaderadiusa,t1.shadepenb,t1.shadepointb,t1.shaderadiusb);
 }
 
 // write tiles (just writes boundary)
@@ -105,7 +113,7 @@ struct mtile {
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
 
-    this.drawtile.push(tile(dt.boundary, fp, dp,dt.shadepena, dt.shadepointa,dt.shaderadiusa,dt.shadepenb,dt.shadepointb,dt.shaderadiusb));
+    this.drawtile.push(tile(dt.boundary, fillpen=fp, drawpen=dp,dt.shadepena, dt.shadepointa,dt.shaderadiusa,dt.shadepenb,dt.shadepointb,dt.shaderadiusb));
 
     this.layers=1;
     this.id=id;
@@ -122,7 +130,7 @@ struct mtile {
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
 
-    this.drawtile.push(tile(dt.boundary, fp, dp,shadepena, shadepointa,dt.shaderadiusa,shadepenb,shadepointb,dt.shaderadiusb));
+    this.drawtile.push(tile(dt.boundary, fillpen=fp, drawpen=dp,shadepena, shadepointa,dt.shaderadiusa,shadepenb,shadepointb,dt.shaderadiusb));
 
     this.layers=1;
     this.id=id;
@@ -139,7 +147,7 @@ struct mtile {
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
 
-    this.drawtile.push(tile(dt.boundary, fp, dp, shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb));
+    this.drawtile.push(tile(dt.boundary, fillpen=fp, drawpen=dp, shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb));
 
     this.layers=1;
     this.id=id;
