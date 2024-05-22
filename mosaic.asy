@@ -2,20 +2,25 @@ real inflation=1;
 private real globalinflation() {return inflation;}
 
 struct tile {
-  restricted path[] boundary;
-  restricted int length; //Remove
-  restricted bool fillable;
+  path[] boundary;
+  int length; //Remove
+  bool fillable;
   pen fillpen;
   pen drawpen;
 
-  pen shadepena;
-  pen shadepenb;
-  pair shadepointa;
-  pair shadepointb;
-  real shaderadiusa;
-  real shaderadiusb;
+  pen aspena;
+  pen aspenb;
+  pair aspointa;
+  pair aspointb;
 
-  private void initializer(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena=nullpen, pair shadepointa=(0,0), real shaderadiusa=0, pen shadepenb=nullpen, pair shadepointb=(0,0),real shaderadiusb=0) {
+  pen rspena;
+  pen rspenb;
+  pair rspointa;
+  pair rspointb;
+  real rsradiusa;
+  real rsradiusb;
+
+  private void initializer(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa=(0,0), pen aspenb=nullpen, pair aspointb=(0,0), pen rspena=nullpen, pair rspointa=(0,0), real rsradiusa=0, pen rspenb=nullpen, pair rspointb=(0,0),real rsradiusb=0) {
     this.boundary=boundary;
     this.fillable=true;
     for(int i=0; i < boundary.length; ++i)
@@ -23,26 +28,35 @@ struct tile {
     this.fillpen=fillpen;
     this.drawpen=drawpen;
 
-    this.shadepena=shadepena;
-    this.shadepenb=shadepenb;
-    this.shadepointa=shadepointa;
-    this.shadepointb=shadepointb;
-    this.shaderadiusa=shaderadiusa;
-    this.shaderadiusb=shaderadiusb;
+    this.aspena=aspena;
+    this.aspenb=aspenb;
+    this.aspointa=aspointa;
+    this.aspointb=aspointb;
+
+    this.rspena=rspena;
+    this.rspenb=rspenb;
+    this.rspointa=rspointa;
+    this.rspointb=rspointb;
+    this.rsradiusa=rsradiusa;
+    this.rsradiusb=rsradiusb;
 
     this.length=boundary.length;
   }
 
   void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen) {
-    this.initializer(boundary, fillpen, drawpen);
+    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen);
   }
 
-  void operator init(path[] boundary, pen shadepena=nullpen, pair shadepointa, pen shadepenb=nullpen, pair shadepointb, pen fillpen=nullpen, pen drawpen=nullpen) {
-    this.initializer(boundary, fillpen, drawpen, shadepena, shadepointa, shadepenb, shadepointb);
+  void operator init(path[] boundary, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen) {
+    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb);
   }
 
-  void operator init(path[] boundary, pen shadepena=nullpen, pair shadepointa, real shaderadiusa, pen shadepenb=nullpen, pair shadepointb,real shaderadiusb, pen fillpen=nullpen, pen drawpen=nullpen) {
-    this.initializer(boundary, fillpen, drawpen, shadepena, shadepointa, shaderadiusa, shadepenb, shadepointb, shaderadiusb);
+  void operator init(path[] boundary, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen) {
+    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb);
+  }
+
+  void operator init(path[] boundary, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen) {
+    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb);
   }
 
   void operator init(pair boundary, pen drawpen=nullpen) {
@@ -67,16 +81,20 @@ tile operator cast(pair p) {
 }
 
 tile copy(tile t) {
-  return tile(copy(t.boundary),fillpen=t.fillpen,drawpen=t.drawpen,t.shadepena, t.shadepointa,t.shaderadiusa,t.shadepenb,t.shadepointb,t.shaderadiusb);
+  return tile(copy(t.boundary),fillpen=t.fillpen,drawpen=t.drawpen,aspena=t.aspena,aspointa=t.aspointa,aspenb=t.aspenb,aspointb=t.aspointb,rspena=t.rspena,rspointa=t.rspointa,rsradiusa=t.rsradiusa,rspenb=t.rspenb,rspointb=t.rspointb,rsradiusb=t.rsradiusb);
 }
 
-tile operator *(transform T, tile t) {
-  return tile(T*t.boundary, fillpen=t.fillpen,drawpen=t.drawpen, t.shadepena, T*t.shadepointa,t.shaderadiusa,t.shadepenb,T*t.shadepointb,t.shaderadiusb);
+tile operator *(transform T, tile t1) {
+  tile t2=copy(t1);
+  t2.boundary=T*t1.boundary;
+  return t2;
 }
 
-// Note that pens of the new tile are the same as t1.
+// Note that pens and shading settings of the new tile are the same as t1.
 tile operator ^^(tile t1, tile t2) {
-  return tile(t1.boundary^^t2.boundary, fillpen=t1.fillpen, drawpen=t1.drawpen,t1.shadepena,t1.shadepointa,t1.shaderadiusa,t1.shadepenb,t1.shadepointb,t1.shaderadiusb);
+  tile t3=copy(t1);
+  t3.boundary=t1.boundary^^t2.boundary;
+  return t3;
 }
 
 // write tiles (just writes boundary)
@@ -103,8 +121,8 @@ struct mtile {
   string id;
   int index; // Used to determine location of tile in a patch
 
-  private void initializer(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb, string id="") {
+  private void initializer(transform transform, tile supertile, tile prototile,
+                     tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, string id="") {
     this.transform=transform;
     this.supertile=supertile;
 
@@ -112,33 +130,39 @@ struct mtile {
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
 
-    this.drawtile.push(tile(dt.boundary,fillpen=fp,drawpen=dp,shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb));
+    this.drawtile.push(tile(dt.boundary,fillpen=fp,drawpen=dp,aspena, aspointa, aspenb, aspointb,rspena, rspointa,rsradiusa,rspenb,rspointb,rsradiusb));
 
     this.layers=1;
     this.id=id;
     this.index=0;
   }
 
-
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
                      tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.shadepena,dt.shadepointa,dt.shaderadiusa,dt.shadepenb,dt.shadepointb,dt.shaderadiusb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.aspena, dt.aspointa,dt.aspenb,dt.aspointb,dt.rspena,dt.rspointa,dt.rsradiusa,dt.rspenb,dt.rspointb,dt.rsradiusb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen shadepena, pair shadepointa, pen shadepenb, pair shadepointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,shadepena,shadepointa,dt.shaderadiusa,shadepenb,shadepointb,dt.shaderadiusb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,aspena, aspointa, aspenb, aspointb,dt.rspena,dt.rspointa,dt.rsradiusa,dt.rspenb,dt.rspointb,dt.rsradiusb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.aspena, dt.aspointa, dt.aspenb, dt.aspointb, rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,id);
+  }
+
+  void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
+                     tile drawtile=nulltile, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.prototile = prototile == nulltile ? supertile : prototile;
+    tile dt=drawtile == nulltile ? this.prototile : drawtile;
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen, aspena, aspointa, aspenb, aspointb, rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
@@ -203,16 +227,23 @@ struct substitution {
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
-                      pen shadepena, pair shadepointa, pen shadepenb, pair shadepointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                      pen aspena, pair aspointa, pen aspenb, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
-    m=mtile(transform,this.supertile,prototile,drawtile,shadepena, shadepointa,shadepenb,shadepointb,fillpen,drawpen,id);
+    m=mtile(transform,this.supertile,prototile,drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,id);
     this.patch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
-    m=mtile(transform,this.supertile,prototile,drawtile,shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb,fillpen,drawpen,id);
+    m=mtile(transform,this.supertile,prototile,drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,id);
+    this.patch.push(m);
+  }
+
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb,
+                     pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    mtile m;
+    m=mtile(transform,this.supertile,prototile,drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,id);
     this.patch.push(m);
   }
 }
@@ -542,13 +573,13 @@ void filldraw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  axialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.shadepena
-    ,t.shadepointa,t.shadepenb,t.shadepointb);
+  axialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.aspena
+    ,t.aspointa,t.aspenb,t.aspointb);
 }
 
 void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  radialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.shadepena
-    ,t.shadepointa,t.shaderadiusa, t.shadepenb,t.shadepointb,t.shaderadiusb);
+  radialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.rspena
+    ,t.rspointa,t.rsradiusa, t.rspenb,t.rspointb,t.rsradiusb);
 }
 
 // Draw layer l of mtile.
@@ -576,13 +607,13 @@ void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scalin
 void axialshade(picture pic=currentpicture, mtile T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable) axialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.shadepena ,T.transform*Tdl.shadepointa,Tdl.shadepenb,T.transform*Tdl.shadepointb);
+  if(Tdl.fillable) axialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.aspena ,T.transform*Tdl.aspointa,Tdl.aspenb,T.transform*Tdl.aspointb);
 }
 
 void radialshade(picture pic=currentpicture, mtile T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable) radialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.shadepena ,T.transform*Tdl.shadepointa,Tdl.shaderadiusa, Tdl.shadepenb,T.transform*Tdl.shadepointb,Tdl.shaderadiusb);
+  if(Tdl.fillable) radialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.rspena ,T.transform*Tdl.rspointa,Tdl.rsradiusa, Tdl.rspenb,T.transform*Tdl.rspointb,Tdl.rsradiusb);
 }
 
 // Draw substitution. If drawoutline == true, also draw the supertile with

@@ -11,10 +11,10 @@ tile chair=tile((0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle,white, (0,0), gr
 
 // substitution rule
 substitution chairRule=substitution(chair);
-chairRule.addtile(white);
-chairRule.addtile(shift(1,1),orange);
-chairRule.addtile(shift(4,0)*rotate(90),lightblue);
-chairRule.addtile(shift(0,4)*rotate(270),lightblue);
+chairRule.addtile();
+chairRule.addtile(shift(1,1));
+chairRule.addtile(shift(4,0)*rotate(90));
+chairRule.addtile(shift(0,4)*rotate(270));
 
 // draw patch
 int n=5;
