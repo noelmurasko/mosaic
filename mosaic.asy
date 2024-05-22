@@ -3,8 +3,7 @@ private real globalinflation() {return inflation;}
 
 struct tile {
   path[] boundary;
-  int length; //Remove
-  bool fillable;
+
   pen fillpen;
   pen drawpen;
 
@@ -22,9 +21,7 @@ struct tile {
 
   private void initializer(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa=(0,0), pen aspenb=nullpen, pair aspointb=(0,0), pen rspena=nullpen, pair rspointa=(0,0), real rsradiusa=0, pen rspenb=nullpen, pair rspointb=(0,0),real rsradiusb=0) {
     this.boundary=boundary;
-    this.fillable=true;
-    for(int i=0; i < boundary.length; ++i)
-      if(!cyclic(boundary[i])) this.fillable=false;
+
     this.fillpen=fillpen;
     this.drawpen=drawpen;
 
@@ -39,8 +36,6 @@ struct tile {
     this.rspointb=rspointb;
     this.rsradiusa=rsradiusa;
     this.rsradiusb=rsradiusb;
-
-    this.length=boundary.length;
   }
 
   void operator init(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen) {
@@ -61,6 +56,12 @@ struct tile {
 
   void operator init(pair boundary, pen drawpen=nullpen) {
     this.initializer((path) boundary, drawpen=drawpen);
+  }
+
+  bool fillable() {
+    for(int i=0; i < this.boundary.length; ++i)
+      if(!cyclic(this.boundary[i])) return false;
+    return true;
   }
 }
 
@@ -104,11 +105,11 @@ void write(string s="", explicit tile t) {
 
 tile nulltile=tile(nullpath);
 
-bool checkfillable(tile drawtile, int ind=0) {
-  for(int i=0; i < drawtile.length; ++i)
-    if(!cyclic(drawtile.boundary[i])) return false;
-  return true;
-}
+//bool fillcheckable(tile drawtile, int ind=0) {
+//  for(int i=0; i < drawtile.length; ++i)
+//    if(!cyclic(drawtile.boundary[i])) return false;
+//  return true;
+//}
 
 struct mtile {
   transform transform;
@@ -190,7 +191,7 @@ struct mtile {
   void setpen(pen fillpen, pen drawpen, int ind) {
     bool fpnull=fillpen == nullpen;
     bool dpnull=drawpen == nullpen;
-    if(drawtile[ind].fillable) {
+    if(drawtile[ind].fillable()) {
       if(!fpnull) drawtile[ind].fillpen=fillpen;
       if(!dpnull) drawtile[ind].drawpen=drawpen;
     } else {
@@ -327,7 +328,7 @@ struct mosaic {
     bool tilehasfillpen=drawtile.fillpen != nullpen;
     bool tilehasdrawpen=drawtile.drawpen != nullpen;
 
-    if(drawtile.fillable) {
+    if(drawtile.fillable()) {
       fp=tilehasfillpen ? drawtile.fillpen : fillpen;
       dp=tilehasdrawpen ? drawtile.drawpen : drawpen;
     } else {
@@ -596,7 +597,7 @@ void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1,
 void fill(picture pic=currentpicture, mtile T, int layer=0) {
   tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable) fill(pic, Td, Tdl.fillpen);
+  if(Tdl.fillable()) fill(pic, Td, Tdl.fillpen);
 }
 
 void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
@@ -607,13 +608,13 @@ void filldraw(picture pic=currentpicture, mtile T, pen p=currentpen, real scalin
 void axialshade(picture pic=currentpicture, mtile T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable) axialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.aspena ,T.transform*Tdl.aspointa,Tdl.aspenb,T.transform*Tdl.aspointb);
+  if(Tdl.fillable()) axialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.aspena ,T.transform*Tdl.aspointa,Tdl.aspenb,T.transform*Tdl.aspointb);
 }
 
 void radialshade(picture pic=currentpicture, mtile T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
   path[] Td=T.transform*Tdl.boundary;
-  if(Tdl.fillable) radialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.rspena ,T.transform*Tdl.rspointa,Tdl.rsradiusa, Tdl.rspenb,T.transform*Tdl.rspointb,Tdl.rsradiusb);
+  if(Tdl.fillable()) radialshade(pic, Td, stroke=stroke, extenda=extenda, extendb=extendb, Tdl.rspena ,T.transform*Tdl.rspointa,Tdl.rsradiusa, Tdl.rspenb,T.transform*Tdl.rspointb,Tdl.rsradiusb);
 }
 
 // Draw substitution. If drawoutline == true, also draw the supertile with
