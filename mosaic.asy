@@ -128,14 +128,14 @@ struct mtile {
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena, pair shadepointa, pen shadepenb, pair shadepointb, string id="") {
+                     tile drawtile=nulltile, pen shadepena, pair shadepointa, pen shadepenb, pair shadepointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,shadepena,shadepointa,dt.shaderadiusa,shadepenb,shadepointb,dt.shaderadiusb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb, string id="") {
+                     tile drawtile=nulltile, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,shadepena,shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb,id);
@@ -205,14 +205,14 @@ struct substitution {
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                       pen shadepena, pair shadepointa, pen shadepenb, pair shadepointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
-    m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,shadepena, shadepointa,shadepenb,shadepointb,id);
+    m=mtile(transform,this.supertile,prototile,drawtile,shadepena, shadepointa,shadepenb,shadepointb,fillpen,drawpen,id);
     this.patch.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen shadepena, pair shadepointa, real shaderadiusa, pen shadepenb, pair shadepointb, real shaderadiusb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     mtile m;
-    m=mtile(transform,this.supertile,prototile,drawtile,fillpen,drawpen,shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb,id);
+    m=mtile(transform,this.supertile,prototile,drawtile,shadepena, shadepointa,shaderadiusa,shadepenb,shadepointb,shaderadiusb,fillpen,drawpen,id);
     this.patch.push(m);
   }
 }
