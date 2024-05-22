@@ -391,21 +391,8 @@ struct mosaic {
     set(fillpen,drawpen,layer,id);
   }
 
-  // Overloading set to take a string provides no new functionality except
-  // one can now use the keyword "id=" when calling set(). I'm uncertain if
-  // this is worth it or not.
-  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string id) {
-    string[] idarray={id};
-    set(fillpen,drawpen,layer,idarray);
-  }
-
   void set(tile drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(drawtile, fillpen,drawpen,layer,id);
-  }
-
-  void set(tile drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string id) {
-    string[] idarray={id};
-    set(drawtile, fillpen, drawpen,layer,idarray);
   }
 
   private void iterate(mtile T, mtile[] tiles,
