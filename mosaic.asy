@@ -195,13 +195,10 @@ struct mtile {
     this.layers+=1;
   }
 
-  void setdrawtile(tile drawtile, int ind) {
-    this.drawtile[ind]=drawtile;
-  }
-
-  void setpen(pen fillpen, pen drawpen, int ind) {
-    if(fillpen != nullpen) drawtile[ind].fillpen=fillpen;
-    if(drawpen != nullpen) drawtile[ind].drawpen=drawpen;
+  void set(tile drawtile, pen fillpen, pen drawpen, int ind) {
+    if(drawtile != nulltile) this.drawtile[ind]=drawtile;
+    if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
+    if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
   }
 }
 
@@ -327,40 +324,23 @@ struct mosaic {
     layers+=1;
   }
 
-  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
-    int ind=layer < 0 ? layers-1 : layer;
-    int idlength=id.length;
-    for(int i=0; i < patch.length; ++i) {
-      for(int j=0; j < max(idlength,1); ++j) {
-        if(idlength == 0 || patch[i].id == id[j]) {
-          patch[i].setpen(fillpen,drawpen,ind);
-          break;
-        }
-      }
-    }
-  }
-
-  void set(tile drawtile, pen fillpen=nullpen, pen drawpen=nullpen,int layer=-1, string[] id) {
+  void set(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen,int layer=-1, string[] id) {
       int ind=layer < 0 ? layers-1 : layer;
       int idlength=id.length;
       for(int i=0; i < patch.length; ++i) {
         for(int j=0; j < max(idlength,1); ++j) {
           if(idlength == 0 || patch[i].id == id[j]) {
-            patch[i].setdrawtile(drawtile,ind);
-            patch[i].setpen(fillpen,drawpen,ind);
+            patch[i].set(drawtile,fillpen,drawpen,ind);
             break;
           }
         }
       }
     }
 
-  void set(pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
-    set(fillpen,drawpen,layer,id);
-  }
-
-  void set(tile drawtile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+  void set(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(drawtile, fillpen,drawpen,layer,id);
   }
+
 
   private void iterate(mtile T, mtile[] tiles,
           real inflation=inflation) {
