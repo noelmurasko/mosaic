@@ -315,8 +315,7 @@ struct mosaic {
   // tilecount[k] is the number of tiles in iteration k
   int[] tilecount;
 
-  // addlayer() Adds a new layer with a drawtile, fillpen and drawpen.
-  // If only 1 pen p is specified, addlayer() checks whether or not the drawtile is fillable. If it is, p is the fillpen, and if not p is the drawpen
+  // addlayer() Adds a new layer with a drawtile.
   void addlayer(tile drawtile=nulltile) {
     for(int i=0; i < patch.length; ++i) {
       patch[i].addlayer(drawtile);
@@ -324,23 +323,22 @@ struct mosaic {
     layers+=1;
   }
 
-  void set(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen,int layer=-1, string[] id) {
-      int ind=layer < 0 ? layers-1 : layer;
-      int idlength=id.length;
-      for(int i=0; i < patch.length; ++i) {
-        for(int j=0; j < max(idlength,1); ++j) {
-          if(idlength == 0 || patch[i].id == id[j]) {
-            patch[i].set(drawtile,fillpen,drawpen,ind);
-            break;
-          }
+  void set(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+    int ind=layer < 0 ? layers-1 : layer;
+    int idlength=id.length;
+    for(int i=0; i < patch.length; ++i) {
+      for(int j=0; j < max(idlength,1); ++j) {
+        if(idlength == 0 || patch[i].id == id[j]) {
+          patch[i].set(drawtile,fillpen,drawpen,ind);
+          break;
         }
       }
     }
+  }
 
   void set(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     set(drawtile, fillpen,drawpen,layer,id);
   }
-
 
   private void iterate(mtile T, mtile[] tiles,
           real inflation=inflation) {
