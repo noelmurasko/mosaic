@@ -589,12 +589,14 @@ void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
 
 // Draw layer l of mtile.
 void draw(picture pic=currentpicture, mtile T, pen p=currentpen, real scaling=1, int layer=0) {
-  tile Tdl=T.drawtile[layer];
+  tile Tdl=T.transform*T.drawtile[layer];
   pen dpl=Tdl.drawpen;
-  if(dpl != nullpen)
-    draw(pic,T.transform*Tdl,dpl+scaling*linewidth(dpl));
-  else
-    draw(pic,T.transform*Tdl,p+scaling*linewidth(p));
+  if(dpl != nullpen) {
+    Tdl.drawpen=dpl+scaling*linewidth(dpl);
+    draw(pic,Tdl);
+  } else {
+    draw(pic,Tdl,p+scaling*linewidth(p));
+  }
 }
 
 void fill(picture pic=currentpicture, mtile T, int layer=0) {

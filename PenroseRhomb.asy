@@ -32,4 +32,6 @@ rhomb2Rule.addtile(shift(b,a)*rotate(108),rhomb1);
 
 int n=4;
 mosaic M=mosaic(rhomb1,n,rhomb1Rule,rhomb2Rule);
+pair dot=(0,1/2);
+M.addlayer(dot,black+10);
 filldraw(M);
