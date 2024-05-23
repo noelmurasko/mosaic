@@ -3,51 +3,103 @@ size(300);
 
 import mosaic;
 
+real w=(sqrt(5)-1)/2;  // inverse golden mean
 
+// Example 1: golden angle cubed, isosceles
 // angles (radians)
-real w=(sqrt(5)-1)/2;
-real alph=pi*w^3;  // Ex.1
-real alph=pi*w;  // Ex.2
-//real alph=pi/4;  // Ex.3
+// real alph=pi*w^3;
+// real beta=(pi-alph)/2;
+// real gamm=pi-alph-beta;
+// bool isostart=true;
+
+// Example 2: golden angle, isosceles
+// real alph=pi*w;  
+// real beta=(pi-alph)/2;
+// real gamm=pi-alph-beta;
+// bool isostart=true;
+
+// Example 3: golden angle, scalene
+ real alph=pi*w;  
+ real beta=pi*w^3;
+ real gamm=pi-alph-beta;
+ bool isostart=false;
+
+// Example 4: golden angle, scalene
+//real alph=pi*w;  
+//real epsi=0.6;  // (needs 0.38196<epsi<1/2)
 //real beta=(1-epsi)*alph;
-//real epsi=0.6;  // general case (use 0.38196<epsi<1/2)
-real beta=(pi-alph)/2;  // Ex.1, Ex.2: case beta=gamm
-//real beta=pi/3;  // Ex.3
-real gamm=pi-alph-beta;
+//real gamm=pi-alph-beta;
+//bool isostart=false;
+
+// Example 5: rational angles (w.r.t. pi), scalene
+//real alph=pi/4;
+//real beta=pi/3; 
+//real gamm=pi-alph-beta;
+//bool isostart=true;
+
+// Example 6: optimal angles, isosceles
+//real alph=pi*(2-sqrt(3));
+//real beta=pi*(sqrt(3)-1)/2;
+//real gamm=beta;
+//bool isostart=true;
 
 // angles (degrees)
 real Alph=alph*180/pi;
 real Beta=beta*180/pi;
 real Gamm=gamm*180/pi;
 
+write("alph=",alph);
+write("beta=",beta);
+write("gamm=",gamm);
+
+if(alph<0) write("Warning: alph<0");
 if(beta<0) write("Warning: beta<0");
 if(gamm<0) write("Warning: gamm<0");
+if(alph>pi) write("Warning: alph>pi");
+if(beta>pi) write("Warning: beta>pi");
+if(gamm>pi) write("Warning: gamm>pi");
 
 // sides
 real a = sin(beta)/sin(gamm);
 real b = sin(alph)/sin(beta);
 real c = 2a*b^2*cos(gamm);
 
+// inflation factor
+// newinflation=1+b^2; // Ex.1: keep top triangle same size
+// newinflation=(1+b^2)/b^2; // Ex.2: keep bottom left triangle same size
+//newinflation=newinflation=(b/(2*cos(gamm))+b^2)/(b/(2*cos(gamm))); // Ex.2: keep top triangle same size
+//newinflation=(1+b^2)/b; // Ex.3: keep middle triangle same size
+//newinflation=(1+b^2)*sqrt(sin(pi-alph)/(b^2*c*sin(gamm)));  // Ex.3: keep top triangle same size
+newinflation=(a*b+c)/c;  // Ex.3: make bottom right of isosceles same size in iteration 2
+//newinflation=(b/(2*cos(gamm))+b^2)/b^2; // Ex.4: keep bottom left triangle same size
+//newinflation=1; // Ex.5: TBD
+//newinflation=1+b^2; // Ex. 6: keep top triangle same size
+write("inflation=",newinflation);
 
-//newinflation=1+b^2; // Ex.1
-newinflation=(1+b^2)/b^2; // Ex.2
+// thresholds
+real area=c*a*b^2*sin(gamm)/2;  // area of iso 
+//real area=a*sin(alph)/2;  // area of sca when alph is acute
+//real area=a*sin(pi-alph)/2;  // area of sca when alph is obtuse
+area=area-exp(-20); // ensure subdivision when equal to threshold
+write("threshold=",area);
 
 // image settings
-// real sepX=1.25;
-real sepX=1.25*c;
-//real sepY=a*sin(alph);
-real sepY=1.25*a*b^2*sin(gamm);
+//real sepX=1.25*c; // for iso case
+//real sepY=1.25*a*b^2*sin(gamm); // for iso case
+real sepX=0.5*(1+b^2+a*cos(pi-alph)); // for sca case
+real sepY=1.25a*sin(alph);  // for sca case
 
 // line colour and width
-pen linePen=black+0.005;
+pen linePen=black+0.01;
 
 // colours
-//pen scaP1=paleblue;
-//pen scaP2=lightblue;
-//pen isoP1=paleyellow;
-pen scaP1=invisible;
-pen scaP2=invisible;
-pen isoP1=invisible;
+//pen scaPen=paleblue;
+//pen scaPen=lightblue;
+//pen isoPen=paleyellow;
+//pen scaPen=paleblue;
+//pen isoPen=lightred;
+pen scaPen=invisible;
+pen isoPen=invisible;
 
 // points in the scalene substitution (counterclockwise)
 pair p1=(0,0);
@@ -78,8 +130,16 @@ tile U3=q4--q5--q6--cycle;
 tile U4=q2--q4--q6--cycle;
 
 // prototiles
-tile sca=tile((p1--p2--p6--cycle),drawpen=linePen);
-tile iso=tile((q1--q2--q6--cycle),drawpen=linePen);
+tile sca=tile((p1--p2--p6--cycle),drawpen=linePen, fillpen=scaPen);
+tile iso=tile((q1--q2--q6--cycle),drawpen=linePen, fillpen=isoPen);
+
+// starting tile
+if(isostart){
+  tile starttile=copy(iso);
+}else{
+  tile starttile=copy(sca);
+} 
+
 
 // initialize substitutions
 substitution scaSub=substitution(sca);
@@ -91,75 +151,116 @@ real isoDefl=c/(c+a*b);
 
 // scalene tile substitution
 transform r=shift(-2a*cos(alph),0)*reflect(p6,(a*cos(alph),0));  // vertical reflection through p6
-scaSub.addtile(identity*scale(scaDefl),sca,scaP1);
-scaSub.addtile(shift(scaDefl*(1+b*cos(gamm),b*sin(gamm)))*scale(b/a)*rotate(Gamm+Alph)*r*scale(scaDefl),sca,scaP2);
-scaSub.addtile(shift(scaDefl*p2)*scale(b)*rotate(Gamm)*scale(scaDefl),sca,scaP1);
-scaSub.addtile(shift(scaDefl*p4)*rotate(Alph+Gamm)*scale(scaDefl),iso,isoP1);
+scaSub.addtile(identity*scale(scaDefl),sca,scaPen);
+scaSub.addtile(shift(scaDefl*(1+b*cos(gamm),b*sin(gamm)))*scale(b/a)*rotate(Gamm+Alph)*r*scale(scaDefl),sca,scaPen);
+scaSub.addtile(shift(scaDefl*p2)*scale(b)*rotate(Gamm)*scale(scaDefl),sca,scaPen);
+scaSub.addtile(shift(scaDefl*p4)*rotate(Alph+Gamm)*scale(scaDefl),iso,isoPen);
 
 // isosceles tile substitution
-isoSub.addtile(identity*scale(isoDefl),iso,isoP1);
-isoSub.addtile(shift(isoDefl*q2)*scale(b)*rotate(-Beta-Gamm)*r*scale(isoDefl),sca,scaP2);
-isoSub.addtile(shift(isoDefl*q6)*scale(a*b/c)*scale(isoDefl),iso,isoP1);
-isoSub.addtile(shift(isoDefl*q4)*scale(b)*rotate(Alph)*r*scale(isoDefl),sca,scaP2);
+isoSub.addtile(identity*scale(isoDefl),iso,isoPen);
+isoSub.addtile(shift(isoDefl*q2)*scale(b)*rotate(-Beta-Gamm)*r*scale(isoDefl),sca,scaPen);
+isoSub.addtile(shift(isoDefl*q6)*scale(a*b/c)*scale(isoDefl),iso,isoPen);
+isoSub.addtile(shift(isoDefl*q4)*scale(b)*rotate(Alph)*r*scale(isoDefl),sca,scaPen);
 
 
 // draw the starting tile and first 5 iterations
 
 bool drawall=false;
+bool clipPatch=false;
+bool writeTileCount=false;
+int N=10; // number of iterations to print tile count
 
 if(drawall) {
+
   int n=0;
-  //mosaic m0=mosaic(sca,n,scaSub,isoSub);
-  mosaic m0=mosaic(iso,n,scaSub,isoSub);
-  //filldraw(p1--p2--p6--cycle,fillpen=lightgray,drawpen=linePen);
-  draw(q1--q2--q6--cycle,linePen);
+  mosaic m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //numtiles=m0.tilecount[n];
+  //mosaic m0=mosaic(iso,n,scaSub,isoSub);
+  filldraw(m);
+  //draw(q1--q2--q6--cycle,linePen);
 
   n=1;
-  //mosaic m1=mosaic(sca,n,scaSub,isoSub);
-  mosaic m1=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(sepX,0)*m1);
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m1=mosaic(iso,n,true,scaSub,isoSub);
+  filldraw(shift(sepX,0)*m);
 
   n=2;
-  //mosaic m2=mosaic(sca,n,scaSub,isoSub);
-  mosaic m2=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(2sepX,0)*m2);
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m2=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  filldraw(shift(2sepX,0)*m);
 
   n=3;
-  //mosaic m3=mosaic(sca,n,scaSub,isoSub);
-  mosaic m3=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(0,-sepY)*m3);
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m3=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  filldraw(shift(0,-sepY)*m);
 
   n=4;
-  //mosaic m4=mosaic(sca,n,scaSub,isoSub);
-  mosaic m4=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(sepX,-sepY)*m4);
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m4=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  filldraw(shift(sepX,-sepY)*m);
 
   n=5;
-  //mosaic m5=mosaic(sca,n,scaSub,isoSub);
-  mosaic m5=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(2sepX,-sepY)*m5);
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m5=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  filldraw(shift(2sepX,-sepY)*m);
 
   n=6;
-  //mosaic m6=mosaic(sca,n,scaSub,isoSub);
-  mosaic m6=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(0,-2sepY)*m6);
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m6=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  filldraw(shift(0,-2sepY)*m);
 
   n=7;
-  //mosaic m6=mosaic(sca,n,scaSub,isoSub);
-  mosaic m7=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(sepX,-2sepY)*m7);
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m7=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  filldraw(shift(sepX,-2sepY)*m);
 
   n=8;
-  //mosaic m6=mosaic(sca,n,scaSub,isoSub);
-  mosaic m8=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(2sepX,-2sepY)*m8);
-} else {
-  int n=10;
-  //mosaic m1=mosaic(sca,n,scaSub,isoSub);
-  mosaic m1=mosaic(iso,n,true,scaSub,isoSub);
-  draw(shift(sepX,0)*m1);
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m8=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  filldraw(shift(2sepX,-2sepY)*m);
 
+  n=9;
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m8=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  //filldraw(shift(0,-3sepY)*m);
+
+  n=10;
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m8=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  //filldraw(shift(sepX,-3sepY)*m);
+
+  n=11;
+  m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  //mosaic m8=mosaic(iso,n,multiscale=true,scaSub,isoSub);
+  //filldraw(shift(2sepX,-3sepY)*m);
+
+} else {
+  int n=1;
+  //mosaic m=mosaic(sca,n,scaSub,isoSub);
+  //mosaic m=mosaic(iso,n,true,scaSub,isoSub)
+  mosaic m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+  filldraw(m);
+
+  real boxLength=0.25;
+  path clipBox=(0,0)--(boxLength,0)--(boxLength,boxLength)--(0,boxLength)--cycle;
+  clipBox=shift(boxLength,0)*clipBox;
+  if(clipPatch) clip(g=clipBox);
 }
-write("alph=",alph);
-write("beta=",beta);
-write("gamm=",gamm);
+
+if(writeTileCount){
+write("tile count:");
+for(int n=1; n<N; ++n){
+mosaic m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+write(m.tilecount[n]);
+}
+
+write("tile count succesive ratios:");
+for(int n=1; n<N; ++n){
+mosaic m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
+write(m.tilecount[n]/m.tilecount[n-1]);
+}
+}
+
+
+
+
