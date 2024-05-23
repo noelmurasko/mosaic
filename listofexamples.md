@@ -9,6 +9,10 @@ As of May 11, 2024.
   - A modification of chair.asy, which uses the decoration/layer features of mosaic.
 - chairlabel.asy
   - A modification of chair.asy, which uses the letter L (created from a Label) as a tile.
+- chairaxialshade.asy
+  - A modification of chair.asy, which uses the axial shading features of mosaic.
+- chairradialshade.asy
+  - A modification of chair.asy, which uses the radial shading features of mosaic.
 - domino.asy
 - fudgeflake.asy
 - Hilbertcurve.asy

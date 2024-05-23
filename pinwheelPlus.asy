@@ -81,11 +81,13 @@ M.set(tri, drawpen=posBorders, "3", "4");  // positive chirality
 
 // add control points
 pair CP=(u+2*v+w)/4;
-M.addlayer(CP, CP_pen);
+
+M.addlayer(CP);
+M.set(drawpen=CP_pen);
 
 if(colourCPs) {
-	M.set(posCP_pen, "3", "4");  // positive chirality
-	M.set(negCP_pen, "1", "2", "5");  // negative chirality
+	M.set(drawpen=posCP_pen, "3", "4");  // positive chirality
+	M.set(drawpen=negCP_pen, "1", "2", "5");  // negative chirality
 }
 
 // rotate/reorient patch
