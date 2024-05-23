@@ -13,19 +13,19 @@ real w=(sqrt(5)-1)/2;  // inverse golden mean
 // bool isostart=true;
 
 // Example 2: golden angle, isosceles
-// real alph=pi*w;  
+// real alph=pi*w;
 // real beta=(pi-alph)/2;
 // real gamm=pi-alph-beta;
 // bool isostart=true;
 
 // Example 3: golden angle, scalene
- real alph=pi*w;  
+ real alph=pi*w;
  real beta=pi*w^3;
  real gamm=pi-alph-beta;
  bool isostart=false;
 
 // Example 4: golden angle, scalene
-//real alph=pi*w;  
+//real alph=pi*w;
 //real epsi=0.6;  // (needs 0.38196<epsi<1/2)
 //real beta=(1-epsi)*alph;
 //real gamm=pi-alph-beta;
@@ -33,7 +33,7 @@ real w=(sqrt(5)-1)/2;  // inverse golden mean
 
 // Example 5: rational angles (w.r.t. pi), scalene
 //real alph=pi/4;
-//real beta=pi/3; 
+//real beta=pi/3;
 //real gamm=pi-alph-beta;
 //bool isostart=true;
 
@@ -77,7 +77,7 @@ newinflation=(a*b+c)/c;  // Ex.3: make bottom right of isosceles same size in it
 write("inflation=",newinflation);
 
 // thresholds
-real area=c*a*b^2*sin(gamm)/2;  // area of iso 
+real area=c*a*b^2*sin(gamm)/2;  // area of iso
 //real area=a*sin(alph)/2;  // area of sca when alph is acute
 //real area=a*sin(pi-alph)/2;  // area of sca when alph is obtuse
 area=area-exp(-20); // ensure subdivision when equal to threshold
@@ -93,13 +93,13 @@ real sepY=1.25a*sin(alph);  // for sca case
 pen linePen=black+0.01;
 
 // colours
-//pen scaPen=paleblue;
+pen scaPen=paleblue;
 //pen scaPen=lightblue;
-//pen isoPen=paleyellow;
+pen isoPen=paleyellow;
 //pen scaPen=paleblue;
 //pen isoPen=lightred;
-pen scaPen=invisible;
-pen isoPen=invisible;
+//pen scaPen=invisible;
+//pen isoPen=invisible;
 
 // points in the scalene substitution (counterclockwise)
 pair p1=(0,0);
@@ -138,7 +138,7 @@ if(isostart){
   tile starttile=copy(iso);
 }else{
   tile starttile=copy(sca);
-} 
+}
 
 
 // initialize substitutions
@@ -235,7 +235,7 @@ if(drawall) {
   //filldraw(shift(2sepX,-3sepY)*m);
 
 } else {
-  int n=1;
+  int n=12;
   //mosaic m=mosaic(sca,n,scaSub,isoSub);
   //mosaic m=mosaic(iso,n,true,scaSub,isoSub)
   mosaic m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
@@ -260,7 +260,3 @@ mosaic m=mosaic(sca,n,multiscale=true,threshold=area,scaSub,isoSub);
 write(m.tilecount[n]/m.tilecount[n-1]);
 }
 }
-
-
-
-

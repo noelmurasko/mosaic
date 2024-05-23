@@ -388,7 +388,9 @@ struct mosaic {
 
       // rule can be either "biggest" or "threshold"
       string rule="threshold";
-
+      for(int i=0; i< this.tiles.length; ++i) {
+        //write(trianglearea(this.tiles[i].transform*this.tiles[i].prototile));
+      }
       // Only iterate biggest (of same tile type)
       if(rule == "biggest") {
         indices.push(0);
@@ -396,14 +398,25 @@ struct mosaic {
         for(int i=1; i < this.tiles.length; ++i) {
           mtile tilei=this.tiles[i];
           bool addon=true;
+          //write();
+          //write(trianglearea(tilei.transform*tilei.prototile));
           for(int j=0; j < indices.length; ++j) {
             mtile tilej=this.tiles[indices[j]];
+            //write(trianglearea(tilej.transform*tilej.prototile));
+
             if(tilej.prototile == tilei.prototile) {
+              //write(trianglearea(tilej.transform*tilej.prototile)-trianglearea(tilei.transform*tilei.prototile));
+              //write(trianglearea(tilej.transform*tilej.prototile)==trianglearea(tilei.transform*tilei.prototile));
+              //write();
               addon=false;
-              if(lessinflated(tilej,tilei)) {
+              if(abs(trianglearea(tilej.transform*tilej.prototile) - trianglearea(tilei.transform*tilei.prototile))<1e-12){
+                //if(lessinflated(tilej,tilei)) {
                 //write(scale2(tilei.transform),i);
                 //write(scale2(tilej.transform));
                 //write();
+                addon=true;
+
+              } else if(trianglearea(tilej.transform*tilej.prototile) < trianglearea(tilei.transform*tilei.prototile)) {
                 indices[j]=i;
               }
             }
