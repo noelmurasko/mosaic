@@ -128,7 +128,7 @@ struct mtile {
 
   restricted int layers;
   string id;
-  int index; // Used to determine location of tile in a subpatch
+  int index; // Used to determine location of tile in the mosaic subpatch
 
   private void initializer(transform transform, tile supertile, tile prototile,
                      tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, string id="") {
@@ -195,51 +195,54 @@ struct mtile {
     this.layers+=1;
   }
 
-  void set(tile drawtile, pen fillpen, pen drawpen,int ind) {
+  void set(tile drawtile, int ind) {
     if(drawtile != nulltile) this.drawtile[ind]=drawtile;
+  }
+
+  void set(pen fillpen, pen drawpen,int ind) {
     if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
     if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
+  }
+
+  void set(pen aspena, pair aspointa, pen aspenb, pair aspointb, int ind) {
+    if(aspena != nullpen) this.drawtile[ind].aspena=aspena;
+    if(aspenb != nullpen) this.drawtile[ind].aspenb=aspenb;
+    this.drawtile[ind].aspointa=aspointa;
+    this.drawtile[ind].aspointb=aspointb;
+  }
+
+  void set(pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, int ind) {
+    if(rspena != nullpen) this.drawtile[ind].rspena=rspena;
+    if(rspenb != nullpen) this.drawtile[ind].rspenb=rspenb;
+    this.drawtile[ind].rspointa=rspointa;
+    this.drawtile[ind].rspointb=rspointb;
+    this.drawtile[ind].rsradiusa=rsradiusa;
+    this.drawtile[ind].rsradiusb=rsradiusb;
+  }
+
+
+  void set(tile drawtile, pen fillpen, pen drawpen,int ind) {
+    this.set(drawtile,ind);
+    this.set(fillpen,drawpen,ind);
   }
 
   void set(tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, int ind) {
-    if(drawtile != nulltile) this.drawtile[ind]=drawtile;
-    if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
-    if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
-    if(aspena != nullpen) this.drawtile[ind].aspena=aspena;
-    if(aspenb != nullpen) this.drawtile[ind].aspenb=aspenb;
-    this.drawtile[ind].aspointa=aspointa;
-    this.drawtile[ind].aspointb=aspointb;
+    this.set(drawtile,ind);
+    this.set(fillpen,drawpen,ind);
+    this.set(aspena,aspointa,aspenb,aspointb,ind);
   }
 
   void set(tile drawtile, pen fillpen, pen drawpen, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, int ind) {
-    if(drawtile != nulltile) this.drawtile[ind]=drawtile;
-    if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
-    if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
-    if(rspena != nullpen) this.drawtile[ind].rspena=rspena;
-    if(rspenb != nullpen) this.drawtile[ind].rspenb=rspenb;
-    this.drawtile[ind].rspointa=rspointa;
-    this.drawtile[ind].rspointb=rspointb;
-    this.drawtile[ind].rsradiusa=rsradiusa;
-    this.drawtile[ind].rsradiusb=rsradiusb;
-
+    this.set(drawtile,ind);
+    this.set(fillpen,drawpen,ind);
+    this.set(rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
   }
 
   void set(tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, int ind) {
-    if(drawtile != nulltile) this.drawtile[ind]=drawtile;
-    if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
-    if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
-
-    if(aspena != nullpen) this.drawtile[ind].aspena=aspena;
-    if(aspenb != nullpen) this.drawtile[ind].aspenb=aspenb;
-    this.drawtile[ind].aspointa=aspointa;
-    this.drawtile[ind].aspointb=aspointb;
-
-    if(rspena != nullpen) this.drawtile[ind].rspena=rspena;
-    if(rspenb != nullpen) this.drawtile[ind].rspenb=rspenb;
-    this.drawtile[ind].rspointa=rspointa;
-    this.drawtile[ind].rspointb=rspointb;
-    this.drawtile[ind].rsradiusa=rsradiusa;
-    this.drawtile[ind].rsradiusb=rsradiusb;
+    this.set(drawtile,ind);
+    this.set(fillpen,drawpen,ind);
+    this.set(aspena,aspointa,aspenb,aspointb,ind);
+    this.set(rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
   }
 }
 
