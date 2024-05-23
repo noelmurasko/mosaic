@@ -195,10 +195,51 @@ struct mtile {
     this.layers+=1;
   }
 
-  void set(tile drawtile, pen fillpen, pen drawpen, int ind) {
+  void set(tile drawtile, pen fillpen, pen drawpen,int ind) {
     if(drawtile != nulltile) this.drawtile[ind]=drawtile;
     if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
     if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
+  }
+
+  void set(tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, int ind) {
+    if(drawtile != nulltile) this.drawtile[ind]=drawtile;
+    if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
+    if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
+    if(aspena != nullpen) this.drawtile[ind].aspena=aspena;
+    if(aspenb != nullpen) this.drawtile[ind].aspenb=aspenb;
+    this.drawtile[ind].aspointa=aspointa;
+    this.drawtile[ind].aspointb=aspointb;
+  }
+
+  void set(tile drawtile, pen fillpen, pen drawpen, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, int ind) {
+    if(drawtile != nulltile) this.drawtile[ind]=drawtile;
+    if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
+    if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
+    if(rspena != nullpen) this.drawtile[ind].rspena=rspena;
+    if(rspenb != nullpen) this.drawtile[ind].rspenb=rspenb;
+    this.drawtile[ind].rspointa=rspointa;
+    this.drawtile[ind].rspointb=rspointb;
+    this.drawtile[ind].rsradiusa=rsradiusa;
+    this.drawtile[ind].rsradiusb=rsradiusb;
+
+  }
+
+  void set(tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, int ind) {
+    if(drawtile != nulltile) this.drawtile[ind]=drawtile;
+    if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
+    if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
+
+    if(aspena != nullpen) this.drawtile[ind].aspena=aspena;
+    if(aspenb != nullpen) this.drawtile[ind].aspenb=aspenb;
+    this.drawtile[ind].aspointa=aspointa;
+    this.drawtile[ind].aspointb=aspointb;
+
+    if(rspena != nullpen) this.drawtile[ind].rspena=rspena;
+    if(rspenb != nullpen) this.drawtile[ind].rspenb=rspenb;
+    this.drawtile[ind].rspointa=rspointa;
+    this.drawtile[ind].rspointb=rspointb;
+    this.drawtile[ind].rsradiusa=rsradiusa;
+    this.drawtile[ind].rsradiusb=rsradiusb;
   }
 }
 
@@ -336,8 +377,59 @@ struct mosaic {
     }
   }
 
+  void set(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+    int ind=layer < 0 ? layers-1 : layer;
+    int idlength=id.length;
+    for(int i=0; i < patch.length; ++i) {
+      for(int j=0; j < max(idlength,1); ++j) {
+        if(idlength == 0 || patch[i].id == id[j]) {
+          patch[i].set(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,ind);
+          break;
+        }
+      }
+    }
+  }
+
+  void set(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+    int ind=layer < 0 ? layers-1 : layer;
+    int idlength=id.length;
+    for(int i=0; i < patch.length; ++i) {
+      for(int j=0; j < max(idlength,1); ++j) {
+        if(idlength == 0 || patch[i].id == id[j]) {
+          patch[i].set(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
+          break;
+        }
+      }
+    }
+  }
+
+  void set(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb,pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+    int ind=layer < 0 ? layers-1 : layer;
+    int idlength=id.length;
+    for(int i=0; i < patch.length; ++i) {
+      for(int j=0; j < max(idlength,1); ++j) {
+        if(idlength == 0 || patch[i].id == id[j]) {
+          patch[i].set(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
+          break;
+        }
+      }
+    }
+  }
+
   void set(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
-    set(drawtile, fillpen,drawpen,layer,id);
+    this.set(drawtile, fillpen,drawpen,layer,id);
+  }
+
+  void set(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+    this.set(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,layer,id);
+  }
+
+  void set(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+    this.set(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layer,id);
+  }
+
+  void set(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+    this.set(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layer,id);
   }
 
   private void iterate(mtile T, mtile[] tiles,
@@ -614,12 +706,12 @@ void filldraw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
 
 void axialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
   for(int k=0; k < M.tiles.length; ++k)
-    axialshade(pic, M.tiles[k], layer,stroke,extenda,extendb);
+    axialshade(pic, M.tiles[k],layer,stroke,extenda,extendb);
 }
 
 void radialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
   for(int k=0; k < M.tiles.length; ++k)
-    radialshade(pic, M.tiles[k], layer,stroke,extenda,extendb);
+    radialshade(pic, M.tiles[k],layer,stroke,extenda,extendb);
 }
 
 // Draw all layers of mosaic. Layers are drawn in increasing order.
