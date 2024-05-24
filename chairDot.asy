@@ -25,7 +25,7 @@ tile hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);
 tile decorate=pentagon^^hexagon;
 
 M.addlayer(decorate);
-M.set(white,"A");
+M.set(lightblue,"A");
 M.set(white,"B");
 M.set(orange,"C","D");
 filldraw(M);

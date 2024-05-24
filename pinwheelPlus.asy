@@ -11,6 +11,7 @@ tile tri=u--v--w--cycle;
 
 // inflation factor
 inflation=sqrt(5);
+error;
 
 // number of iterations
 int n=5;
