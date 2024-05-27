@@ -6,7 +6,7 @@ import mosaic;
 inflation=2;
 
 // prototile
-tile chair=tile((0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle);
+tile chair=tile((0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle,"A");
 substitution chairRule=substitution(chair); // chair substitution rule
 
 chairRule.addtile(white,id="A");
@@ -25,7 +25,8 @@ tile hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);
 tile decorate=pentagon^^hexagon;
 
 M.addlayer(decorate);
-M.set(lightblue,"A");
+M.set(lightblue);
 M.set(white,"B");
 M.set(orange,"C","D");
+
 filldraw(M);
