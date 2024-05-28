@@ -714,13 +714,18 @@ void draw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
   else  draw(pic, t.boundary, p);
 }
 
-void fill(picture pic=currentpicture, explicit tile t) {
-  if(t.fillable()) fill(pic, t.boundary, t.fillpen);
+// NOTE: default value of p is invisible. Not currentpen.
+void fill(picture pic=currentpicture, explicit tile t, pen p=invisible) {
+  if(t.fillable())
+    if(t.fillpen != nullpen)
+      fill(pic, t.boundary, t.fillpen);
+    else
+      fill(pic, t.boundary, p);
 }
 
-void filldraw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
-  draw(pic, t.boundary, p);
-  fill(pic, t.boundary, t.fillpen);
+void filldraw(picture pic=currentpicture, explicit tile t, pen fillpen=invisible, pen drawpen=currentpen) {
+  draw(pic, t, drawpen);
+  fill(pic, t.boundary, drawpen);
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
@@ -745,14 +750,14 @@ void draw(picture pic=currentpicture, tiledata T, pen p=currentpen, real scaling
   }
 }
 
-void fill(picture pic=currentpicture, tiledata T, int layer=0) {
+void fill(picture pic=currentpicture, tiledata T, pen p=invisible, int layer=0) {
   tile Tdl=T.drawtile[layer];
   fill(pic, T.transform*Tdl);
 }
 
-void filldraw(picture pic=currentpicture, tiledata T, pen p=currentpen, real scaling=1, int layer=0) {
-  fill(pic,T,layer);
-  draw(pic,T,p,scaling,layer);
+void filldraw(picture pic=currentpicture, tiledata T, pen fillpen=invisible, pen drawpen=currentpen, real scaling=1, int layer=0) {
+  fill(pic,T,fillpen,layer);
+  draw(pic,T,drawpen,scaling,layer);
 }
 
 void axialshade(picture pic=currentpicture, tiledata T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
@@ -776,20 +781,20 @@ void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
-void fill(picture pic=currentpicture, substitution s,
+void fill(picture pic=currentpicture, substitution s, pen p=invisible,
           bool drawoutline=false,
           pen outlinepen=linetype(new real[] {4,2})+1.5) {
   for(int k=0; k < s.subpatch.length; ++k)
-    fill(pic, s.subpatch[k], 0);
+    fill(pic, s.subpatch[k], p, 0);
   if(drawoutline)
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
-void filldraw(picture pic=currentpicture, substitution s, pen p=currentpen,
+void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible, pen drawpen=currentpen,
               bool drawoutline=false,
               pen outlinepen=linetype(new real[] {4,2})+1.5) {
   for(int k=0; k < s.subpatch.length; ++k)
-    filldraw(pic, s.subpatch[k], p, 1, 0);
+    filldraw(pic, s.subpatch[k], fillpen, drawpen, 1, 0);
   if(drawoutline)
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
@@ -807,16 +812,16 @@ void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
     draw(pic, M.tiles[k], p, scaling, layer);
 }
 
-void fill(picture pic=currentpicture, mosaic M, int layer) {
+void fill(picture pic=currentpicture, mosaic M, pen p=invisible,int layer) {
   for(int k=0; k < M.tiles.length; ++k)
-    fill(pic, M.tiles[k], layer);
+    fill(pic, M.tiles[k], p, layer);
 }
 
-void filldraw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
+void filldraw(picture pic=currentpicture, mosaic M, int layer, pen fillpen=invisible, pen drawpen=currentpen,
           bool scalelinewidth=true, int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
   for(int k=0; k < M.tiles.length; ++k)
-    filldraw(pic, M.tiles[k], p, scaling, layer);
+    filldraw(pic, M.tiles[k], fillpen, drawpen, scaling, layer);
 }
 
 void axialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
@@ -836,17 +841,17 @@ void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
     draw(pic,M,layer,p,scalelinewidth,nscale);
 }
 
-void fill(picture pic=currentpicture, mosaic M) {
+void fill(picture pic=currentpicture, mosaic M, pen p=invisible) {
   for(int layer=0; layer < M.layers; ++layer)
-    fill(pic,M,layer);
+    fill(pic,M,p,layer);
 }
 
-void filldraw(picture pic=currentpicture, mosaic M, pen p=currentpen,
+void filldraw(picture pic=currentpicture, mosaic M, pen fillpen=invisible, pen drawpen=currentpen,
           bool scalelinewidth=true, int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
   for(int layer=0; layer < M.layers; ++layer) {
-    fill(pic,M,layer);
-    draw(pic,M,layer,p,scalelinewidth,nscale);
+    fill(pic,M,fillpen,layer);
+    draw(pic,M,layer,drawpen,scalelinewidth,nscale);
   }
 }
 
