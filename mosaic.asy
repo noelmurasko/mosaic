@@ -42,7 +42,7 @@ struct tile {
     this.id=id;
   }
 
-  void operator init(path[] boundary={}, frame frame=newframe, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+  void operator init(path[] boundary={}, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.initializer(boundary, fillpen=fillpen, drawpen=drawpen,id);
   }
 
@@ -58,8 +58,20 @@ struct tile {
     this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
-  void operator init(pair boundary, pen drawpen=nullpen,string id="") {
-    this.initializer((path) boundary, drawpen=drawpen,id);
+  void operator init(pair boundary, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(new path[] {boundary}, fillpen=fillpen, drawpen=drawpen,id);
+  }
+
+  void operator init(pair boundary, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(new path[] {boundary}, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb,id);
+  }
+
+  void operator init(pair boundary, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(new path[] {boundary}, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  }
+
+  void operator init(pair boundary,pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, string id="") {
+    this.initializer(new path[] {boundary}, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
   bool fillable() {
