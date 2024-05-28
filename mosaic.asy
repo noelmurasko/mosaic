@@ -377,7 +377,7 @@ struct mosaic {
     return false;
   }
 
-  private int[] setindices(string[] id) {
+  private int[] decorateIndices(string[] id) {
     int[] indices={};
     int idlength=id.length;
     for(int i=0; i < subpatch.length; ++i) {
@@ -397,7 +397,7 @@ struct mosaic {
 
     if(decorateStartTile(id)) tiles[0].set(drawtile,fillpen,drawpen,ind);
 
-    int[] indices=setindices(id);
+    int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].set(drawtile,fillpen,drawpen,ind);
   }
@@ -408,7 +408,7 @@ struct mosaic {
 
     if(decorateStartTile(id)) tiles[0].set(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,ind);
 
-    int[] indices=setindices(id);
+    int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].set(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,ind);
   }
@@ -419,7 +419,7 @@ struct mosaic {
 
     if(decorateStartTile(id)) tiles[0].set(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
 
-    int[] indices=setindices(id);
+    int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].set(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
   }
@@ -428,7 +428,7 @@ struct mosaic {
 
     int ind=layer < 0 ? layers-1 : layer;
 
-    int[] indices=setindices(id);
+    int[] indices=decorateIndices(id);
     if(decorateStartTile(id)) tiles[0].set(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
 
     for(int i=0; i < indices.length; ++i)
