@@ -451,12 +451,15 @@ struct mosaic {
     this.layers=1;
   }
 
-  void addlayer() {
-    for(int i=0; i < subpatch.length; ++i) {
-      subpatch[i].addlayer();
+  void addlayer(int n=1) {
+    assert(n >= 1, "Cannot add less than 1 layer.");
+    for(int i=0; i < n; ++i) {
+      for(int i=0; i < subpatch.length; ++i) {
+        subpatch[i].addlayer();
+      }
+      if(this.n == 0) tiles[0].addlayer();
+      this.layers+=1;
     }
-    if(n == 0) tiles[0].addlayer();
-    this.layers+=1;
   }
 
   // Return true if start tile should be decorated
