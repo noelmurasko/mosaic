@@ -28,5 +28,4 @@ M.addlayer(decorate);
 M.set(lightblue);
 M.set(white,"B");
 M.set(orange,"C","D");
-
 filldraw(M);
