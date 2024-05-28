@@ -358,6 +358,99 @@ struct mosaic {
   int[] tilecount;
 
   // addlayer() Adds a new layer to mosaic
+
+  private void iterate(tiledata T, tiledata[] tiles,
+          real inflation=inflation) {
+    tiledata patchi;
+    for(int i=0; i < subpatch.length; ++i) {
+      patchi=subpatch[i];
+      if(patchi.supertile == T.prototile) {
+        tiles.push(T*patchi);
+      }
+    }
+  }
+
+  void substitute(int n) {
+    if(n > 0) {
+      for(int k=0; k < n; ++k) {
+        tiledata[] tiles=new tiledata[];
+        int sTL=this.tiles.length;
+        if(sTL == 0) {
+          this.tilecount.push(1);
+          this.iterate(tiledata(this.starttile),tiles,inflation);
+        }
+        else {
+          for(int i=0; i < sTL; ++i)
+            this.iterate(this.tiles[i],tiles,inflation);
+        }
+        this.tiles=tiles;
+        int tilesl=tiles.length;
+        this.tilecount.push(tilesl);
+      }
+      for(int i=0; i < this.tiles.length; ++i)
+        this.tiles[i]=scale(inflation^n)*this.tiles[i];
+      this.n+=n;
+    } else {
+      if(this.tiles.length == 0) this.tiles.push(tiledata(this.starttile));
+    }
+  }
+
+  void operator init(tile starttile=nulltile, int n ...substitution[] rules) {
+    int ind=0;
+    int Lr=rules.length;
+    assert(rules.length > 0,"Mosaics must have at least one substitution.");
+
+    this.inflation=rules[0].inflation;
+    substitution rulesi=rules[0];
+    tiledata[] rulesipatch=rulesi.subpatch;
+    tiledata rulesipatchj;
+    for(int j=0; j < rulesipatch.length; ++j) {
+      rulesipatchj=duplicate(rulesipatch[j]);
+      rulesipatchj.index=ind;
+      ind+=1;
+      this.subpatch.push(rulesipatchj);
+    }
+    for(int i=1; i < Lr; ++i) {
+      rulesi=rules[i];
+      rulesipatch=rulesi.subpatch;
+      assert(rulesi.inflation == this.inflation,"All substitutions in a mosaic must have the same inflation factor.");
+      for(int j=0; j < rulesipatch.length; ++j) {
+        rulesipatchj=duplicate(rulesipatch[j]);
+        rulesipatchj.index=ind;
+        ind+=1;
+        this.subpatch.push(rulesipatchj);
+      }
+    }
+    int Lp=this.subpatch.length;
+    real deflation=1/inflation;
+    tiledata patchi;
+    for(int i=0; i < Lp; ++i) {
+      patchi=subpatch[i];
+      if(patchi.prototile == nulltile) {
+        patchi.prototile=this.starttile;
+      }
+      if(patchi.supertile == nulltile) {
+        patchi.supertile=this.starttile;
+      }
+      transform Ti=subpatch[i].transform;
+      patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+    }
+    // If starttile is not specified, use supertile from first specified rule.
+    if(starttile == nulltile) {
+      this.starttile=rules[0].supertile;
+    } else {
+      for(int i=0; i < Lr; ++i) {
+        if(starttile==rules[i].supertile) {
+          this.starttile=starttile;
+          break;
+        }
+      assert(i < Lr, "starttile does not match supertile in provided substitutions.");
+      }
+    }
+    this.substitute(n);
+    this.layers=1;
+  }
+
   void addlayer() {
     for(int i=0; i < subpatch.length; ++i) {
       subpatch[i].addlayer();
@@ -450,98 +543,6 @@ struct mosaic {
 
   void updatelayer(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
     this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layer,id);
-  }
-
-  private void iterate(tiledata T, tiledata[] tiles,
-          real inflation=inflation) {
-    tiledata patchi;
-    for(int i=0; i < subpatch.length; ++i) {
-      patchi=subpatch[i];
-      if(patchi.supertile == T.prototile) {
-        tiles.push(T*patchi);
-      }
-    }
-  }
-
-  void substitute(int n) {
-    if(n > 0) {
-      for(int k=0; k < n; ++k) {
-        tiledata[] tiles=new tiledata[];
-        int sTL=this.tiles.length;
-        if(sTL == 0) {
-          this.tilecount.push(1);
-          this.iterate(tiledata(this.starttile),tiles,inflation);
-        }
-        else {
-          for(int i=0; i < sTL; ++i)
-            this.iterate(this.tiles[i],tiles,inflation);
-        }
-        this.tiles=tiles;
-        int tilesl=tiles.length;
-        this.tilecount.push(tilesl);
-      }
-      for(int i=0; i < this.tiles.length; ++i)
-        this.tiles[i]=scale(inflation^n)*this.tiles[i];
-      this.n+=n;
-    } else {
-      if(this.tiles.length == 0) this.tiles.push(tiledata(this.starttile));
-    }
-  }
-
-  void operator init(tile starttile=nulltile, int n ...substitution[] rules) {
-    int ind=0;
-    int Lr=rules.length;
-    assert(rules.length > 0,"Mosaics must have at least one substitution.");
-
-    this.inflation=rules[0].inflation;
-    substitution rulesi=rules[0];
-    tiledata[] rulesipatch=rulesi.subpatch;
-    tiledata rulesipatchj;
-    for(int j=0; j < rulesipatch.length; ++j) {
-      rulesipatchj=duplicate(rulesipatch[j]);
-      rulesipatchj.index=ind;
-      ind+=1;
-      this.subpatch.push(rulesipatchj);
-    }
-    for(int i=1; i < Lr; ++i) {
-      rulesi=rules[i];
-      rulesipatch=rulesi.subpatch;
-      assert(rulesi.inflation == this.inflation,"All substitutions in a mosaic must have the same inflation factor.");
-      for(int j=0; j < rulesipatch.length; ++j) {
-        rulesipatchj=duplicate(rulesipatch[j]);
-        rulesipatchj.index=ind;
-        ind+=1;
-        this.subpatch.push(rulesipatchj);
-      }
-    }
-    int Lp=this.subpatch.length;
-    real deflation=1/inflation;
-    tiledata patchi;
-    for(int i=0; i < Lp; ++i) {
-      patchi=subpatch[i];
-      if(patchi.prototile == nulltile) {
-        patchi.prototile=this.starttile;
-      }
-      if(patchi.supertile == nulltile) {
-        patchi.supertile=this.starttile;
-      }
-      transform Ti=subpatch[i].transform;
-      patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
-    }
-    // If starttile is not specified, use supertile from first specified rule.
-    if(starttile == nulltile) {
-      this.starttile=rules[0].supertile;
-    } else {
-      for(int i=0; i < Lr; ++i) {
-        if(starttile==rules[i].supertile) {
-          this.starttile=starttile;
-          break;
-        }
-      assert(i < Lr, "starttile does not match supertile in provided substitutions.");
-      }
-    }
-    this.substitute(n);
-    this.layers=1;
   }
 }
 
