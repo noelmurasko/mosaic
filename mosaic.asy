@@ -142,10 +142,7 @@ struct tiledata {
     this.drawtile.push(tile(dt.boundary,fillpen=fp,drawpen=dp,aspena, aspointa, aspenb, aspointb,rspena, rspointa,rsradiusa,rspenb,rspointb,rsradiusb));
 
     this.layers=1;
-    if(length(id) == 0)
-      this.id=this.prototile.id;
-    else
-      this.id=id;
+    this.id=length(id) == 0 ? this.prototile.id : id;
     this.index=0;
   }
 
@@ -186,7 +183,7 @@ struct tiledata {
     this.drawtile=drawtile;
     this.index=index;
     this.layers=drawtile.length;
-    this.id=id == "" ? this.prototile.id : id;
+    this.id=length(id) == 0 ? this.prototile.id : id;
   }
 
   void addlayer() {
