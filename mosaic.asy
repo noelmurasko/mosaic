@@ -540,30 +540,6 @@ struct mosaic {
       }
     }
     this.substitute(n);
-    /*
-    if(n > 0) {
-      for(int k=0; k < n; ++k) {
-        mtile[] tiles=new mtile[];
-        int sTL=this.tiles.length;
-        if(sTL == 0) {
-          this.tilecount.push(1);
-          this.iterate(mtile(this.supertile),tiles,inflation);
-        }
-        else {
-          for(int i=0; i < sTL; ++i)
-            this.iterate(this.tiles[i],tiles,inflation);
-        }
-        this.tiles=tiles;
-        int tilesl=tiles.length;
-        this.tilecount.push(tilesl);
-      }
-      for(int i=0; i < this.tiles.length; ++i)
-        this.tiles[i]=scale(inflation^n)*this.tiles[i];
-      this.n+=n;
-    } else {
-      if(this.n == 0) this.tiles.push(mtile(this.supertile));
-    }
-    */
     this.layers=1;
   }
 }
