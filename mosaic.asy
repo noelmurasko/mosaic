@@ -118,11 +118,6 @@ tile operator ^^(tile t1, tile t2) {
   return t3;
 }
 
-// write tiles (just writes path)
-void write(string s="", explicit tile t) {
-  write(s,t.path);
-}
-
 tile nulltile=tile(nullpath);
 
 //bool fillcheckable(tile drawtile, int ind=0) {
