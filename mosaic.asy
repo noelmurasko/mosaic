@@ -2,7 +2,7 @@ real inflation=1;
 private real globalinflation() {return inflation;}
 
 struct tile {
-  path[] boundary;
+  path[] path;
 
   pen fillpen;
   pen drawpen;
@@ -21,8 +21,8 @@ struct tile {
 
   string id;
 
-  private void initializer(path[] boundary, pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa=(0,0), pen aspenb=nullpen, pair aspointb=(0,0), pen rspena=nullpen, pair rspointa=(0,0), real rsradiusa=0, pen rspenb=nullpen, pair rspointb=(0,0),real rsradiusb=0, string id="") {
-    this.boundary=boundary;
+  private void initializer(path[] path, pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa=(0,0), pen aspenb=nullpen, pair aspointb=(0,0), pen rspena=nullpen, pair rspointa=(0,0), real rsradiusa=0, pen rspenb=nullpen, pair rspointb=(0,0),real rsradiusb=0, string id="") {
+    this.path=path;
 
     this.fillpen=fillpen;
     this.drawpen=drawpen;
@@ -42,41 +42,41 @@ struct tile {
     this.id=id;
   }
 
-  void operator init(path[] boundary={}, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen,id);
+  void operator init(path[] path={}, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(path, fillpen=fillpen, drawpen=drawpen,id);
   }
 
-  void operator init(path[] boundary={}, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb,id);
+  void operator init(path[] path={}, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(path, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb,id);
   }
 
-  void operator init(path[] boundary={}, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  void operator init(path[] path={}, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(path, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
-  void operator init(path[] boundary={},pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, string id="") {
-    this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  void operator init(path[] path={},pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, string id="") {
+    this.initializer(path, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
-  void operator init(pair boundary, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(new path[] {boundary}, fillpen=fillpen, drawpen=drawpen,id);
+  void operator init(pair path, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen,id);
   }
 
-  void operator init(pair boundary, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(new path[] {boundary}, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb,id);
+  void operator init(pair path, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb,id);
   }
 
-  void operator init(pair boundary, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(new path[] {boundary}, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  void operator init(pair path, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
-  void operator init(pair boundary,pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, string id="") {
-    this.initializer(new path[] {boundary}, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  void operator init(pair path,pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, string id="") {
+    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
   bool fillable() {
-    for(int i=0; i < this.boundary.length; ++i)
-      if(!cyclic(this.boundary[i])) return false;
+    for(int i=0; i < this.path.length; ++i)
+      if(!cyclic(this.path[i])) return false;
     return true;
   }
 }
@@ -98,12 +98,12 @@ tile operator cast(pair p) {
 }
 
 tile copy(tile t) {
-  return tile(copy(t.boundary),fillpen=t.fillpen,drawpen=t.drawpen,aspena=t.aspena,aspointa=t.aspointa,aspenb=t.aspenb,aspointb=t.aspointb,rspena=t.rspena,rspointa=t.rspointa,rsradiusa=t.rsradiusa,rspenb=t.rspenb,rspointb=t.rspointb,rsradiusb=t.rsradiusb,id=t.id);
+  return tile(copy(t.path),fillpen=t.fillpen,drawpen=t.drawpen,aspena=t.aspena,aspointa=t.aspointa,aspenb=t.aspenb,aspointb=t.aspointb,rspena=t.rspena,rspointa=t.rspointa,rsradiusa=t.rsradiusa,rspenb=t.rspenb,rspointb=t.rspointb,rsradiusb=t.rsradiusb,id=t.id);
 }
 
 tile operator *(transform T, tile t1) {
   tile t2=copy(t1);
-  t2.boundary=T*t1.boundary;
+  t2.path=T*t1.path;
   t2.aspointa=T*t1.aspointa;
   t2.aspointb=T*t1.aspointb;
   t2.rspointa=T*t1.rspointa;
@@ -114,20 +114,20 @@ tile operator *(transform T, tile t1) {
 // Note that pens and shading settings of the new tile are the same as t1.
 tile operator ^^(tile t1, tile t2) {
   tile t3=copy(t1);
-  t3.boundary=t1.boundary^^t2.boundary;
+  t3.path=t1.path^^t2.path;
   return t3;
 }
 
-// write tiles (just writes boundary)
+// write tiles (just writes path)
 void write(string s="", explicit tile t) {
-  write(s,t.boundary);
+  write(s,t.path);
 }
 
 tile nulltile=tile(nullpath);
 
 //bool fillcheckable(tile drawtile, int ind=0) {
 //  for(int i=0; i < drawtile.length; ++i)
-//    if(!cyclic(drawtile.boundary[i])) return false;
+//    if(!cyclic(drawtile.path[i])) return false;
 //  return true;
 //}
 
@@ -151,7 +151,7 @@ struct tiledata {
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
 
-    this.drawtile.push(tile(dt.boundary,fillpen=fp,drawpen=dp,aspena, aspointa, aspenb, aspointb,rspena, rspointa,rsradiusa,rspenb,rspointb,rsradiusb));
+    this.drawtile.push(tile(dt.path,fillpen=fp,drawpen=dp,aspena, aspointa, aspenb, aspointb,rspena, rspointa,rsradiusa,rspenb,rspointb,rsradiusb));
 
     this.layers=1;
     this.id=length(id) == 0 ? this.prototile.id : id;
@@ -710,31 +710,31 @@ real inflationscaling(bool scalelinewidth, real inflation, int n) {
 
 // draw tile t
 void draw(picture pic=currentpicture, explicit tile t, pen p=currentpen) {
-  if(t.drawpen != nullpen) draw(pic, t.boundary, t.drawpen);
-  else  draw(pic, t.boundary, p);
+  if(t.drawpen != nullpen) draw(pic, t.path, t.drawpen);
+  else  draw(pic, t.path, p);
 }
 
 // NOTE: default value of p is invisible. Not currentpen.
 void fill(picture pic=currentpicture, explicit tile t, pen p=invisible) {
   if(t.fillable())
     if(t.fillpen != nullpen)
-      fill(pic, t.boundary, t.fillpen);
+      fill(pic, t.path, t.fillpen);
     else
-      fill(pic, t.boundary, p);
+      fill(pic, t.path, p);
 }
 
 void filldraw(picture pic=currentpicture, explicit tile t, pen fillpen=invisible, pen drawpen=currentpen) {
   draw(pic, t, drawpen);
-  fill(pic, t.boundary, drawpen);
+  fill(pic, t.path, drawpen);
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  if(t.fillable()) axialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.aspena
+  if(t.fillable()) axialshade(pic, t.path, stroke=stroke, extenda=extenda, extendb=extendb, t.aspena
     ,t.aspointa,t.aspenb,t.aspointb);
 }
 
 void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  if(t.fillable()) radialshade(pic, t.boundary, stroke=stroke, extenda=extenda, extendb=extendb, t.rspena
+  if(t.fillable()) radialshade(pic, t.path, stroke=stroke, extenda=extenda, extendb=extendb, t.rspena
     ,t.rspointa,t.rsradiusa, t.rspenb,t.rspointb,t.rsradiusb);
 }
 
