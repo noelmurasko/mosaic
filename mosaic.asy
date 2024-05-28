@@ -491,6 +491,8 @@ struct mosaic {
   }
 
   // Update with tile, fillpen, and drawpen
+
+  //Update layer
   void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
     checkLayerError(layer);
@@ -506,6 +508,7 @@ struct mosaic {
     this.updatelayer(drawtile, fillpen,drawpen,layer,id);
   }
 
+  //Update top layer
   void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
      this.updatelayer(drawtile, fillpen,drawpen,layers-1,id);
   }
@@ -514,6 +517,7 @@ struct mosaic {
      this.updatelayer(drawtile, fillpen,drawpen,layers-1,id);
   }
 
+  //Update layer 0
   void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
     this.updatelayer(drawtile, fillpen,drawpen,0,id);
   }
