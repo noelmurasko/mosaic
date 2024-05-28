@@ -20,7 +20,6 @@ mosaic M=mosaic(chair,n,chairRule);
 tile dot=tile((1/2,1/2),black+10);
 M.addlayer();
 M.updatelayer(dot);
-M.update(dot);
 
 tile pentagon=shift(7/5,1/2)*rotate(30)*scale(1/5)*polygon(5);
 tile hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);

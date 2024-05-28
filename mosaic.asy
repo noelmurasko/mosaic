@@ -485,22 +485,34 @@ struct mosaic {
     return indices;
   }
 
+  // Assert that layer must be valid
+  private void checkLayerError(int layer) {
+    assert(0 <= layer && layer < layers, "Cannot update layer "+string(layer)+" in mosaic with "+string(layers)+" layers.");
+  }
+
   // Update with tile, fillpen, and drawpen
-  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
-    int ind=layer < 0 ? layers-1 : layer;
+    checkLayerError(layer);
 
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,ind);
+    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,ind);
+      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
     this.updatelayer(drawtile, fillpen,drawpen,layer,id);
   }
 
+  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+     this.updatelayer(drawtile, fillpen,drawpen,layers-1,id);
+  }
+
+  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+     this.updatelayer(drawtile, fillpen,drawpen,layers-1,id);
+  }
 
   void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
     this.updatelayer(drawtile, fillpen,drawpen,0,id);
@@ -511,19 +523,27 @@ struct mosaic {
   }
 
   // Update with axial shading
-  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
-    int ind=layer < 0 ? layers-1 : layer;
+    checkLayerError(layer);
 
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,ind);
+    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,ind);
+      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
     this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,layer,id);
+  }
+
+  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,layers-1,id);
+  }
+
+  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,layers-1,id);
   }
 
   void update(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
@@ -535,19 +555,27 @@ struct mosaic {
   }
 
   // Update with radial shading
-  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
-    int ind=layer < 0 ? layers-1 : layer;
+    checkLayerError(layer);
 
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
+    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
+      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
     this.updatelayer(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layer,id);
+  }
+
+  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+    this.updatelayer(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layers-1,id);
+  }
+
+  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layers-1,id);
   }
 
   void update(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
@@ -559,19 +587,27 @@ struct mosaic {
   }
 
   // Update everything
-  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb,pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb,pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
-    int ind=layer < 0 ? layers-1 : layer;
+    checkLayerError(layer);
 
     int[] indices=decorateIndices(id);
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
+    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,layer);
 
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
+      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,layer);
   }
 
-  void updatelayer(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer=-1 ...string[] id) {
+  void updatelayer(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
     this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layer,id);
+  }
+
+  void updatelayer(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layers-1,id);
+  }
+
+  void updatelayer(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layers-1,id);
   }
 
   void update(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
@@ -581,7 +617,6 @@ struct mosaic {
   void update(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
     this.update(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,id);
   }
-
 
 }
 
