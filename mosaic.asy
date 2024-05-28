@@ -7,37 +7,37 @@ struct tile {
   pen fillpen;
   pen drawpen;
 
-  pen aspena;
-  pen aspenb;
-  pair aspointa;
-  pair aspointb;
+  pen axialpena;
+  pen axialpenb;
+  pair axiala;
+  pair axialb;
 
-  pen rspena;
-  pen rspenb;
-  pair rspointa;
-  pair rspointb;
-  real rsradiusa;
-  real rsradiusb;
+  pen radialpena;
+  pen radialpenb;
+  pair radiala;
+  pair radialb;
+  real radialra;
+  real radialrb;
 
   string id;
 
-  private void initializer(path[] path, pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa=(0,0), pen aspenb=nullpen, pair aspointb=(0,0), pen rspena=nullpen, pair rspointa=(0,0), real rsradiusa=0, pen rspenb=nullpen, pair rspointb=(0,0),real rsradiusb=0, string id="") {
+  private void initializer(path[] path, pen fillpen=nullpen, pen drawpen=nullpen, pen axialpena=nullpen, pair axiala=(0,0), pen axialpenb=nullpen, pair axialb=(0,0), pen radialpena=nullpen, pair radiala=(0,0), real radialra=0, pen radialpenb=nullpen, pair radialb=(0,0),real radialrb=0, string id="") {
     this.path=path;
 
     this.fillpen=fillpen;
     this.drawpen=drawpen;
 
-    this.aspena=aspena;
-    this.aspenb=aspenb;
-    this.aspointa=aspointa;
-    this.aspointb=aspointb;
+    this.axialpena=axialpena;
+    this.axialpenb=axialpenb;
+    this.axiala=axiala;
+    this.axialb=axialb;
 
-    this.rspena=rspena;
-    this.rspenb=rspenb;
-    this.rspointa=rspointa;
-    this.rspointb=rspointb;
-    this.rsradiusa=rsradiusa;
-    this.rsradiusb=rsradiusb;
+    this.radialpena=radialpena;
+    this.radialpenb=radialpenb;
+    this.radiala=radiala;
+    this.radialb=radialb;
+    this.radialra=radialra;
+    this.radialrb=radialrb;
 
     this.id=id;
   }
@@ -46,32 +46,32 @@ struct tile {
     this.initializer(path, fillpen=fillpen, drawpen=drawpen,id);
   }
 
-  void operator init(path[] path={}, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(path, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb,id);
+  void operator init(path[] path={}, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(path, fillpen=fillpen, drawpen=drawpen, axialpena=axialpena, axiala=axiala, axialpenb=axialpenb, axialb=axialb,id);
   }
 
-  void operator init(path[] path={}, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(path, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  void operator init(path[] path={}, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(path, fillpen=fillpen, drawpen=drawpen, radialpena=radialpena, radiala=radiala, radialra=radialra, radialpenb=radialpenb, radialb=radialb, radialrb=radialrb,id);
   }
 
-  void operator init(path[] path={},pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, string id="") {
-    this.initializer(path, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  void operator init(path[] path={},pen fillpen=nullpen, pen drawpen=nullpen, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,real radialrb, string id="") {
+    this.initializer(path, fillpen=fillpen, drawpen=drawpen, axialpena=axialpena, axiala=axiala, axialpenb=axialpenb, axialb=axialb, radialpena=radialpena, radiala=radiala, radialra=radialra, radialpenb=radialpenb, radialb=radialb, radialrb=radialrb,id);
   }
 
   void operator init(pair path, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen,id);
   }
 
-  void operator init(pair path, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb,id);
+  void operator init(pair path, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, axialpena=axialpena, axiala=axiala, axialpenb=axialpenb, axialb=axialb,id);
   }
 
-  void operator init(pair path, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  void operator init(pair path, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, radialpena=radialpena, radiala=radiala, radialra=radialra, radialpenb=radialpenb, radialb=radialb, radialrb=radialrb,id);
   }
 
-  void operator init(pair path,pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, string id="") {
-    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
+  void operator init(pair path,pen fillpen=nullpen, pen drawpen=nullpen, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,real radialrb, string id="") {
+    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, axialpena=axialpena, axiala=axiala, axialpenb=axialpenb, axialb=axialb, radialpena=radialpena, radiala=radiala, radialra=radialra, radialpenb=radialpenb, radialb=radialb, radialrb=radialrb,id);
   }
 
   bool fillable() {
@@ -98,16 +98,16 @@ tile operator cast(pair p) {
 }
 
 tile copy(tile t) {
-  return tile(copy(t.path),fillpen=t.fillpen,drawpen=t.drawpen,aspena=t.aspena,aspointa=t.aspointa,aspenb=t.aspenb,aspointb=t.aspointb,rspena=t.rspena,rspointa=t.rspointa,rsradiusa=t.rsradiusa,rspenb=t.rspenb,rspointb=t.rspointb,rsradiusb=t.rsradiusb,id=t.id);
+  return tile(copy(t.path),fillpen=t.fillpen,drawpen=t.drawpen,axialpena=t.axialpena,axiala=t.axiala,axialpenb=t.axialpenb,axialb=t.axialb,radialpena=t.radialpena,radiala=t.radiala,radialra=t.radialra,radialpenb=t.radialpenb,radialb=t.radialb,radialrb=t.radialrb,id=t.id);
 }
 
 tile operator *(transform T, tile t1) {
   tile t2=copy(t1);
   t2.path=T*t1.path;
-  t2.aspointa=T*t1.aspointa;
-  t2.aspointb=T*t1.aspointb;
-  t2.rspointa=T*t1.rspointa;
-  t2.rspointb=T*t1.rspointb;
+  t2.axiala=T*t1.axiala;
+  t2.axialb=T*t1.axialb;
+  t2.radiala=T*t1.radiala;
+  t2.radialb=T*t1.radialb;
   return t2;
 }
 
@@ -143,7 +143,7 @@ struct tiledata {
   int index; // Used to determine location of tile in the mosaic subpatch
 
   private void initializer(transform transform, tile supertile, tile prototile,
-                     tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, string id="") {
+                     tile drawtile, pen fillpen, pen drawpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, string id="") {
     this.transform=transform;
     this.supertile=supertile;
 
@@ -151,7 +151,7 @@ struct tiledata {
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
 
-    this.drawtile.push(tile(dt.path,fillpen=fp,drawpen=dp,aspena, aspointa, aspenb, aspointb,rspena, rspointa,rsradiusa,rspenb,rspointb,rsradiusb));
+    this.drawtile.push(tile(dt.path,fillpen=fp,drawpen=dp,axialpena, axiala, axialpenb, axialb,radialpena, radiala,radialra,radialpenb,radialb,radialrb));
 
     this.layers=1;
     this.id=length(id) == 0 ? this.prototile.id : id;
@@ -162,28 +162,28 @@ struct tiledata {
                      tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.aspena, dt.aspointa,dt.aspenb,dt.aspointb,dt.rspena,dt.rspointa,dt.rsradiusa,dt.rspenb,dt.rspointb,dt.rsradiusb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.axialpena, dt.axiala,dt.axialpenb,dt.axialb,dt.radialpena,dt.radiala,dt.radialra,dt.radialpenb,dt.radialb,dt.radialrb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,aspena, aspointa, aspenb, aspointb,dt.rspena,dt.rspointa,dt.rsradiusa,dt.rspenb,dt.rspointb,dt.rsradiusb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,axialpena, axiala, axialpenb, axialb,dt.radialpena,dt.radiala,dt.radialra,dt.radialpenb,dt.radialb,dt.radialrb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.aspena, dt.aspointa, dt.aspenb, dt.aspointb, rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.axialpena, dt.axiala, dt.axialpenb, dt.axialb, radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile,pen fillpen=nullpen, pen drawpen=nullpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, string id="") {
+                     tile drawtile=nulltile,pen fillpen=nullpen, pen drawpen=nullpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen, aspena, aspointa, aspenb, aspointb, rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen, axialpena, axiala, axialpenb, axialb, radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
@@ -212,20 +212,20 @@ struct tiledata {
     if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
   }
 
-  void updatelayer(pen aspena, pair aspointa, pen aspenb, pair aspointb, int ind) {
-    if(aspena != nullpen) this.drawtile[ind].aspena=aspena;
-    if(aspenb != nullpen) this.drawtile[ind].aspenb=aspenb;
-    this.drawtile[ind].aspointa=aspointa;
-    this.drawtile[ind].aspointb=aspointb;
+  void updatelayer(pen axialpena, pair axiala, pen axialpenb, pair axialb, int ind) {
+    if(axialpena != nullpen) this.drawtile[ind].axialpena=axialpena;
+    if(axialpenb != nullpen) this.drawtile[ind].axialpenb=axialpenb;
+    this.drawtile[ind].axiala=axiala;
+    this.drawtile[ind].axialb=axialb;
   }
 
-  void updatelayer(pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, int ind) {
-    if(rspena != nullpen) this.drawtile[ind].rspena=rspena;
-    if(rspenb != nullpen) this.drawtile[ind].rspenb=rspenb;
-    this.drawtile[ind].rspointa=rspointa;
-    this.drawtile[ind].rspointb=rspointb;
-    this.drawtile[ind].rsradiusa=rsradiusa;
-    this.drawtile[ind].rsradiusb=rsradiusb;
+  void updatelayer(pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, int ind) {
+    if(radialpena != nullpen) this.drawtile[ind].radialpena=radialpena;
+    if(radialpenb != nullpen) this.drawtile[ind].radialpenb=radialpenb;
+    this.drawtile[ind].radiala=radiala;
+    this.drawtile[ind].radialb=radialb;
+    this.drawtile[ind].radialra=radialra;
+    this.drawtile[ind].radialrb=radialrb;
   }
 
   void updatelayer(tile drawtile, pen fillpen, pen drawpen,int ind) {
@@ -233,23 +233,23 @@ struct tiledata {
     this.updatelayer(fillpen,drawpen,ind);
   }
 
-  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, int ind) {
+  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, int ind) {
     this.updatelayer(drawtile,ind);
     this.updatelayer(fillpen,drawpen,ind);
-    this.updatelayer(aspena,aspointa,aspenb,aspointb,ind);
+    this.updatelayer(axialpena,axiala,axialpenb,axialb,ind);
   }
 
-  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, int ind) {
+  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, int ind) {
     this.updatelayer(drawtile,ind);
     this.updatelayer(fillpen,drawpen,ind);
-    this.updatelayer(rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
+    this.updatelayer(radialpena,radiala,radialra,radialpenb,radialb,radialrb,ind);
   }
 
-  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, int ind) {
+  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, int ind) {
     this.updatelayer(drawtile,ind);
     this.updatelayer(fillpen,drawpen,ind);
-    this.updatelayer(aspena,aspointa,aspenb,aspointb,ind);
-    this.updatelayer(rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,ind);
+    this.updatelayer(axialpena,axiala,axialpenb,axialb,ind);
+    this.updatelayer(radialpena,radiala,radialra,radialpenb,radialb,radialrb,ind);
   }
 }
 
@@ -276,23 +276,23 @@ struct substitution {
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
-                      pen aspena, pair aspointa, pen aspenb, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                      pen axialpena, pair axiala, pen axialpenb, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     tiledata m;
-    m=tiledata(transform,this.supertile,prototile,drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,id);
+    m=tiledata(transform,this.supertile,prototile,drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     tiledata m;
-    m=tiledata(transform,this.supertile,prototile,drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,id);
+    m=tiledata(transform,this.supertile,prototile,drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     tiledata m;
-    m=tiledata(transform,this.supertile,prototile,drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,id);
+    m=tiledata(transform,this.supertile,prototile,drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
     this.subpatch.push(m);
   }
 }
@@ -539,99 +539,99 @@ struct mosaic {
   }
 
   // Update with axial shading
-  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
     checkLayerError(layer);
 
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,layer);
+    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,layer);
+      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
-    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,layer,id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
+    this.updatelayer(drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,layer,id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,layers-1,id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,layers-1,id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,layers-1,id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,layers-1,id);
   }
 
-  void update(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,0,id);
+  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+    this.updatelayer(drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,0,id);
   }
 
-  void update(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.update(drawtile,aspena,aspointa,aspenb,aspointb,fillpen,drawpen,id);
+  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.update(drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,id);
   }
 
   // Update with radial shading
-  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
     checkLayerError(layer);
 
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,layer);
+    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,layer);
+      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
-    this.updatelayer(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layer,id);
+  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
+    this.updatelayer(drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,layer,id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layers-1,id);
+  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+    this.updatelayer(drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,layers-1,id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.updatelayer(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layers-1,id);
+  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,layers-1,id);
   }
 
-  void update(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-      this.updatelayer(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,0,id);
+  void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+      this.updatelayer(drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,0,id);
   }
 
-  void update(tile drawtile=nulltile, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-      this.update(drawtile,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,id);
+  void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+      this.update(drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
   }
 
   // Update everything
-  void updatelayer(tile drawtile=nulltile, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb,pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb,pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
     checkLayerError(layer);
 
     int[] indices=decorateIndices(id);
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,layer);
+    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
 
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,layer);
+      subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
   }
 
-  void updatelayer(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
-    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layer,id);
+  void updatelayer(tile drawtile=nulltile,pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
+    this.updatelayer(drawtile,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,layer,id);
   }
 
-  void updatelayer(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layers-1,id);
+  void updatelayer(tile drawtile=nulltile,pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+    this.updatelayer(drawtile,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,layers-1,id);
   }
 
-  void updatelayer(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,layers-1,id);
+  void updatelayer(tile drawtile=nulltile,pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,layers-1,id);
   }
 
-  void update(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,0,id);
+  void update(tile drawtile=nulltile,pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+    this.updatelayer(drawtile,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,0,id);
   }
 
-  void update(tile drawtile=nulltile,pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.update(drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,id);
+  void update(tile drawtile=nulltile,pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+    this.update(drawtile,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
   }
 
 }
@@ -729,13 +729,13 @@ void filldraw(picture pic=currentpicture, explicit tile t, pen fillpen=invisible
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  if(t.fillable()) axialshade(pic, t.path, stroke=stroke, extenda=extenda, extendb=extendb, t.aspena
-    ,t.aspointa,t.aspenb,t.aspointb);
+  if(t.fillable()) axialshade(pic, t.path, stroke=stroke, extenda=extenda, extendb=extendb, t.axialpena
+    ,t.axiala,t.axialpenb,t.axialb);
 }
 
 void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  if(t.fillable()) radialshade(pic, t.path, stroke=stroke, extenda=extenda, extendb=extendb, t.rspena
-    ,t.rspointa,t.rsradiusa, t.rspenb,t.rspointb,t.rsradiusb);
+  if(t.fillable()) radialshade(pic, t.path, stroke=stroke, extenda=extenda, extendb=extendb, t.radialpena
+    ,t.radiala,t.radialra, t.radialpenb,t.radialb,t.radialrb);
 }
 
 // Draw layer l of tiledata.
