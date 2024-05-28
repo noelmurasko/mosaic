@@ -19,15 +19,15 @@ mosaic M=mosaic(chair,n,chairRule);
 
 tile dot=(1/2,1/2);
 M.addlayer();
-//M.updatelayer(dot,drawpen=black+10);
+M.updatelayer(dot,drawpen=black+10);
 
 tile pentagon=shift(7/5,1/2)*rotate(30)*scale(1/5)*polygon(5);
 tile hexagon=shift(1/2,7/5)*rotate(30)*scale(1/5)*polygon(6);
 tile decorate=pentagon^^hexagon;
 
 M.addlayer();
-//M.updatelayer(decorate);
-//M.updatelayer(lightblue);
-M.updatelayer(decorate,green,"B");
-M.updatelayer(decorate,orange,"C","D");
-filldraw(M,layer=2);
+M.updatelayer(decorate);
+M.updatelayer(lightblue);
+M.updatelayer(white,"B");
+M.updatelayer(orange,"C","D");
+filldraw(M);
