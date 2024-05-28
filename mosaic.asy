@@ -799,6 +799,22 @@ void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
+void axialshade(picture pic=currentpicture, substitution s, bool stroke=false, bool extenda=true, bool extendb=true, bool drawoutline=false,
+              pen outlinepen=linetype(new real[] {4,2})+1.5)  {
+  for(int k=0; k < s.subpatch.length; ++k)
+    axialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda, extendb=extendb);
+  if(drawoutline)
+    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
+}
+
+void radialshade(picture pic=currentpicture, substitution s, bool stroke=false, bool extenda=true, bool extendb=true, bool drawoutline=false,
+              pen outlinepen=linetype(new real[] {4,2})+1.5)  {
+  for(int k=0; k < s.subpatch.length; ++k)
+    radialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda, extendb=extendb);
+  if(drawoutline)
+    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
+}
+
 // Draw layer of mosaic.
 // If scalelinewidth == true, the linewidth of the pen is scaled by the
 // inflation nscale times. The default value of nscale is the number of
