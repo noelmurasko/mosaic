@@ -349,7 +349,7 @@ tiledata[] operator *(transform T, tiledata[] mt1) {
 
 struct mosaic {
   tiledata[] tiles;
-  tile supertile;
+  tile starttile;
   int n=0;
   tiledata[] subpatch;
   int layers;
@@ -471,7 +471,7 @@ struct mosaic {
         int sTL=this.tiles.length;
         if(sTL == 0) {
           this.tilecount.push(1);
-          this.iterate(tiledata(this.supertile),tiles,inflation);
+          this.iterate(tiledata(this.starttile),tiles,inflation);
         }
         else {
           for(int i=0; i < sTL; ++i)
@@ -485,11 +485,11 @@ struct mosaic {
         this.tiles[i]=scale(inflation^n)*this.tiles[i];
       this.n+=n;
     } else {
-      if(this.tiles.length == 0) this.tiles.push(tiledata(this.supertile));
+      if(this.tiles.length == 0) this.tiles.push(tiledata(this.starttile));
     }
   }
 
-  void operator init(tile supertile=nulltile, int n=0 ...substitution[] rules) {
+  void operator init(tile starttile=nulltile, int n ...substitution[] rules) {
     int ind=0;
     int Lr=rules.length;
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
@@ -521,24 +521,24 @@ struct mosaic {
     for(int i=0; i < Lp; ++i) {
       patchi=subpatch[i];
       if(patchi.prototile == nulltile) {
-        patchi.prototile=this.supertile;
+        patchi.prototile=this.starttile;
       }
       if(patchi.supertile == nulltile) {
-        patchi.supertile=this.supertile;
+        patchi.supertile=this.starttile;
       }
       transform Ti=subpatch[i].transform;
       patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
     }
-    // If supertile is not specified, use supertile from first specified rule.
-    if(supertile == nulltile) {
-      this.supertile=rules[0].supertile;
+    // If starttile is not specified, use supertile from first specified rule.
+    if(starttile == nulltile) {
+      this.starttile=rules[0].supertile;
     } else {
       for(int i=0; i < Lr; ++i) {
-        if(supertile==rules[i].supertile) {
-          this.supertile=supertile;
+        if(starttile==rules[i].supertile) {
+          this.starttile=starttile;
           break;
         }
-      assert(i < Lr, "Supertile in mosaic does not match supertile in provided substitutions.");
+      assert(i < Lr, "starttile does not match supertile in provided substitutions.");
       }
     }
     this.substitute(n);
@@ -593,8 +593,8 @@ mosaic copy(mosaic M) {
   }
 
   for(int j=0; j < Lp; ++j) {
-    if(M.supertile == Msupertiles[j]); {
-      M2.supertile=M2.subpatch[j].supertile;
+    if(M.starttile == Msupertiles[j]); {
+      M2.starttile=M2.subpatch[j].supertile;
       break;
     }
   }
