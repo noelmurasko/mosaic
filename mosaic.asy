@@ -189,8 +189,8 @@ struct tiledata {
     this.id=id == "" ? this.prototile.id : id;
   }
 
-  void addlayer(tile drawtile) {
-    this.drawtile.push(copy(drawtile));
+  void addlayer() {
+    this.drawtile.push(nulltile);
     this.layers+=1;
   }
 
@@ -198,7 +198,7 @@ struct tiledata {
     if(drawtile != nulltile) this.drawtile[ind]=drawtile;
   }
 
-  void set(pen fillpen, pen drawpen,int ind) {
+  void set(pen fillpen, pen drawpen, int ind) {
     if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
     if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
   }
@@ -218,7 +218,6 @@ struct tiledata {
     this.drawtile[ind].rsradiusa=rsradiusa;
     this.drawtile[ind].rsradiusb=rsradiusb;
   }
-
 
   void set(tile drawtile, pen fillpen, pen drawpen,int ind) {
     this.set(drawtile,ind);
@@ -358,13 +357,13 @@ struct mosaic {
   // tilecount[k] is the number of tiles in iteration k
   int[] tilecount;
 
-  // addlayer() Adds a new layer with a drawtile.
-  void addlayer(tile drawtile=nulltile) {
+  // addlayer() Adds a new layer to mosaic
+  void addlayer() {
     for(int i=0; i < subpatch.length; ++i) {
-      subpatch[i].addlayer(drawtile);
+      subpatch[i].addlayer();
     }
-    if(n == 0) tiles[0].addlayer(drawtile);
-    layers+=1;
+    if(n == 0) tiles[0].addlayer();
+    this.layers+=1;
   }
 
   // Return true if start tile should be decorated

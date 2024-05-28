@@ -83,8 +83,8 @@ M.set(tri, drawpen=posBorders, "3", "4");  // positive chirality
 // add control points
 pair CP=(u+2*v+w)/4;
 
-M.addlayer(CP);
-M.set(drawpen=CP_pen);
+M.addlayer();
+M.set(CP,drawpen=CP_pen);
 
 if(colourCPs) {
 	M.set(drawpen=posCP_pen, "3", "4");  // positive chirality
