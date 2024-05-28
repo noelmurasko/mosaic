@@ -199,12 +199,12 @@ struct tiledata {
   }
 
   void addlayer() {
-    this.drawtile.push(nulltile);
+    this.drawtile.push(tile());
     this.layers+=1;
   }
 
   void updatelayer(tile drawtile, int ind) {
-    if(drawtile != nulltile) this.drawtile[ind]=drawtile;
+    if(drawtile != nulltile) this.drawtile[ind]=copy(drawtile);
   }
 
   void updatelayer(pen fillpen, pen drawpen, int ind) {
