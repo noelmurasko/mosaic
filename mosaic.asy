@@ -367,6 +367,7 @@ struct mosaic {
     layers+=1;
   }
 
+  // Return true if start tile should be decorated
   private bool decorateStartTile(string[] id) {
     int idlength=id.length;
     if(n != 0) return false;
@@ -377,6 +378,7 @@ struct mosaic {
     return false;
   }
 
+  // Return indices of subpatch for decoration
   private int[] decorateIndices(string[] id) {
     int[] indices={};
     int idlength=id.length;
