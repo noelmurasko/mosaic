@@ -54,7 +54,7 @@ struct tile {
     this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
-  void operator init(path[] boundary={}, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+  void operator init(path[] boundary={},pen fillpen=nullpen, pen drawpen=nullpen, pen aspena=nullpen, pair aspointa, pen aspenb=nullpen, pair aspointb, pen rspena=nullpen, pair rspointa, real rsradiusa, pen rspenb=nullpen, pair rspointb,real rsradiusb, string id="") {
     this.initializer(boundary, fillpen=fillpen, drawpen=drawpen, aspena=aspena, aspointa=aspointa, aspenb=aspenb, aspointb=aspointb, rspena=rspena, rspointa=rspointa, rsradiusa=rsradiusa, rspenb=rspenb, rspointb=rspointb, rsradiusb=rsradiusb,id);
   }
 
@@ -171,7 +171,7 @@ struct tiledata {
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile,pen fillpen=nullpen, pen drawpen=nullpen, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb, string id="") {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen, aspena, aspointa, aspenb, aspointb, rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,id);
@@ -283,7 +283,7 @@ struct substitution {
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen aspena, pair aspointa, pen aspenb, pair aspointb, pen rspena, pair rspointa, real rsradiusa, pen rspenb, pair rspointb, real rsradiusb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
     tiledata m;
-    m=tiledata(transform,this.supertile,prototile,drawtile,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,fillpen,drawpen,id);
+    m=tiledata(transform,this.supertile,prototile,drawtile,fillpen,drawpen,aspena,aspointa,aspenb,aspointb,rspena,rspointa,rsradiusa,rspenb,rspointb,rsradiusb,id);
     this.subpatch.push(m);
   }
 }
