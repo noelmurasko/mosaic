@@ -120,12 +120,6 @@ tile operator ^^(tile t1, tile t2) {
 
 tile nulltile=tile(nullpath);
 
-//bool fillcheckable(tile drawtile, int ind=0) {
-//  for(int i=0; i < drawtile.length; ++i)
-//    if(!cyclic(drawtile.path[i])) return false;
-//  return true;
-//}
-
 struct tiledata {
   transform transform;
   tile supertile;
