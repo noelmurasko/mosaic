@@ -262,29 +262,25 @@ struct substitution {
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m;
-    m=tessera(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
+    tessera m=tessera(transform,this.supertile,prototile,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile,
                       pen axialpena, pair axiala, pen axialpenb, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m;
-    m=tessera(transform,this.supertile,prototile,drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,id);
+    tessera m=tessera(transform,this.supertile,prototile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m;
-    m=tessera(transform,this.supertile,prototile,drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
+    tessera m=tessera(transform,this.supertile,prototile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m;
-    m=tessera(transform,this.supertile,prototile,drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
+    tessera m=tessera(transform,this.supertile,prototile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
     this.subpatch.push(m);
   }
 }
@@ -349,7 +345,7 @@ tessera[] operator *(transform T, tessera[] mt1) {
 
 struct mosaic {
   tessera[] tesserae;
-  tile starttile;
+  tile initialtile;
   int n=0;
   tessera[] subpatch;
   int layers;
@@ -358,15 +354,13 @@ struct mosaic {
   // tilecount[k] is the number of tesserae in iteration k
   int[] tilecount;
 
-  // addlayer() Adds a new layer to mosaic
-
   private void iterate(tessera T, tessera[] tesserae,
           real inflation=inflation) {
     tessera patchi;
     for(int i=0; i < subpatch.length; ++i) {
       patchi=subpatch[i];
       if(patchi.supertile == T.prototile) {
-        tesserae.push(T*patchi);
+        tesserae.push(scale(inflation)*T*patchi);
       }
     }
   }
@@ -386,15 +380,13 @@ struct mosaic {
         int tesserael=tesserae.length;
         this.tilecount.push(tesserael);
       }
-      for(int i=0; i < this.tesserae.length; ++i)
-        this.tesserae[i]=scale(inflation^n)*this.tesserae[i];
       this.n+=n;
     }
   }
 
   void substitute(int n) {this.substitute(n, new void (tessera[],int){});}
 
-  private void initializer(tile starttile=nulltile, int n, void updatetesserae(tessera[],int), substitution[] rules) {
+  private void initializer(tile initialtile=nulltile, int n, void updatetesserae(tessera[],int), substitution[] rules) {
     int ind=0;
     int Lr=rules.length;
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
@@ -426,27 +418,29 @@ struct mosaic {
     for(int i=0; i < Lp; ++i) {
       patchi=subpatch[i];
       if(patchi.prototile == nulltile) {
-        patchi.prototile=this.starttile;
+        patchi.prototile=this.initialtile;
       }
       if(patchi.supertile == nulltile) {
-        patchi.supertile=this.starttile;
+        patchi.supertile=this.initialtile;
       }
       transform Ti=subpatch[i].transform;
       patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
     }
-    // If starttile is not specified, use supertile from first specified rule.
-    if(starttile == nulltile) {
-      this.starttile=rules[0].supertile;
+    // If initialtile is not specified, use supertile from first specified rule.
+    if(initialtile == nulltile) {
+      this.initialtile=rules[0].supertile;
     } else {
-      for(int i=0; i < Lr; ++i) {
-        if(starttile==rules[i].supertile) {
-          this.starttile=starttile;
+      int i=0;
+      while(i < Lr) {
+        if(initialtile==rules[i].supertile) {
+          this.initialtile=initialtile;
           break;
         }
-      assert(i < Lr, "starttile does not match supertile in provided substitutions.");
+        ++i;
       }
+      assert(i < Lr, "initialtile does not match supertile in provided substitutions.");
     }
-    this.tesserae.push(tessera(this.starttile));
+    this.tesserae.push(tessera(this.initialtile));
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
     this.substitute(n,updatetesserae);
@@ -454,22 +448,39 @@ struct mosaic {
 
   }
 
-  void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[],int), substitution[] rules) {
-    this.initializer(starttile, n, updatetesserae, rules);
+  void operator init(tile initialtile=nulltile, int n, void updatetesserae(tessera[],int), substitution[] rules) {
+    this.initializer(initialtile, n, updatetesserae, rules);
   }
 
-  void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[],int) ...substitution[] rules) {
-    this.initializer(starttile, n, updatetesserae, rules);
+  void operator init(tile initialtile=nulltile, int n, void updatetesserae(tessera[],int) ...substitution[] rules) {
+    this.initializer(initialtile, n, updatetesserae, rules);
   }
 
-  void operator init(tile starttile=nulltile, int n, substitution[] rules) {
-    this.initializer(starttile, n, new void (tessera[],int){}, rules);
+  void operator init(tile initialtile=nulltile, int n, substitution[] rules) {
+    this.initializer(initialtile, n, new void (tessera[],int){}, rules);
   }
 
-  void operator init(tile starttile=nulltile, int n ...substitution[] rules) {
-    this.initializer(starttile, n, new void (tessera[],int){}, rules);
+  void operator init(tile initialtile=nulltile, int n ...substitution[] rules) {
+    this.initializer(initialtile, n, new void (tessera[],int){}, rules);
   }
 
+  // Assert that layer must be valid
+  private void checkLayerError(int layer) {
+    assert(0 <= layer && layer < layers, "Cannot access layer "+string(layer)+" in mosaic with "+string(layers)+" layers.");
+  }
+
+  // Return transformed drawtiles of layer
+  tile[] tiles(int layer=0) {
+    checkLayerError(layer);
+    tile[] ttiles=new tile[this.tesserae.length];
+    for(int i=0; i < this.tesserae.length; ++i) {
+      tessera ti=this.tesserae[i];
+      ttiles[i]=ti.transform*ti.drawtile[layer];
+    }
+    return ttiles;
+  }
+
+  // addlayer() Adds a new layer to mosaic
   void addlayer(int n=1) {
     assert(n >= 1, "Cannot add less than 1 layer.");
     for(int i=0; i < n; ++i) {
@@ -482,7 +493,7 @@ struct mosaic {
   }
 
   // Return true if start tile should be decorated
-  private bool decorateStartTile(string[] id) {
+  private bool decorateinitialtile(string[] id) {
     int idlength=id.length;
     if(n != 0) return false;
     if(idlength == 0) return true;
@@ -507,19 +518,13 @@ struct mosaic {
     return indices;
   }
 
-  // Assert that layer must be valid
-  private void checkLayerError(int layer) {
-    assert(0 <= layer && layer < layers, "Cannot update layer "+string(layer)+" in mosaic with "+string(layers)+" layers.");
-  }
-
   // Update with tile, fillpen, and drawpen
-
   //Update layer
   void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
     checkLayerError(layer);
 
-    if(decorateStartTile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,layer);
+    if(decorateinitialtile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
@@ -553,7 +558,7 @@ struct mosaic {
 
     checkLayerError(layer);
 
-    if(decorateStartTile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,layer);
+    if(decorateinitialtile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
@@ -585,7 +590,7 @@ struct mosaic {
 
     checkLayerError(layer);
 
-    if(decorateStartTile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
+    if(decorateinitialtile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
@@ -618,7 +623,7 @@ struct mosaic {
     checkLayerError(layer);
 
     int[] indices=decorateIndices(id);
-    if(decorateStartTile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
+    if(decorateinitialtile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
 
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
@@ -692,8 +697,8 @@ mosaic copy(mosaic M) {
   }
 
   for(int j=0; j < Lp; ++j) {
-    if(M.starttile == Msupertiles[j]); {
-      M2.starttile=M2.subpatch[j].supertile;
+    if(M.initialtile == Msupertiles[j]); {
+      M2.initialtile=M2.subpatch[j].supertile;
       break;
     }
   }
@@ -734,7 +739,7 @@ void fill(picture pic=currentpicture, explicit tile t, pen p=invisible) {
 
 void filldraw(picture pic=currentpicture, explicit tile t, pen fillpen=invisible, pen drawpen=currentpen) {
   draw(pic, t, drawpen);
-  fill(pic, t.path, drawpen);
+  fill(pic, t, fillpen);
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
