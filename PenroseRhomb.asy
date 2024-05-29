@@ -9,6 +9,7 @@ real a=Sin(18);
 real b=Cos(18);
 real c=Sin(36);
 real d=Cos(36);
+void f(tessera[]);
 
 tile rhomb1=tile((0,0)--(c,d)--(0,2*d)--(-c,d)--cycle,lightyellow);
 tile rhomb2=tile((0,0)--(b,a)--(0,2*a)--(-b,a)--cycle,heavyblue);

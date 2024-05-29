@@ -7,19 +7,31 @@ As of May 11, 2024.
 - chair.asy
 - chairDot.asy
   - A modification of chair.asy, which uses the decoration/layer features of mosaic.
+- chairlabel.asy
+  - A modification of chair.asy, which uses the letter L (created from a Label) as a tile.
+- chairaxialshade.asy
+  - A modification of chair.asy, which uses the axial shading features of mosaic.
+- chairradialshade.asy
+  - A modification of chair.asy, which uses the radial shading features of mosaic.
+- chairrand.asy
+  - A modification of chair.asy, in which it is random whether or not a tile is iterated.
 - domino.asy
 - fudgeflake.asy
+- Hilbertcurve.asy
+  - Hilbert curve, using substitution (see https://tilings.math.uni-bielefeld.de/substitution/hilbert-curve/).
 - KenyonNonFLC.asy
   - Keynon's non FLC tiling which is not of finite local complexity (see https://tilings.math.uni-bielefeld.de/substitution/kenyons-non-flc/).
 - PenroseKite.asy
 - PenroseRhomb.asy
 - periodDoubling.asy
 - pinwheel.asy
-  - The epidome of a tiling with statistical circular symmetry.
+  - The epitome of a tiling with statistical circular symmetry.
 - pinwheelPlus.asy
   - The pinwheel tiling with several decorations.
 - pinwheelVariant.asy
   - A periodic variant of the pinwheel tiling.
+- pinwheelrand.asy
+  - Each iteration randomly chooses between the aperiodic and periodic pinwheel substitution rule.
 - SierpinskiGasket.asy
 - square.asy
 - tromino1.asy

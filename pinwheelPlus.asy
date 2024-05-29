@@ -11,6 +11,7 @@ tile tri=u--v--w--cycle;
 
 // inflation factor
 inflation=sqrt(5);
+error;
 
 // number of iterations
 int n=5;
@@ -68,24 +69,26 @@ mosaic M=mosaic(n,pinSub);
 
 // colour tiles by chirality
 if(colourTiles) {
-	M.set(posTiles, "3", "4");  // positive chirality
-	M.set(negTiles, "1", "2", "5");  // negative chirality
+	M.updatelayer(posTiles, "3", "4");  // positive chirality
+	M.updatelayer(negTiles, "1", "2", "5");  // negative chirality
 }
 
 // colour tile borders by chirality (with positive on top)
-M.set(drawpen=tilePen);
+M.updatelayer(drawpen=tilePen);
 M.addlayer();
-M.set(tri, drawpen=negBorders, "1", "2", "5");  // negative chirality
+M.updatelayer(tri, drawpen=negBorders, "1", "2", "5");  // negative chirality
 M.addlayer();
-M.set(tri, drawpen=posBorders, "3", "4");  // positive chirality
+M.updatelayer(tri, drawpen=posBorders, "3", "4");  // positive chirality
 
 // add control points
 pair CP=(u+2*v+w)/4;
-M.addlayer(CP, CP_pen);
+
+M.addlayer();
+M.updatelayer(CP,drawpen=CP_pen);
 
 if(colourCPs) {
-	M.set(posCP_pen, "3", "4");  // positive chirality
-	M.set(negCP_pen, "1", "2", "5");  // negative chirality
+	M.updatelayer(drawpen=posCP_pen, "3", "4");  // positive chirality
+	M.updatelayer(drawpen=negCP_pen, "1", "2", "5");  // negative chirality
 }
 
 // rotate/reorient patch
@@ -110,13 +113,13 @@ if(drawFP) draw(FP, p=FP_pen);
 
 // overlay level n-k supertiles
 mosaic superM=mosaic(max(n-k,0),pinSub);
-superM.set(invisible, layer=0);
-if(superM.layers>1) superM.set(invisible, layer=1);
+superM.updatelayer(invisible, layer=0);
+if(superM.layers>1) superM.updatelayer(invisible, layer=1);
 if(colourSupertiles) {
 	superM.addlayer();
-	superM.set(tri, drawpen=negOverlay, "1", "2", "5");
+	superM.updatelayer(tri, drawpen=negOverlay, "1", "2", "5");
 	superM.addlayer();
-	superM.set(tri, drawpen=posOverlay, "3", "4");
+	superM.updatelayer(tri, drawpen=posOverlay, "3", "4");
 }
 superM=scale(inflation^k)*superM;
 if(rotatePatch) superM=RotVarphi*superM;

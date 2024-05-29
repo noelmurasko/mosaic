@@ -17,6 +17,14 @@ chairRule.addtile(shift(4,0)*rotate(90),lightgreen);
 chairRule.addtile(shift(0,4)*rotate(270),lightyellow);
 
 // draw patch
-int n=4;
-mosaic M=mosaic(chair,n,chairRule);
+
+void updatetesserae(tessera[] tesserae) {
+  for(int i=0; i < tesserae.length; ++ i) {
+    real x=unitrand();
+    tesserae[i].iterate=x < 0.5 ? false : true;
+  }
+}
+
+int n=6;
+mosaic M=mosaic(chair,n,updatetesserae,chairRule);
 filldraw(M);
