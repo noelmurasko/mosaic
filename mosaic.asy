@@ -456,7 +456,7 @@ struct mosaic {
       assert(i < Lr, "starttile does not match supertile in provided substitutions.");
       }
     }
-    this.substitute(n);
+    this.substitute(n,updatetesserae);
     this.layers=1;
 
   }
