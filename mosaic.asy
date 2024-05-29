@@ -1,8 +1,6 @@
 real inflation=1;
 private real globalinflation() {return inflation;}
 
-real newinflation=1;
-
 // Return the square of the scaling applied by a transform T
 // i.e. det(abs(M)), where M is the matrix (shiftless) part of T.
 real scale2(transform T) {
@@ -431,12 +429,12 @@ struct mosaic {
         mtile[] sortedtiles;
         for(int i=0; i < this.tiles.length; ++i) {
           //write(scale2(this.tiles[i].transform));
-          //write(scale2(this.tiles[i].transform)*this.tiles[i].prototile.area*newinflation^(2*this.n));
-          //write(newinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile));
-          //write(newinflation^((this.n-1))*sqrt(scale2(this.tiles[i].transform))*trianglearea(this.tiles[i].prototile));
+          //write(scale2(this.tiles[i].transform)*this.tiles[i].prototile.area);
+          //write(trianglearea(this.tiles[i].transform*this.tiles[i].prototile));
+          //write(sqrt(scale2(this.tiles[i].transform))*trianglearea(this.tiles[i].prototile));
           //write();
-          if(newinflation^(2*(this.n-1))*trianglearea(this.tiles[i].transform*this.tiles[i].prototile) >= threshold)
-              indices.push(i);
+          if(trianglearea(this.tiles[i].transform*this.tiles[i].prototile) >= threshold)
+             indices.push(i);
         }
       }
 
@@ -510,7 +508,7 @@ struct mosaic {
       if(multiscale) {
         //real threshold=0;
         //for(int i=4; i < patch.length; ++i) {
-        //  real area=newinflation^2*trianglearea(this.patch[i].transform*this.patch[i].prototile);
+        //  real area=trianglearea(this.patch[i].transform*this.patch[i].prototile);
         //  if(area > threshold) threshold = area;
         //}
         //write();
