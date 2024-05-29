@@ -438,13 +438,15 @@ struct mosaic {
     if(starttile == nulltile) {
       this.starttile=rules[0].supertile;
     } else {
-      for(int i=0; i < Lr; ++i) {
+      int i=0;
+      while(i < Lr) {
         if(starttile==rules[i].supertile) {
           this.starttile=starttile;
           break;
         }
-      assert(i < Lr, "starttile does not match supertile in provided substitutions.");
+        ++i;
       }
+      assert(i < Lr, "starttile does not match supertile in provided substitutions.");
     }
     this.tesserae.push(tessera(this.starttile));
     this.tilecount.push(1);
