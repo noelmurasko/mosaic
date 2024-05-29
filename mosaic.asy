@@ -240,7 +240,8 @@ struct tessera {
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     this.initializer(transform, supertile, prototile, drawtile, fillpen,
                      drawpen, axialpena, axiala, axialpenb, axialb, radialpena,
-                     radiala, radialra, radialpenb, radialb, radialrb, id, iterate);
+                     radiala, radialra, radialpenb, radialb, radialrb, id,
+                     iterate);
   }
 
   void operator init(transform transform=identity, tile supertile,
@@ -301,17 +302,24 @@ struct tessera {
     this.updatelayer(axialpena, axiala, axialpenb, axialb, ind);
   }
 
-  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, int ind) {
+  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen radialpena,
+                   pair radiala, real radialra, pen radialpenb, pair radialb,
+                   real radialrb, int ind) {
     this.updatelayer(drawtile, ind);
     this.updatelayer(fillpen, drawpen, ind);
-    this.updatelayer(radialpena, radiala, radialra, radialpenb, radialb, radialrb, ind);
+    this.updatelayer(radialpena, radiala, radialra, radialpenb, radialb,
+                     radialrb, ind);
   }
 
-  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, int ind) {
+  void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen axialpena,
+                   pair axiala, pen axialpenb, pair axialb, pen radialpena,
+                   pair radiala, real radialra, pen radialpenb, pair radialb,
+                   real radialrb, int ind) {
     this.updatelayer(drawtile, ind);
     this.updatelayer(fillpen, drawpen, ind);
     this.updatelayer(axialpena, axiala, axialpenb, axialb, ind);
-    this.updatelayer(radialpena, radiala, radialra, radialpenb, radialb, radialrb, ind);
+    this.updatelayer(radialpena, radiala, radialra, radialpenb, radialb,
+                     radialrb, ind);
   }
 }
 
@@ -330,27 +338,40 @@ struct substitution {
     this.inflation=inflation;
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile,
+               explicit tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen, id);
+    tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen,
+                      id);
     this.subpatch.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
-                      pen axialpena, pair axiala, pen axialpenb, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m=tessera(transform, this.supertile, prototile, axialpena, axiala, axialpenb, axialb, fillpen, drawpen, id);
+               pen axialpena, pair axiala, pen axialpenb, pair axialb,
+               pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+    tessera m=tessera(transform, this.supertile, prototile, axialpena, axiala,
+                      axialpenb, axialb, fillpen, drawpen, id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile,
+               pen radialpena, pair radiala, real radialra, pen radialpenb,
+               pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m=tessera(transform, this.supertile, prototile, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, id);
+    tessera m=tessera(transform, this.supertile, prototile, radialpena, radiala,
+                      radialra, radialpenb, radialb, radialrb, fillpen, drawpen,
+                      id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile,
+               pen axialpena, pair axiala, pen axialpenb, pair axialb,
+               pen radialpena, pair radiala, real radialra, pen radialpenb,
+               pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen, axialpena, axiala, axialpenb, axialb, radialpena, radiala, radialra, radialpenb, radialb, radialrb, id);
+    tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen,
+                      axialpena, axiala, axialpenb, axialb, radialpena, radiala,
+                      radialra, radialpenb, radialb, radialrb, id);
     this.subpatch.push(m);
   }
 }
@@ -364,10 +385,11 @@ tessera copy(tessera mt) {
   // If supertile and prototile are the same, make only one copy
   if(mt.supertile == mt.prototile) {
     tile super2=copy(mt.supertile);
-    return tessera(mt.transform, super2, super2, dtcopy, mt.index, mt.id, mt.iterate);
+    return tessera(mt.transform, super2, super2, dtcopy, mt.index, mt.id,
+                   mt.iterate);
   } else
     return tessera(mt.transform, copy(mt.supertile), copy(mt.prototile), dtcopy,
-      mt.index, mt.id, mt.iterate);
+                   mt.index, mt.id, mt.iterate);
 }
 
 // Create a deep copy of the substitution s1.
@@ -381,7 +403,8 @@ substitution copy(substitution s1) {
 // Create a new tessera mt2 from mt1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
 tessera duplicate(tessera mt1) {
-  tessera mt2=tessera(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile, mt1.index, mt1.id, mt1.iterate);
+  tessera mt2=tessera(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile,
+                      mt1.index, mt1.id, mt1.iterate);
   return mt2;
 }
 
@@ -456,7 +479,9 @@ struct mosaic {
 
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
-  private void initializer(tile initialtile=nulltile, int n, void updatetesserae(tessera[], int), substitution[] rules) {
+  private void initializer(tile initialtile=nulltile, int n,
+                           void updatetesserae(tessera[], int),
+                           substitution[] rules) {
     int ind=0;
     int Lr=rules.length;
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
@@ -474,7 +499,8 @@ struct mosaic {
     for(int i=1; i < Lr; ++i) {
       rulesi=rules[i];
       rulesipatch=rulesi.subpatch;
-      assert(rulesi.inflation == this.inflation,"All substitutions in a mosaic must have the same inflation factor.");
+      assert(rulesi.inflation == this.inflation,"All substitutions in a mosaic
+             must have the same inflation factor.");
       for(int j=0; j < rulesipatch.length; ++j) {
         rulesipatchj=duplicate(rulesipatch[j]);
         rulesipatchj.index=ind;
@@ -494,7 +520,8 @@ struct mosaic {
         patchi.supertile=this.initialtile;
       }
       transform Ti=subpatch[i].transform;
-      patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*scale(deflation);
+      patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*
+                        scale(deflation);
     }
     // If initialtile is not specified, use supertile from first specified rule.
     if(initialtile == nulltile) {
@@ -508,7 +535,8 @@ struct mosaic {
         }
         ++i;
       }
-      assert(i < Lr, "initialtile does not match supertile in provided substitutions.");
+      assert(i < Lr, "initialtile does not match any supertile in provided
+            substitutions.");
     }
     this.tesserae.push(tessera(this.initialtile));
     this.tilecount.push(1);
@@ -518,11 +546,15 @@ struct mosaic {
 
   }
 
-  void operator init(tile initialtile=nulltile, int n, void updatetesserae(tessera[], int), substitution[] rules) {
+  void operator init(tile initialtile=nulltile, int n,
+                     void updatetesserae(tessera[], int),
+                     substitution[] rules) {
     this.initializer(initialtile, n, updatetesserae, rules);
   }
 
-  void operator init(tile initialtile=nulltile, int n, void updatetesserae(tessera[], int) ...substitution[] rules) {
+  void operator init(tile initialtile=nulltile, int n,
+                     void updatetesserae(tessera[], int)
+                     ...substitution[] rules) {
     this.initializer(initialtile, n, updatetesserae, rules);
   }
 
@@ -536,7 +568,8 @@ struct mosaic {
 
   // Assert that layer must be valid
   private void checkLayerError(int layer) {
-    assert(0 <= layer && layer < layers, "Cannot access layer "+string(layer)+" in mosaic with "+string(layers)+" layers.");
+    assert(0 <= layer && layer < layers, "Cannot access layer "+string(layer)+
+           " in mosaic with "+string(layers)+" layers.");
   }
 
   // Return transformed drawtiles of layer
@@ -590,133 +623,224 @@ struct mosaic {
 
   // Update with tile, fillpen, and drawpen
   //Update layer
-  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
-
+  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
+                   pen drawpen=nullpen, int layer, string[] id) {
     checkLayerError(layer);
 
-    if(decorateinitialtile(id)) tesserae[0].updatelayer(drawtile, fillpen, drawpen, layer);
+    if(decorateinitialtile(id))
+      tesserae[0].updatelayer(drawtile, fillpen, drawpen, layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
+                   pen drawpen=nullpen, int layer ...string[] id) {
     this.updatelayer(drawtile, fillpen, drawpen, layer, id);
   }
 
   //Update top layer
-  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
+                   pen drawpen=nullpen, string[] id) {
      this.updatelayer(drawtile, fillpen, drawpen, layers-1, id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
+                   pen drawpen=nullpen ...string[] id) {
      this.updatelayer(drawtile, fillpen, drawpen, layers-1, id);
   }
 
   //Update layer 0
-  void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
+  void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen,
+              string[] id) {
     this.updatelayer(drawtile, fillpen, drawpen,0, id);
   }
 
-  void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen... string[] id) {
+  void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen
+              ...string[] id) {
     this.update(drawtile, fillpen, drawpen, id);
   }
 
   // Update with axial shading
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
-
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+                   pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
+                   pen drawpen=nullpen, int layer, string[] id) {
     checkLayerError(layer);
 
-    if(decorateinitialtile(id)) tesserae[0].updatelayer(drawtile, fillpen, drawpen, axialpena, axiala, axialpenb, axialb, layer);
+    if(decorateinitialtile(id))
+      tesserae[0].updatelayer(drawtile, fillpen, drawpen, axialpena, axiala,
+                              axialpenb, axialb, layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, axialpena, axiala, axialpenb, axialb, layer);
+      subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, axialpena,
+                                       axiala, axialpenb, axialb, layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen, drawpen, layer, id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+                   pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
+                   pen drawpen=nullpen, int layer ...string[] id) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
+                     drawpen, layer, id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen, drawpen, layers-1, id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+                   pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
+                   pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
+                     drawpen, layers-1, id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen, drawpen, layers-1, id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+                   pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
+                  pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
+                     drawpen, layers-1, id);
   }
 
-  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen, drawpen,0, id);
+  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+              pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
+              pen drawpen=nullpen, string[] id) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
+                     drawpen, 0, id);
   }
 
-  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.update(drawtile, axialpena, axiala, axialpenb, axialb, fillpen, drawpen, id);
+  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+              pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
+              pen drawpen=nullpen ...string[] id) {
+    this.update(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
+                drawpen, id);
   }
 
   // Update with radial shading
-  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
+  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
+                   real radialra, pen radialpenb=nullpen, pair radialb,
+                   real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
+                   int layer, string[] id) {
 
     checkLayerError(layer);
 
-    if(decorateinitialtile(id)) tesserae[0].updatelayer(drawtile, fillpen, drawpen, radialpena, radiala, radialra, radialpenb, radialb, radialrb, layer);
+    if(decorateinitialtile(id))
+      tesserae[0].updatelayer(drawtile, fillpen, drawpen, radialpena, radiala,
+                              radialra, radialpenb, radialb, radialrb, layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, radialpena, radiala, radialra, radialpenb, radialb, radialrb, layer);
+      subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, radialpena,
+                                       radiala, radialra, radialpenb, radialb,
+                                       radialrb, layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
-    this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, layer, id);
+  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
+                   real radialra, pen radialpenb=nullpen, pair radialb,
+                   real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
+                   int layer ...string[] id) {
+    this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb,
+                     radialb, radialrb, fillpen, drawpen, layer, id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, layers-1, id);
+  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
+                   real radialra, pen radialpenb=nullpen, pair radialb,
+                   real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
+                   string[] id) {
+    this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb,
+                     radialb, radialrb, fillpen, drawpen, layers-1, id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, layers-1, id);
+  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
+                   real radialra, pen radialpenb=nullpen, pair radialb,
+                   real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
+                   ...string[] id) {
+    this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb,
+                     radialb, radialrb, fillpen, drawpen, layers-1, id);
   }
 
-  void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-      this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen,0, id);
+  void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
+              real radialra, pen radialpenb=nullpen, pair radialb,
+              real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
+              string[] id) {
+      this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb,
+                       radialb, radialrb, fillpen, drawpen,0, id);
   }
 
-  void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-      this.update(drawtile, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, id);
+  void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
+              real radialra, pen radialpenb=nullpen, pair radialb,
+              real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
+              ...string[] id) {
+      this.update(drawtile, radialpena, radiala, radialra, radialpenb, radialb,
+                  radialrb, fillpen, drawpen, id);
   }
 
   // Update everything
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
-
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+                   pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
+                   pair radiala, real radialra, pen radialpenb=nullpen,
+                   pair radialb, real radialrb, pen fillpen=nullpen,
+                   pen drawpen=nullpen, int layer, string[] id) {
     checkLayerError(layer);
 
     int[] indices=decorateIndices(id);
-    if(decorateinitialtile(id)) tesserae[0].updatelayer(drawtile, fillpen, drawpen, axialpena, axiala, axialpenb, axialb, radialpena, radiala, radialra, radialpenb, radialb, radialrb, layer);
+    if(decorateinitialtile(id))
+      tesserae[0].updatelayer(drawtile, fillpen, drawpen, axialpena, axiala,
+                              axialpenb, axialb, radialpena, radiala, radialra,
+                              radialpenb, radialb, radialrb, layer);
 
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, axialpena, axiala, axialpenb, axialb, radialpena, radiala, radialra, radialpenb, radialb, radialrb, layer);
+      subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, axialpena,
+                                       axiala, axialpenb, axialb, radialpena,
+                                       radiala, radialra, radialpenb, radialb,
+                                       radialrb, layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, int layer ...string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, layer, id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+                   pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
+                   pair radiala, real radialra, pen radialpenb=nullpen,
+                   pair radialb, real radialrb, pen fillpen=nullpen,
+                   pen drawpen=nullpen, int layer ...string[] id) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
+                     radiala, radialra, radialpenb, radialb, radialrb, fillpen,
+                     drawpen, layer, id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, layers-1, id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+                   pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
+                   pair radiala, real radialra, pen radialpenb=nullpen,
+                   pair radialb, real radialrb, pen fillpen=nullpen,
+                   pen drawpen=nullpen, string[] id) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
+                     radiala, radialra, radialpenb, radialb, radialrb, fillpen,
+                     drawpen, layers-1, id);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, layers-1, id);
+  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+                   pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
+                   pair radiala, real radialra, pen radialpenb=nullpen,
+                   pair radialb, real radialrb, pen fillpen=nullpen,
+                   pen drawpen=nullpen ...string[] id) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
+                     radiala, radialra, radialpenb, radialb, radialrb, fillpen,
+                     drawpen, layers-1, id);
   }
 
-  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen,0, id);
+  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+              pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
+              pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,
+              real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
+              string[] id) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
+                     radiala, radialra, radialpenb, radialb, radialrb, fillpen,
+                     drawpen, 0, id);
   }
 
-  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    this.update(drawtile, axialpena, axiala, axialpenb, axialb, radialpena, radiala, radialra, radialpenb, radialb, radialrb, fillpen, drawpen, id);
+  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
+              pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
+              pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,
+              real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
+              ...string[] id) {
+    this.update(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
+                radiala, radialra, radialpenb, radialb, radialrb, fillpen,
+                drawpen, id);
   }
 }
 
@@ -776,7 +900,9 @@ mosaic copy(mosaic M) {
   for(int i=0; i < Lt; ++i) {
     tessera t=M.tesserae[i];
     int j=t.index;
-    tessera t2=tessera(t.transform, M2.subpatch[j].supertile, M2.subpatch[j].prototile, M2.subpatch[j].drawtile, j, M2.subpatch[j].id);
+    tessera t2=tessera(t.transform, M2.subpatch[j].supertile,
+                       M2.subpatch[j].prototile, M2.subpatch[j].drawtile, j,
+                       M2.subpatch[j].id);
     M2.tesserae.push(t2);
   }
   return M2;
@@ -807,23 +933,29 @@ void fill(picture pic=currentpicture, explicit tile t, pen p=invisible) {
       fill(pic, t.path, p);
 }
 
-void filldraw(picture pic=currentpicture, explicit tile t, pen fillpen=invisible, pen drawpen=currentpen) {
+void filldraw(picture pic=currentpicture, explicit tile t,
+              pen fillpen=invisible, pen drawpen=currentpen) {
   draw(pic, t, drawpen);
   fill(pic, t, fillpen);
 }
 
-void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  if(t.fillable()) axialshade(pic, t.path, stroke=stroke, extenda=extenda, extendb=extendb, t.axialpena
-    , t.axiala, t.axialpenb, t.axialb);
+void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
+                bool extenda=true, bool extendb=true) {
+  if(t.fillable()) axialshade(pic, t.path, stroke=stroke, extenda=extenda,
+                              extendb=extendb, t.axialpena, t.axiala,
+                              t.axialpenb, t.axialb);
 }
 
-void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
-  if(t.fillable()) radialshade(pic, t.path, stroke=stroke, extenda=extenda, extendb=extendb, t.radialpena
+void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
+                 bool extenda=true, bool extendb=true) {
+  if(t.fillable()) radialshade(pic, t.path, stroke=stroke, extenda=extenda,
+                               extendb=extendb, t.radialpena
     , t.radiala, t.radialra, t.radialpenb, t.radialb, t.radialrb);
 }
 
 // Draw layer l of tessera.
-void draw(picture pic=currentpicture, tessera T, pen p=currentpen, real scaling=1, int layer=0) {
+void draw(picture pic=currentpicture, tessera T, pen p=currentpen,
+          real scaling=1, int layer=0) {
   tile Tdl=T.transform*T.drawtile[layer];
   pen dpl=Tdl.drawpen;
   if(dpl != nullpen) {
@@ -834,24 +966,30 @@ void draw(picture pic=currentpicture, tessera T, pen p=currentpen, real scaling=
   }
 }
 
-void fill(picture pic=currentpicture, tessera T, pen p=invisible, int layer=0) {
+void fill(picture pic=currentpicture, tessera T, pen p=invisible,
+          int layer=0) {
   tile Tdl=T.drawtile[layer];
   fill(pic, T.transform*Tdl);
 }
 
-void filldraw(picture pic=currentpicture, tessera T, pen fillpen=invisible, pen drawpen=currentpen, real scaling=1, int layer=0) {
+void filldraw(picture pic=currentpicture, tessera T, pen fillpen=invisible,
+              pen drawpen=currentpen, real scaling=1, int layer=0) {
   fill(pic, T, fillpen, layer);
   draw(pic, T, drawpen, scaling, layer);
 }
 
-void axialshade(picture pic=currentpicture, tessera T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
+void axialshade(picture pic=currentpicture, tessera T, int layer=0,
+                bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
-  axialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda, extendb=extendb);
+  axialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda,
+             extendb=extendb);
 }
 
-void radialshade(picture pic=currentpicture, tessera T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
+void radialshade(picture pic=currentpicture, tessera T, int layer=0,
+                 bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
-  radialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda, extendb=extendb);
+  radialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda,
+              extendb=extendb);
 }
 
 // Draw substitution. If drawoutline == true, also draw the supertile with
@@ -874,8 +1012,8 @@ void fill(picture pic=currentpicture, substitution s, pen p=invisible,
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
-void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible, pen drawpen=currentpen,
-              bool drawoutline=false,
+void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
+              pen drawpen=currentpen, bool drawoutline=false,
               pen outlinepen=linetype(new real[] {4,2})+1.5) {
   for(int k=0; k < s.subpatch.length; ++k)
     filldraw(pic, s.subpatch[k], fillpen, drawpen, 1, 0);
@@ -883,18 +1021,22 @@ void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
-void axialshade(picture pic=currentpicture, substitution s, bool stroke=false, bool extenda=true, bool extendb=true, bool drawoutline=false,
-              pen outlinepen=linetype(new real[] {4,2})+1.5)  {
+void axialshade(picture pic=currentpicture, substitution s, bool stroke=false,
+                bool extenda=true, bool extendb=true, bool drawoutline=false,
+                pen outlinepen=linetype(new real[] {4,2})+1.5)  {
   for(int k=0; k < s.subpatch.length; ++k)
-    axialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda, extendb=extendb);
+    axialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda,
+               extendb=extendb);
   if(drawoutline)
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
 
-void radialshade(picture pic=currentpicture, substitution s, bool stroke=false, bool extenda=true, bool extendb=true, bool drawoutline=false,
-              pen outlinepen=linetype(new real[] {4,2})+1.5)  {
+void radialshade(picture pic=currentpicture, substitution s, bool stroke=false,
+                 bool extenda=true, bool extendb=true, bool drawoutline=false,
+                 pen outlinepen=linetype(new real[] {4,2})+1.5)  {
   for(int k=0; k < s.subpatch.length; ++k)
-    radialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda, extendb=extendb);
+    radialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda,
+                extendb=extendb);
   if(drawoutline)
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
@@ -917,19 +1059,22 @@ void fill(picture pic=currentpicture, mosaic M, pen p=invisible, int layer) {
     fill(pic, M.tesserae[k], p, layer);
 }
 
-void filldraw(picture pic=currentpicture, mosaic M, int layer, pen fillpen=invisible, pen drawpen=currentpen,
-          bool scalelinewidth=true, int nscale=M.n) {
+void filldraw(picture pic=currentpicture, mosaic M, int layer,
+              pen fillpen=invisible, pen drawpen=currentpen,
+              bool scalelinewidth=true, int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth, M.inflation, nscale);
   for(int k=0; k < M.tesserae.length; ++k)
     filldraw(pic, M.tesserae[k], fillpen, drawpen, scaling, layer);
 }
 
-void axialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
+void axialshade(picture pic=currentpicture, mosaic M, int layer,
+                bool stroke=false, bool extenda=true, bool extendb=true) {
   for(int k=0; k < M.tesserae.length; ++k)
     axialshade(pic, M.tesserae[k], layer, stroke, extenda, extendb);
 }
 
-void radialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
+void radialshade(picture pic=currentpicture, mosaic M, int layer,
+                 bool stroke=false, bool extenda=true, bool extendb=true) {
   for(int k=0; k < M.tesserae.length; ++k)
     radialshade(pic, M.tesserae[k], layer, stroke, extenda, extendb);
 }
@@ -946,8 +1091,9 @@ void fill(picture pic=currentpicture, mosaic M, pen p=invisible) {
     fill(pic, M, p, layer);
 }
 
-void filldraw(picture pic=currentpicture, mosaic M, pen fillpen=invisible, pen drawpen=currentpen,
-          bool scalelinewidth=true, int nscale=M.n) {
+void filldraw(picture pic=currentpicture, mosaic M, pen fillpen=invisible,
+              pen drawpen=currentpen, bool scalelinewidth=true,
+              int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth, M.inflation, nscale);
   for(int layer=0; layer < M.layers; ++layer) {
     fill(pic, M, fillpen, layer);
@@ -955,12 +1101,14 @@ void filldraw(picture pic=currentpicture, mosaic M, pen fillpen=invisible, pen d
   }
 }
 
-void axialshade(picture pic=currentpicture, mosaic M, bool stroke=false, bool extenda=true, bool extendb=true) {
+void axialshade(picture pic=currentpicture, mosaic M, bool stroke=false,
+                bool extenda=true, bool extendb=true) {
   for(int layer=0; layer < M.layers; ++layer)
     axialshade(pic, M, layer, stroke, extenda, extendb);
 }
 
-void radialshade(picture pic=currentpicture, mosaic M, bool stroke=false, bool extenda=true, bool extendb=true) {
+void radialshade(picture pic=currentpicture, mosaic M, bool stroke=false,
+                 bool extenda=true, bool extendb=true) {
   for(int layer=0; layer < M.layers; ++layer)
     radialshade(pic, M, layer, stroke, extenda, extendb);
 }
