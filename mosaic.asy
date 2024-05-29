@@ -741,7 +741,7 @@ void fill(picture pic=currentpicture, explicit tile t, pen p=invisible) {
 
 void filldraw(picture pic=currentpicture, explicit tile t, pen fillpen=invisible, pen drawpen=currentpen) {
   draw(pic, t, drawpen);
-  fill(pic, t, drawpen);
+  fill(pic, t, fillpen);
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
