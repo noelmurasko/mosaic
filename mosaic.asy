@@ -360,7 +360,7 @@ struct mosaic {
     for(int i=0; i < subpatch.length; ++i) {
       patchi=subpatch[i];
       if(patchi.supertile == T.prototile) {
-        tesserae.push(T*patchi);
+        tesserae.push(scale(inflation)*T*patchi);
       }
     }
   }
@@ -380,8 +380,6 @@ struct mosaic {
         int tesserael=tesserae.length;
         this.tilecount.push(tesserael);
       }
-      for(int i=0; i < this.tesserae.length; ++i)
-        this.tesserae[i]=scale(inflation^n)*this.tesserae[i];
       this.n+=n;
     }
   }
