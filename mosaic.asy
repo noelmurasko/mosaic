@@ -130,9 +130,10 @@ struct tessera {
   restricted int layers;
   string id;
   int index; // Used to determine location of tile in the mosaic subpatch
+  bool iterate;
 
   private void initializer(transform transform, tile supertile, tile prototile,
-                     tile drawtile, pen fillpen, pen drawpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, string id="") {
+                     tile drawtile, pen fillpen, pen drawpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, string id="", bool iterate=true) {
     this.transform=transform;
     this.supertile=supertile;
 
@@ -145,38 +146,39 @@ struct tessera {
     this.layers=1;
     this.id=length(id) == 0 ? this.prototile.id : id;
     this.index=0;
+    this.iterate=iterate;
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, string id="", bool iterate=true) {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.axialpena, dt.axiala,dt.axialpenb,dt.axialb,dt.radialpena,dt.radiala,dt.radialra,dt.radialpenb,dt.radialb,dt.radialrb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.axialpena, dt.axiala,dt.axialpenb,dt.axialb,dt.radialpena,dt.radiala,dt.radialra,dt.radialpenb,dt.radialb,dt.radialrb,id,iterate);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="", bool iterate=true) {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,axialpena, axiala, axialpenb, axialb,dt.radialpena,dt.radiala,dt.radialra,dt.radialpenb,dt.radialb,dt.radialrb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,axialpena, axiala, axialpenb, axialb,dt.radialpena,dt.radiala,dt.radialra,dt.radialpenb,dt.radialb,dt.radialrb,id,iterate);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
+                     tile drawtile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen, string id="", bool iterate=true) {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.axialpena, dt.axiala, dt.axialpenb, dt.axialb, radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen,dt.axialpena, dt.axiala, dt.axialpenb, dt.axialb, radialpena,radiala,radialra,radialpenb,radialb,radialrb,id,iterate);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile drawtile=nulltile,pen fillpen=nullpen, pen drawpen=nullpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, string id="") {
+                     tile drawtile=nulltile,pen fillpen=nullpen, pen drawpen=nullpen, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb, string id="",bool iterate=true) {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
-    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen, axialpena, axiala, axialpenb, axialb, radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
+    this.initializer(transform,supertile,prototile,drawtile,fillpen,drawpen, axialpena, axiala, axialpenb, axialb, radialpena,radiala,radialra,radialpenb,radialb,radialrb,id,iterate);
   }
 
   void operator init(transform transform=identity, tile supertile, tile prototile=nulltile,
-                     tile[] drawtile, int index, string id="") {
+                     tile[] drawtile, int index, string id="", bool iterate=true) {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
@@ -185,6 +187,7 @@ struct tessera {
     this.index=index;
     this.layers=drawtile.length;
     this.id=length(id) == 0 ? this.prototile.id : id;
+    this.iterate=iterate;
   }
 
   void addlayer() {
@@ -295,10 +298,10 @@ tessera copy(tessera mt) {
   // If supertile and prototile are the same, make only one copy
   if(mt.supertile == mt.prototile) {
     tile super2=copy(mt.supertile);
-    return tessera(mt.transform, super2, super2, dtcopy, mt.index, mt.id);
+    return tessera(mt.transform, super2, super2, dtcopy, mt.index, mt.id, mt.iterate);
   } else
     return tessera(mt.transform, copy(mt.supertile), copy(mt.prototile), dtcopy,
-      mt.index, mt.id);
+      mt.index, mt.id, mt.iterate);
 }
 
 // Create a deep copy of the substitution s1.
@@ -312,7 +315,7 @@ substitution copy(substitution s1) {
 // Create a new tessera mt2 from mt1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
 tessera duplicate(tessera mt1) {
-  tessera mt2=tessera(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile, mt1.index, mt1.id);
+  tessera mt2=tessera(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile, mt1.index, mt1.id, mt1.iterate);
   return mt2;
 }
 
@@ -381,7 +384,10 @@ struct mosaic {
         }
         else {
           for(int i=0; i < sTL; ++i)
-            this.iterate(this.tesserae[i],tesserae,inflation);
+            if(this.tesserae[i].iterate)
+              this.iterate(this.tesserae[i],tesserae,inflation);
+            else
+              tesserae.push(this.tesserae[i]);
         }
         updatetesserae(tesserae);
         this.tesserae=tesserae;
@@ -644,7 +650,6 @@ struct mosaic {
   void update(tile drawtile=nulltile,pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen, pair radiala, real radialra, pen radialpenb=nullpen, pair radialb, real radialrb, pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
     this.update(drawtile,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
   }
-
 }
 
 int searchtile(tile[] ts, tile t) {
@@ -669,32 +674,32 @@ mosaic copy(mosaic M) {
   int Lt=M.tesserae.length;
   int Lp=M.subpatch.length;
 
-  tile[] Msupertesserae;
-  tile[] Mprototesserae;
+  tile[] Msupertiles;
+  tile[] Mprototiles;
 
   M2.subpatch.push(copy(M.subpatch[0]));
-  Msupertesserae.push(M.subpatch[0].supertile);
-  Mprototesserae.push(M.subpatch[0].prototile);
+  Msupertiles.push(M.subpatch[0].supertile);
+  Mprototiles.push(M.subpatch[0].prototile);
 
   tessera patchj;
   for(int j=1; j < Lp; ++j) {
     patchj=copy(M.subpatch[j]);
-    int is=searchtile(Msupertesserae, M.subpatch[j].supertile);
+    int is=searchtile(Msupertiles, M.subpatch[j].supertile);
     if(is != -1)
       patchj.supertile=M2.subpatch[is].supertile;
-    Msupertesserae.push(M.subpatch[j].supertile);
+    Msupertiles.push(M.subpatch[j].supertile);
 
-    int ip=searchtile(Mprototesserae, M.subpatch[j].prototile);
+    int ip=searchtile(Mprototiles, M.subpatch[j].prototile);
     if(ip != -1)
       patchj.prototile=M2.subpatch[ip].prototile;
 
-    Mprototesserae.push(M.subpatch[j].supertile);
+    Mprototiles.push(M.subpatch[j].supertile);
 
     M2.subpatch.push(patchj);
   }
 
   for(int j=0; j < Lp; ++j) {
-    if(M.starttile == Msupertesserae[j]); {
+    if(M.starttile == Msupertiles[j]); {
       M2.starttile=M2.subpatch[j].supertile;
       break;
     }
