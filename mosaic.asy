@@ -354,8 +354,6 @@ struct mosaic {
   // tilecount[k] is the number of tesserae in iteration k
   int[] tilecount;
 
-  // addlayer() Adds a new layer to mosaic
-
   private void iterate(tessera T, tessera[] tesserae,
           real inflation=inflation) {
     tessera patchi;
@@ -468,6 +466,23 @@ struct mosaic {
     this.initializer(initialtile, n, new void (tessera[],int){}, rules);
   }
 
+  // Assert that layer must be valid
+  private void checkLayerError(int layer) {
+    assert(0 <= layer && layer < layers, "Cannot access layer "+string(layer)+" in mosaic with "+string(layers)+" layers.");
+  }
+
+  // Return transformed drawtiles of layer
+  tile[] tiles(int layer=0) {
+    checkLayerError(layer);
+    tile[] ttiles=new tile[this.tesserae.length];
+    for(int i=0; i < this.tesserae.length; ++i) {
+      tessera ti=this.tesserae[i];
+      ttiles[i]=ti.transform*ti.drawtile[layer];
+    }
+    return ttiles;
+  }
+
+  // addlayer() Adds a new layer to mosaic
   void addlayer(int n=1) {
     assert(n >= 1, "Cannot add less than 1 layer.");
     for(int i=0; i < n; ++i) {
@@ -505,13 +520,7 @@ struct mosaic {
     return indices;
   }
 
-  // Assert that layer must be valid
-  private void checkLayerError(int layer) {
-    assert(0 <= layer && layer < layers, "Cannot update layer "+string(layer)+" in mosaic with "+string(layers)+" layers.");
-  }
-
   // Update with tile, fillpen, and drawpen
-
   //Update layer
   void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen, int layer, string[] id) {
 
@@ -732,7 +741,7 @@ void fill(picture pic=currentpicture, explicit tile t, pen p=invisible) {
 
 void filldraw(picture pic=currentpicture, explicit tile t, pen fillpen=invisible, pen drawpen=currentpen) {
   draw(pic, t, drawpen);
-  fill(pic, t.path, drawpen);
+  fill(pic, t, drawpen);
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false, bool extenda=true, bool extendb=true) {
