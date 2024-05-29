@@ -371,24 +371,16 @@ struct mosaic {
     }
   }
 
-  void donothing(tessera[] tesserae) {}
-
   void substitute(int n, void updatetesserae(tessera[])) {
     if(n > 0) {
       for(int k=0; k < n; ++k) {
         tessera[] tesserae=new tessera[];
         int sTL=this.tesserae.length;
-        if(sTL == 0) {
-          this.tilecount.push(1);
-          this.iterate(tessera(this.starttile),tesserae,inflation);
-        }
-        else {
-          for(int i=0; i < sTL; ++i)
-            if(this.tesserae[i].iterate)
-              this.iterate(this.tesserae[i],tesserae,inflation);
-            else
-              tesserae.push(this.tesserae[i]);
-        }
+        for(int i=0; i < sTL; ++i)
+          if(this.tesserae[i].iterate)
+            this.iterate(this.tesserae[i],tesserae,inflation);
+          else
+            tesserae.push(this.tesserae[i]);
         updatetesserae(tesserae);
         this.tesserae=tesserae;
         int tesserael=tesserae.length;
@@ -397,8 +389,6 @@ struct mosaic {
       for(int i=0; i < this.tesserae.length; ++i)
         this.tesserae[i]=scale(inflation^n)*this.tesserae[i];
       this.n+=n;
-    } else {
-      if(this.tesserae.length == 0) this.tesserae.push(tessera(this.starttile));
     }
   }
 
@@ -456,6 +446,9 @@ struct mosaic {
       assert(i < Lr, "starttile does not match supertile in provided substitutions.");
       }
     }
+    this.tesserae.push(tessera(this.starttile));
+    this.tilecount.push(1);
+    updatetesserae(this.tesserae);
     this.substitute(n,updatetesserae);
     this.layers=1;
 

@@ -28,9 +28,7 @@ mosaic M=mosaic(n,pinSub);
 
 transform RotVarphi=rotate(-varphi)^n;
 transform Rot90=rotate(-90);
-M=RotVarphi*Rot90*M;
+//M=RotVarphi*Rot90*M;
 
 // draw the patch
 filldraw(M);
-
-
