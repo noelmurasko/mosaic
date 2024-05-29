@@ -120,7 +120,7 @@ tile operator ^^(tile t1, tile t2) {
 
 tile nulltile=tile(nullpath);
 
-struct tiledata {
+struct tessera {
   transform transform;
   tile supertile;
   tile prototile;
@@ -244,7 +244,7 @@ struct tiledata {
 
 struct substitution {
   tile supertile;
-  tiledata[] subpatch;
+  tessera[] subpatch;
   real inflation;
 
   void operator init(explicit tile supertile) {
@@ -259,35 +259,35 @@ struct substitution {
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tiledata m;
-    m=tiledata(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
+    tessera m;
+    m=tessera(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                       pen axialpena, pair axiala, pen axialpenb, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tiledata m;
-    m=tiledata(transform,this.supertile,prototile,drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,id);
+    tessera m;
+    m=tessera(transform,this.supertile,prototile,drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tiledata m;
-    m=tiledata(transform,this.supertile,prototile,drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
+    tessera m;
+    m=tessera(transform,this.supertile,prototile,drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tiledata m;
-    m=tiledata(transform,this.supertile,prototile,drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
+    tessera m;
+    m=tessera(transform,this.supertile,prototile,drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
     this.subpatch.push(m);
   }
 }
 
-// Create a deep copy of the tiledata mt.
-tiledata copy(tiledata mt) {
+// Create a deep copy of the tessera mt.
+tessera copy(tessera mt) {
   int L=mt.drawtile.length;
   tile[] dtcopy=new tile[L];
   for(int i; i < L; ++i)
@@ -295,9 +295,9 @@ tiledata copy(tiledata mt) {
   // If supertile and prototile are the same, make only one copy
   if(mt.supertile == mt.prototile) {
     tile super2=copy(mt.supertile);
-    return tiledata(mt.transform, super2, super2, dtcopy, mt.index, mt.id);
+    return tessera(mt.transform, super2, super2, dtcopy, mt.index, mt.id);
   } else
-    return tiledata(mt.transform, copy(mt.supertile), copy(mt.prototile), dtcopy,
+    return tessera(mt.transform, copy(mt.supertile), copy(mt.prototile), dtcopy,
       mt.index, mt.id);
 }
 
@@ -309,10 +309,10 @@ substitution copy(substitution s1) {
   return s2;
 }
 
-// Create a new tiledata mt2 from mt1 with a shallow copy of the supertile,
+// Create a new tessera mt2 from mt1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
-tiledata duplicate(tiledata mt1) {
-  tiledata mt2=tiledata(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile, mt1.index, mt1.id);
+tessera duplicate(tessera mt1) {
+  tessera mt2=tessera(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile, mt1.index, mt1.id);
   return mt2;
 }
 
@@ -324,46 +324,46 @@ substitution duplicate(substitution s1) {
   return s2;
 }
 
-tiledata operator *(tiledata mt1, tiledata mt2) {
-  tiledata mt3=duplicate(mt2);
+tessera operator *(tessera mt1, tessera mt2) {
+  tessera mt3=duplicate(mt2);
   mt3.transform=mt1.transform*mt2.transform;
   return mt3;
 }
 
-tiledata operator *(transform T, tiledata mt1) {
-  tiledata mt2=duplicate(mt1);
+tessera operator *(transform T, tessera mt1) {
+  tessera mt2=duplicate(mt1);
   mt2.transform=T*mt2.transform;
   return mt2;
 }
 
-tiledata[] operator *(transform T, tiledata[] mt1) {
+tessera[] operator *(transform T, tessera[] mt1) {
   int L=mt1.length;
-  tiledata[] mt2=new tiledata[L];
+  tessera[] mt2=new tessera[L];
   for(int i=0; i < mt1.length; ++i)
     mt2[i]=T*mt1[i];
   return mt2;
 }
 
 struct mosaic {
-  tiledata[] tiles;
+  tessera[] tesserae;
   tile starttile;
   int n=0;
-  tiledata[] subpatch;
+  tessera[] subpatch;
   int layers;
   real inflation;
 
-  // tilecount[k] is the number of tiles in iteration k
+  // tilecount[k] is the number of tesserae in iteration k
   int[] tilecount;
 
   // addlayer() Adds a new layer to mosaic
 
-  private void iterate(tiledata T, tiledata[] tiles,
+  private void iterate(tessera T, tessera[] tesserae,
           real inflation=inflation) {
-    tiledata patchi;
+    tessera patchi;
     for(int i=0; i < subpatch.length; ++i) {
       patchi=subpatch[i];
       if(patchi.supertile == T.prototile) {
-        tiles.push(T*patchi);
+        tesserae.push(T*patchi);
       }
     }
   }
@@ -371,25 +371,25 @@ struct mosaic {
   void substitute(int n) {
     if(n > 0) {
       for(int k=0; k < n; ++k) {
-        tiledata[] tiles=new tiledata[];
-        int sTL=this.tiles.length;
+        tessera[] tesserae=new tessera[];
+        int sTL=this.tesserae.length;
         if(sTL == 0) {
           this.tilecount.push(1);
-          this.iterate(tiledata(this.starttile),tiles,inflation);
+          this.iterate(tessera(this.starttile),tesserae,inflation);
         }
         else {
           for(int i=0; i < sTL; ++i)
-            this.iterate(this.tiles[i],tiles,inflation);
+            this.iterate(this.tesserae[i],tesserae,inflation);
         }
-        this.tiles=tiles;
-        int tilesl=tiles.length;
-        this.tilecount.push(tilesl);
+        this.tesserae=tesserae;
+        int tesserael=tesserae.length;
+        this.tilecount.push(tesserael);
       }
-      for(int i=0; i < this.tiles.length; ++i)
-        this.tiles[i]=scale(inflation^n)*this.tiles[i];
+      for(int i=0; i < this.tesserae.length; ++i)
+        this.tesserae[i]=scale(inflation^n)*this.tesserae[i];
       this.n+=n;
     } else {
-      if(this.tiles.length == 0) this.tiles.push(tiledata(this.starttile));
+      if(this.tesserae.length == 0) this.tesserae.push(tessera(this.starttile));
     }
   }
 
@@ -400,8 +400,8 @@ struct mosaic {
 
     this.inflation=rules[0].inflation;
     substitution rulesi=rules[0];
-    tiledata[] rulesipatch=rulesi.subpatch;
-    tiledata rulesipatchj;
+    tessera[] rulesipatch=rulesi.subpatch;
+    tessera rulesipatchj;
     for(int j=0; j < rulesipatch.length; ++j) {
       rulesipatchj=duplicate(rulesipatch[j]);
       rulesipatchj.index=ind;
@@ -421,7 +421,7 @@ struct mosaic {
     }
     int Lp=this.subpatch.length;
     real deflation=1/inflation;
-    tiledata patchi;
+    tessera patchi;
     for(int i=0; i < Lp; ++i) {
       patchi=subpatch[i];
       if(patchi.prototile == nulltile) {
@@ -455,7 +455,7 @@ struct mosaic {
       for(int i=0; i < subpatch.length; ++i) {
         subpatch[i].addlayer();
       }
-      if(this.n == 0) tiles[0].addlayer();
+      if(this.n == 0) tesserae[0].addlayer();
       this.layers+=1;
     }
   }
@@ -466,7 +466,7 @@ struct mosaic {
     if(n != 0) return false;
     if(idlength == 0) return true;
     for(int j=0; j < idlength; ++j)
-      if(tiles[0].id == id[j])
+      if(tesserae[0].id == id[j])
         return true;
     return false;
   }
@@ -498,7 +498,7 @@ struct mosaic {
 
     checkLayerError(layer);
 
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,layer);
+    if(decorateStartTile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
@@ -532,7 +532,7 @@ struct mosaic {
 
     checkLayerError(layer);
 
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,layer);
+    if(decorateStartTile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
@@ -564,7 +564,7 @@ struct mosaic {
 
     checkLayerError(layer);
 
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
+    if(decorateStartTile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
 
     int[] indices=decorateIndices(id);
     for(int i=0; i < indices.length; ++i)
@@ -597,7 +597,7 @@ struct mosaic {
     checkLayerError(layer);
 
     int[] indices=decorateIndices(id);
-    if(decorateStartTile(id)) tiles[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
+    if(decorateStartTile(id)) tesserae[0].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
 
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].updatelayer(drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,layer);
@@ -644,52 +644,52 @@ mosaic copy(mosaic M) {
 
   M2.tilecount=M.tilecount;
 
-  int Lt=M.tiles.length;
+  int Lt=M.tesserae.length;
   int Lp=M.subpatch.length;
 
-  tile[] Msupertiles;
-  tile[] Mprototiles;
+  tile[] Msupertesserae;
+  tile[] Mprototesserae;
 
   M2.subpatch.push(copy(M.subpatch[0]));
-  Msupertiles.push(M.subpatch[0].supertile);
-  Mprototiles.push(M.subpatch[0].prototile);
+  Msupertesserae.push(M.subpatch[0].supertile);
+  Mprototesserae.push(M.subpatch[0].prototile);
 
-  tiledata patchj;
+  tessera patchj;
   for(int j=1; j < Lp; ++j) {
     patchj=copy(M.subpatch[j]);
-    int is=searchtile(Msupertiles, M.subpatch[j].supertile);
+    int is=searchtile(Msupertesserae, M.subpatch[j].supertile);
     if(is != -1)
       patchj.supertile=M2.subpatch[is].supertile;
-    Msupertiles.push(M.subpatch[j].supertile);
+    Msupertesserae.push(M.subpatch[j].supertile);
 
-    int ip=searchtile(Mprototiles, M.subpatch[j].prototile);
+    int ip=searchtile(Mprototesserae, M.subpatch[j].prototile);
     if(ip != -1)
       patchj.prototile=M2.subpatch[ip].prototile;
 
-    Mprototiles.push(M.subpatch[j].supertile);
+    Mprototesserae.push(M.subpatch[j].supertile);
 
     M2.subpatch.push(patchj);
   }
 
   for(int j=0; j < Lp; ++j) {
-    if(M.starttile == Msupertiles[j]); {
+    if(M.starttile == Msupertesserae[j]); {
       M2.starttile=M2.subpatch[j].supertile;
       break;
     }
   }
 
   for(int i=0; i < Lt; ++i) {
-    tiledata t=M.tiles[i];
+    tessera t=M.tesserae[i];
     int j=t.index;
-    tiledata t2=tiledata(t.transform, M2.subpatch[j].supertile, M2.subpatch[j].prototile, M2.subpatch[j].drawtile, j, M2.subpatch[j].id);
-    M2.tiles.push(t2);
+    tessera t2=tessera(t.transform, M2.subpatch[j].supertile, M2.subpatch[j].prototile, M2.subpatch[j].drawtile, j, M2.subpatch[j].id);
+    M2.tesserae.push(t2);
   }
   return M2;
 }
 
 mosaic operator *(transform T, mosaic M) {
   mosaic M2=copy(M);
-  M2.tiles=T*M2.tiles;
+  M2.tesserae=T*M2.tesserae;
   return M2;
 }
 
@@ -727,8 +727,8 @@ void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
     ,t.radiala,t.radialra, t.radialpenb,t.radialb,t.radialrb);
 }
 
-// Draw layer l of tiledata.
-void draw(picture pic=currentpicture, tiledata T, pen p=currentpen, real scaling=1, int layer=0) {
+// Draw layer l of tessera.
+void draw(picture pic=currentpicture, tessera T, pen p=currentpen, real scaling=1, int layer=0) {
   tile Tdl=T.transform*T.drawtile[layer];
   pen dpl=Tdl.drawpen;
   if(dpl != nullpen) {
@@ -739,22 +739,22 @@ void draw(picture pic=currentpicture, tiledata T, pen p=currentpen, real scaling
   }
 }
 
-void fill(picture pic=currentpicture, tiledata T, pen p=invisible, int layer=0) {
+void fill(picture pic=currentpicture, tessera T, pen p=invisible, int layer=0) {
   tile Tdl=T.drawtile[layer];
   fill(pic, T.transform*Tdl);
 }
 
-void filldraw(picture pic=currentpicture, tiledata T, pen fillpen=invisible, pen drawpen=currentpen, real scaling=1, int layer=0) {
+void filldraw(picture pic=currentpicture, tessera T, pen fillpen=invisible, pen drawpen=currentpen, real scaling=1, int layer=0) {
   fill(pic,T,fillpen,layer);
   draw(pic,T,drawpen,scaling,layer);
 }
 
-void axialshade(picture pic=currentpicture, tiledata T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
+void axialshade(picture pic=currentpicture, tessera T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
   axialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda, extendb=extendb);
 }
 
-void radialshade(picture pic=currentpicture, tiledata T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
+void radialshade(picture pic=currentpicture, tessera T, int layer=0, bool stroke=false, bool extenda=true, bool extendb=true) {
   tile Tdl=T.drawtile[layer];
   radialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda, extendb=extendb);
 }
@@ -813,30 +813,30 @@ void radialshade(picture pic=currentpicture, substitution s, bool stroke=false, 
 void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
           bool scalelinewidth=true, int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
-  for(int k=0; k < M.tiles.length; ++k)
-    draw(pic, M.tiles[k], p, scaling, layer);
+  for(int k=0; k < M.tesserae.length; ++k)
+    draw(pic, M.tesserae[k], p, scaling, layer);
 }
 
 void fill(picture pic=currentpicture, mosaic M, pen p=invisible,int layer) {
-  for(int k=0; k < M.tiles.length; ++k)
-    fill(pic, M.tiles[k], p, layer);
+  for(int k=0; k < M.tesserae.length; ++k)
+    fill(pic, M.tesserae[k], p, layer);
 }
 
 void filldraw(picture pic=currentpicture, mosaic M, int layer, pen fillpen=invisible, pen drawpen=currentpen,
           bool scalelinewidth=true, int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth,M.inflation,nscale);
-  for(int k=0; k < M.tiles.length; ++k)
-    filldraw(pic, M.tiles[k], fillpen, drawpen, scaling, layer);
+  for(int k=0; k < M.tesserae.length; ++k)
+    filldraw(pic, M.tesserae[k], fillpen, drawpen, scaling, layer);
 }
 
 void axialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
-  for(int k=0; k < M.tiles.length; ++k)
-    axialshade(pic, M.tiles[k],layer,stroke,extenda,extendb);
+  for(int k=0; k < M.tesserae.length; ++k)
+    axialshade(pic, M.tesserae[k],layer,stroke,extenda,extendb);
 }
 
 void radialshade(picture pic=currentpicture, mosaic M, int layer, bool stroke=false, bool extenda=true, bool extendb=true) {
-  for(int k=0; k < M.tiles.length; ++k)
-    radialshade(pic, M.tiles[k],layer,stroke,extenda,extendb);
+  for(int k=0; k < M.tesserae.length; ++k)
+    radialshade(pic, M.tesserae[k],layer,stroke,extenda,extendb);
 }
 
 // Draw all layers of mosaic. Layers are drawn in increasing order.
