@@ -262,29 +262,25 @@ struct substitution {
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m;
-    m=tessera(transform,this.supertile,prototile,drawtile,fillpen,drawpen,id);
+    tessera m=tessera(transform,this.supertile,prototile,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile,
                       pen axialpena, pair axiala, pen axialpenb, pair axialb, pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m;
-    m=tessera(transform,this.supertile,prototile,drawtile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,id);
+    tessera m=tessera(transform,this.supertile,prototile,axialpena,axiala,axialpenb,axialb,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m;
-    m=tessera(transform,this.supertile,prototile,drawtile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
+    tessera m=tessera(transform,this.supertile,prototile,radialpena,radiala,radialra,radialpenb,radialb,radialrb,fillpen,drawpen,id);
     this.subpatch.push(m);
   }
 
-  void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
+  void addtile(transform transform=identity, explicit tile prototile=nulltile, pen axialpena, pair axiala, pen axialpenb, pair axialb, pen radialpena, pair radiala, real radialra, pen radialpenb, pair radialb, real radialrb,
                      pen fillpen=nullpen, pen drawpen=nullpen, string id="") {
-    tessera m;
-    m=tessera(transform,this.supertile,prototile,drawtile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
+    tessera m=tessera(transform,this.supertile,prototile,fillpen,drawpen,axialpena,axiala,axialpenb,axialb,radialpena,radiala,radialra,radialpenb,radialb,radialrb,id);
     this.subpatch.push(m);
   }
 }

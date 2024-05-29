@@ -16,5 +16,4 @@ ifs.addtile(shift(-1,0)*R30);
 
 int n=4;
 mosaic M=mosaic(hexagon,n,ifs);
-
 filldraw(M,white);
