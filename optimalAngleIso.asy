@@ -19,7 +19,7 @@ real b = sin(alph)/sin(beta);
 real c = 2b^2*cos(beta);
 
 // inflation factor
-newinflation=1+b^2;
+inflation=1+b^2;
 write("inflation=",inflation);
 
 // threshold area for subdivision
@@ -64,18 +64,20 @@ substitution isoSub=substitution(iso);
 
 // subdivide rule (no reflection)
 //real isoDefl=c/(b+c);
-//isoSub.addtile(scale(isoDefl),pen2);
-//isoSub.addtile(shift(q6*isoDefl)*scale(isoDefl*b/c),pen1);
-//isoSub.addtile(shift(q3*isoDefl)*rotate(180-Beta)*scale(isoDefl/b),pen3);
-//isoSub.addtile(shift(q6*isoDefl)*rotate(-Beta)*scale(isoDefl*b^2/c),pen4);
+//real isoRescale=inflation*isoRescale;
+//isoSub.addtile(scale(isoRescale),pen2);
+//isoSub.addtile(shift(q6*isoRescale)*scale(isoRescale*b/c),pen1);
+//isoSub.addtile(shift(q3*isoRescale)*rotate(180-Beta)*scale(isoRescale/b),pen3);
+//isoSub.addtile(shift(q6*isoRescale)*rotate(-Beta)*scale(isoRescale*b^2/c),pen4);
 
 // subdivide rule (with one reflection, bottom right)
 real isoDefl=c/(b+c);
+real isoRescale=inflation*isoDefl;
 transform r=reflect((c/2,0),(c/2,b^2*sin(beta)));
-isoSub.addtile(scale(isoDefl),pen2);
-isoSub.addtile(shift(q6*isoDefl)*scale(isoDefl*b/c),pen1);
-isoSub.addtile(shift(q3*isoDefl)*rotate(180-Beta)*shift(q1*isoDefl)*scale(isoDefl/b)*r);
-isoSub.addtile(shift(q6*isoDefl)*rotate(-Beta)*scale(isoDefl*b^2/c),pen4);
+isoSub.addtile(scale(isoRescale),pen2);
+isoSub.addtile(shift(q6*isoRescale)*scale(isoRescale*b/c),pen1);
+isoSub.addtile(shift(q3*isoRescale)*rotate(180-Beta)*shift(q1*isoRescale)*scale(isoRescale/b)*r);
+isoSub.addtile(shift(q6*isoRescale)*rotate(-Beta)*scale(isoRescale*b^2/c),pen4);
 
 bool drawall=true;
 

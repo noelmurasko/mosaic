@@ -20,7 +20,7 @@ real b = sin(alph)/sin(beta);
 real c = 2b^2*cos(beta);
 
 // inflation factor
-newinflation=1+b^2;
+inflation=1+b^2;
 write("inflation=",inflation);
 
 // threshold area for subdivision
@@ -61,12 +61,14 @@ substitution isoSub=substitution(iso);
 
 // subdivide rule
 real isoDefl=c/(b+c);
-isoSub.addtile(scale(isoDefl),pen2);
-isoSub.addtile(shift(q6*isoDefl)*scale(isoDefl*b/c),pen1);
-isoSub.addtile(shift(q3*isoDefl)*rotate(180-Beta)*scale(isoDefl/b),pen3);
-isoSub.addtile(shift(q6*isoDefl)*rotate(-Beta)*scale(isoDefl*b^2/c),pen4);
+real isoRescale=inflation*isoDefl;
+isoSub.addtile(scale(isoRescale),pen2);
+isoSub.addtile(shift(q6*isoRescale)*scale(isoRescale*b/c),pen1);
+isoSub.addtile(shift(q3*isoRescale)*rotate(180-Beta)*scale(isoRescale/b),pen3);
+isoSub.addtile(shift(q6*isoRescale)*rotate(-Beta)*scale(isoRescale*b^2/c),pen4);
 
-bool drawall=true;
+bool drawall=false;
+int n=10; // number of iterations when drawall=false
 
 if(drawall) {
 
@@ -119,7 +121,6 @@ if(drawall) {
   //filldraw(shift(2sepX,-3sepY)*m);
 
 } else {
-  int n=10;
   mosaic m=mosaic(iso,n,multiscale=true,threshold=area,isoSub);
   filldraw(m);
 
@@ -127,7 +128,7 @@ if(drawall) {
   real boxLength=0.25;
   path clipBox=(0,0)--(boxLength,0)--(boxLength,boxLength)--(0,boxLength)--cycle;
   clipBox=shift(boxLength,0)*clipBox;
-  clip(g=clipBox);
+  if(clipPatch) clip(g=clipBox);
 }
 
 bool writeTileCount=false;

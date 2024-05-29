@@ -52,12 +52,12 @@ real c = 2a*b^2*cos(gamm);
 
 // inflation factor
 if(isostart==true){
-  newinflation=1+2*b*cos(gamm);  // keep top triangle the same
+  inflation=1+2*b*cos(gamm);  // keep top triangle the same
   //newinflation=1+a*b/c;  // keep bottom left triangle the same
   }else{
-    newinflation=1+b^2;  // keep bottom left triangle the same
+    inflation=1+b^2;  // keep bottom left triangle the same
   }
-write("inflation=",newinflation);
+write("inflation=",inflation);
 
 
 // thresholds
@@ -138,25 +138,30 @@ substitution isoSub=substitution(iso);
 real scaDefl=1/(1+b^2);
 real isoDefl=c/(c+a*b);
 
+real scaRescale=inflation*scaDefl;
+real isoRescale=inflation*isoDefl;
+
 // scalene tile substitution
 transform r=shift(-2a*cos(alph),0)*reflect(p6,(a*cos(alph),0));  // vertical reflection through p6
-scaSub.addtile(identity*scale(scaDefl),sca,pen2);
-scaSub.addtile(shift(scaDefl*(1+b*cos(gamm),b*sin(gamm)))*scale(b/a)*rotate(Gamm+Alph)*r*scale(scaDefl),sca,pen2);
-scaSub.addtile(shift(scaDefl*p2)*scale(b)*rotate(Gamm)*scale(scaDefl),sca,pen2);
-scaSub.addtile(shift(scaDefl*p4)*rotate(Alph+Gamm)*scale(scaDefl),iso,pen1);
+scaSub.addtile(scale(scaRescale),sca,pen2);
+scaSub.addtile(shift(scaRescale*(1+b*cos(gamm),b*sin(gamm)))*scale(b/a)*rotate(Gamm+Alph)*r*scale(scaRescale),sca,pen2);
+scaSub.addtile(shift(scaRescale*p2)*scale(b)*rotate(Gamm)*scale(scaRescale),sca,pen2);
+scaSub.addtile(shift(scaRescale*p4)*rotate(Alph+Gamm)*scale(scaRescale),iso,pen1);
 
 // isosceles tile substitution
-isoSub.addtile(identity*scale(isoDefl),iso,pen3);
-isoSub.addtile(shift(isoDefl*q2)*scale(b)*rotate(-Beta-Gamm)*r*scale(isoDefl),sca,pen2);
-isoSub.addtile(shift(isoDefl*q6)*scale(a*b/c)*scale(isoDefl),iso,pen1);
-isoSub.addtile(shift(isoDefl*q4)*scale(b)*rotate(Alph)*r*scale(isoDefl),sca,pen2);
+isoSub.addtile(scale(isoRescale),iso,pen3);
+isoSub.addtile(shift(isoRescale*q2)*scale(b)*rotate(-Beta-Gamm)*r*scale(isoRescale),sca,pen2);
+isoSub.addtile(shift(isoRescale*q6)*scale(a*b/c)*scale(isoRescale),iso,pen1);
+isoSub.addtile(shift(isoRescale*q4)*scale(b)*rotate(Alph)*r*scale(isoRescale),sca,pen2);
 
 
-// draw the starting tile and first 5 iterations
 
-bool drawall=true;
+// draw the starting tile and first several iterations
+
+bool drawall=false;
 bool clipPatch=false;
 bool writeTileCount=false;
+int n=4; // iterations when drawall=false
 int N=10; // iterations for tile count
 
 if(drawall) {
@@ -259,7 +264,6 @@ if(drawall) {
   //filldraw(shift(2sepX,-3sepY)*m);
 
 } else {
-  int n=1;
   mosaic m;
   if(isostart){
     m=mosaic(iso,n,multiscale=true,threshold=area,scaSub,isoSub);
