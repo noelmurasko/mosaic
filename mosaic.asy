@@ -368,7 +368,9 @@ struct mosaic {
     }
   }
 
-  void substitute(int n) {
+  void donothing(tessera[] tesserae) {}
+
+  void substitute(int n, void updatetesserae(tessera[])) {
     if(n > 0) {
       for(int k=0; k < n; ++k) {
         tessera[] tesserae=new tessera[];
@@ -381,6 +383,7 @@ struct mosaic {
           for(int i=0; i < sTL; ++i)
             this.iterate(this.tesserae[i],tesserae,inflation);
         }
+        updatetesserae(tesserae);
         this.tesserae=tesserae;
         int tesserael=tesserae.length;
         this.tilecount.push(tesserael);
@@ -393,7 +396,9 @@ struct mosaic {
     }
   }
 
-  void operator init(tile starttile=nulltile, int n ...substitution[] rules) {
+  void substitute(int n) {this.substitute(n,donothing);}
+
+  private void initializer(tile starttile=nulltile, int n, void updatetesserae(tessera[]), substitution[] rules) {
     int ind=0;
     int Lr=rules.length;
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
@@ -447,6 +452,15 @@ struct mosaic {
     }
     this.substitute(n);
     this.layers=1;
+
+  }
+
+  void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[]) ...substitution[] rules) {
+    this.initializer(starttile, n, updatetesserae, rules);
+  }
+
+  void operator init(tile starttile=nulltile, int n ...substitution[] rules) {
+    this.initializer(starttile, n, donothing, rules);
   }
 
   void addlayer(int n=1) {
