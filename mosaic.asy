@@ -396,7 +396,7 @@ struct mosaic {
     }
   }
 
-  void substitute(int n) {this.substitute(n,donothing);}
+  void substitute(int n) {this.substitute(n, new void (tessera[]){});}
 
   private void initializer(tile starttile=nulltile, int n, void updatetesserae(tessera[]), substitution[] rules) {
     int ind=0;
@@ -455,12 +455,20 @@ struct mosaic {
 
   }
 
+  void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[]), substitution[] rules) {
+    this.initializer(starttile, n, updatetesserae, rules);
+  }
+
   void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[]) ...substitution[] rules) {
     this.initializer(starttile, n, updatetesserae, rules);
   }
 
+  void operator init(tile starttile=nulltile, int n, substitution[] rules) {
+    this.initializer(starttile, n, new void (tessera[]){}, rules);
+  }
+
   void operator init(tile starttile=nulltile, int n ...substitution[] rules) {
-    this.initializer(starttile, n, donothing, rules);
+    this.initializer(starttile, n, new void (tessera[]){}, rules);
   }
 
   void addlayer(int n=1) {
