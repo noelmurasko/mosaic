@@ -371,7 +371,7 @@ struct mosaic {
     }
   }
 
-  void substitute(int n, void updatetesserae(tessera[])) {
+  void substitute(int n, void updatetesserae(tessera[],int)) {
     if(n > 0) {
       for(int k=0; k < n; ++k) {
         tessera[] tesserae=new tessera[];
@@ -381,7 +381,7 @@ struct mosaic {
             this.iterate(this.tesserae[i],tesserae,inflation);
           else
             tesserae.push(this.tesserae[i]);
-        updatetesserae(tesserae);
+        updatetesserae(tesserae,this.n+k+1);
         this.tesserae=tesserae;
         int tesserael=tesserae.length;
         this.tilecount.push(tesserael);
@@ -392,9 +392,9 @@ struct mosaic {
     }
   }
 
-  void substitute(int n) {this.substitute(n, new void (tessera[]){});}
+  void substitute(int n) {this.substitute(n, new void (tessera[],int){});}
 
-  private void initializer(tile starttile=nulltile, int n, void updatetesserae(tessera[]), substitution[] rules) {
+  private void initializer(tile starttile=nulltile, int n, void updatetesserae(tessera[],int), substitution[] rules) {
     int ind=0;
     int Lr=rules.length;
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
@@ -448,26 +448,26 @@ struct mosaic {
     }
     this.tesserae.push(tessera(this.starttile));
     this.tilecount.push(1);
-    updatetesserae(this.tesserae);
+    updatetesserae(this.tesserae,0);
     this.substitute(n,updatetesserae);
     this.layers=1;
 
   }
 
-  void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[]), substitution[] rules) {
+  void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[],int), substitution[] rules) {
     this.initializer(starttile, n, updatetesserae, rules);
   }
 
-  void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[]) ...substitution[] rules) {
+  void operator init(tile starttile=nulltile, int n, void updatetesserae(tessera[],int) ...substitution[] rules) {
     this.initializer(starttile, n, updatetesserae, rules);
   }
 
   void operator init(tile starttile=nulltile, int n, substitution[] rules) {
-    this.initializer(starttile, n, new void (tessera[]){}, rules);
+    this.initializer(starttile, n, new void (tessera[],int){}, rules);
   }
 
   void operator init(tile starttile=nulltile, int n ...substitution[] rules) {
-    this.initializer(starttile, n, new void (tessera[]){}, rules);
+    this.initializer(starttile, n, new void (tessera[],int){}, rules);
   }
 
   void addlayer(int n=1) {
