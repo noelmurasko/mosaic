@@ -18,7 +18,7 @@ chairRule.addtile(shift(0,4)*rotate(270),lightyellow);
 
 // draw patch
 
-void updatetesserae(tessera[] tesserae) {
+void updatetesserae(tessera[] tesserae, int) {
   for(int i=0; i < tesserae.length; ++ i) {
     real x=unitrand();
     tesserae[i].iterate=x < 0.5 ? false : true;
