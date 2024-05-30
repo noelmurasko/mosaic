@@ -22,6 +22,8 @@ As of May 11, 2024.
 - KenyonNonFLC.asy
   - Keynon's non FLC tiling which is not of finite local complexity (see https://tilings.math.uni-bielefeld.de/substitution/kenyons-non-flc/).
 - PenroseKite.asy
+- PenroseKiteMatching.asy
+  - A modification of PenroseKite.asy that shows the matching rule.
 - PenroseRhomb.asy
 - periodDoubling.asy
 - pinwheel.asy
