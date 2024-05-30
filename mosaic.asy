@@ -56,16 +56,17 @@ struct tile {
   void operator init(path[] path={}, pen axialpena=nullpen, pair axiala,
                      pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
                      pen drawpen=nullpen, string id="") {
-    this.initializer(path, fillpen, drawpen, axialpena, axiala, axialpenb,
-                     axialb, id);
+    this.initializer(path, fillpen, drawpen, axialpena=axialpena, axiala=axiala,
+                     axialpenb=axialpenb, axialb=axialb, id);
   }
 
   void operator init(path[] path={}, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
                      real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
                      string id="") {
-    this.initializer(path, fillpen, drawpen, radialpena, radiala, radialra,
-                     radialpenb, radialb, radialrb, id);
+    this.initializer(path, fillpen, drawpen, radialpena=radialpena,
+                     radiala=radiala, radialra=radialra, radialpenb=radialpenb,
+                     radialb=radialb, radialrb=radialrb, id);
   }
 
   void operator init(path[] path={}, pen fillpen=nullpen, pen drawpen=nullpen,
@@ -73,9 +74,10 @@ struct tile {
                      pair axialb, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
                      real radialrb, string id="") {
-    this.initializer(path, fillpen, drawpen, axialpena, axiala, axialpenb,
-                     axialb, radialpena, radiala, radialra, radialpenb, radialb,
-                     radialrb, id);
+    this.initializer(path, fillpen, drawpen, axialpena=axialpena, axiala=axiala,
+                     axialpenb=axialpenb, axialb=axialb, radialpena=radialpena,
+                     radiala=radiala, radialra=radialra, radialpenb=radialpenb,
+                     radialb=radialb, radialrb=radialrb, id);
   }
 
   void operator init(pair path, pen fillpen=nullpen, pen drawpen=nullpen,
@@ -86,16 +88,17 @@ struct tile {
   void operator init(pair path, pen axialpena=nullpen, pair axiala,
                      pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
                      pen drawpen=nullpen, string id="") {
-    this.initializer(new path[] {path}, fillpen, drawpen, axialpena, axiala,
-                     axialpenb, axialb, id);
+    this.initializer(new path[] {path}, fillpen, drawpen, axialpena=axialpena,
+                     axiala=axiala, axialpenb=axialpenb, axialb=axialb, id);
   }
 
   void operator init(pair path, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
                      real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
                      string id="") {
-    this.initializer(new path[] {path}, fillpen, drawpen, radialpena, radiala,
-                     radialra, radialpenb, radialb, radialrb, id);
+    this.initializer(new path[] {path}, fillpen, drawpen, radialpena=radialpena,
+                     radiala=radiala, radialra=radialra, radialpenb=radialpenb,
+                     radialb=radialb, radialrb=radialrb, id);
   }
 
   void operator init(pair path, pen fillpen=nullpen, pen drawpen=nullpen,
@@ -103,9 +106,11 @@ struct tile {
                      pair axialb, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
                      real radialrb, string id="") {
-    this.initializer(new path[] {path}, fillpen, drawpen, axialpena, axiala,
-                     axialpenb, axialb, radialpena, radiala, radialra,
-                     radialpenb, radialb, radialrb, id);
+    this.initializer(new path[] {path}, fillpen, drawpen, axialpena=axialpena,
+                     axiala=axiala, axialpenb=axialpenb, axialb=axialb,
+                     radialpena=radialpena, radiala=radiala, radialra=radialra,
+                     radialpenb=radialpenb, radialb=radialb, radialrb=radialrb,
+                     id);
   }
 
   bool fillable() {
