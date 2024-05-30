@@ -37,3 +37,37 @@ rhomb2Rule.addtile(shift(b,a)*rotate(108),rhomb1);
 int n=4;
 mosaic M=mosaic(rhomb1,n,rhomb1Rule,rhomb2Rule);
 filldraw(M);
+
+path[] matchingrule(real radlower, real radupper, pair l, pair m, pair r) {
+
+  pair rlower=radlower*r/abs(r);
+  pair mlower=(0,radlower);
+  pair llower=radlower*l/abs(l);
+  path pathlower=rlower..mlower..llower;
+
+  pair rupper=radupper*(r-m)/abs(r-m)+m;
+  pair mupper=m-(0,radupper);
+  pair lupper=radupper*(l-m)/abs(l-m)+m;
+  path pathupper=rupper..mupper..lupper;
+
+  return new path[] {pathlower, pathupper};
+}
+
+real r1radlower=1/4;
+real r1radupper=abs(r2m-r2r)-r1radlower;
+path[] rhomb1matching=matchingrule(r1radlower,r1radupper,r1l,r1m,r1r);
+
+real r2radlower=r1radlower;
+real r2radupper=r1radlower;
+path[] rhomb2matching=matchingrule(r2radlower,r2radupper,r2l,r2m,r2r);
+
+M.addlayer();
+M.updatelayer(rhomb1matching[0],"rhomb1");
+M.updatelayer(rhomb2matching[0],"rhomb2");
+
+M.addlayer();
+M.updatelayer(rhomb1matching[1],"rhomb1");
+M.updatelayer(rhomb2matching[1],"rhomb2");
+
+draw(M,blue+1.5,layer=1);
+draw(M,red+1.5,layer=2);

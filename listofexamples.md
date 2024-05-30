@@ -23,8 +23,10 @@ As of May 11, 2024.
   - Keynon's non FLC tiling which is not of finite local complexity (see https://tilings.math.uni-bielefeld.de/substitution/kenyons-non-flc/).
 - PenroseKite.asy
 - PenroseKiteMatching.asy
-  - A modification of PenroseKite.asy that shows the matching rule.
+  - A modification of PenroseKite.asy that shows a matching rule.
 - PenroseRhomb.asy
+- PenroseRhombMatching.asy
+  - A modification of PenroseRhomb.asy that shows a matching rule.
 - periodDoubling.asy
 - pinwheel.asy
   - The epitome of a tiling with statistical circular symmetry.
