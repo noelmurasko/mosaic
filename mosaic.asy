@@ -303,63 +303,63 @@ struct tessera {
     this.layers+=1;
   }
 
-  void updatelayer(tile drawtile, int ind) {
-    if(drawtile != nulltile) this.drawtile[ind]=copy(drawtile);
+  void updatelayer(tile drawtile, int layer) {
+    if(drawtile != nulltile) this.drawtile[layer]=copy(drawtile);
   }
 
-  void updatelayer(pen fillpen, pen drawpen, int ind) {
-    if(fillpen != nullpen) this.drawtile[ind].fillpen=fillpen;
-    if(drawpen != nullpen) this.drawtile[ind].drawpen=drawpen;
+  void updatelayer(pen fillpen, pen drawpen, int layer) {
+    if(fillpen != nullpen) this.drawtile[layer].fillpen=fillpen;
+    if(drawpen != nullpen) this.drawtile[layer].drawpen=drawpen;
   }
 
   void updatelayer(pen axialpena, pair axiala, pen axialpenb, pair axialb,
-                   int ind) {
-    if(axialpena != nullpen) this.drawtile[ind].axialpena=axialpena;
-    if(axialpenb != nullpen) this.drawtile[ind].axialpenb=axialpenb;
-    this.drawtile[ind].axiala=axiala;
-    this.drawtile[ind].axialb=axialb;
+                   int layer) {
+    if(axialpena != nullpen) this.drawtile[layer].axialpena=axialpena;
+    if(axialpenb != nullpen) this.drawtile[layer].axialpenb=axialpenb;
+    this.drawtile[layer].axiala=axiala;
+    this.drawtile[layer].axialb=axialb;
   }
 
   void updatelayer(pen radialpena, pair radiala, real radialra, pen radialpenb,
-                   pair radialb, real radialrb, int ind) {
-    if(radialpena != nullpen) this.drawtile[ind].radialpena=radialpena;
-    if(radialpenb != nullpen) this.drawtile[ind].radialpenb=radialpenb;
-    this.drawtile[ind].radiala=radiala;
-    this.drawtile[ind].radialb=radialb;
-    this.drawtile[ind].radialra=radialra;
-    this.drawtile[ind].radialrb=radialrb;
+                   pair radialb, real radialrb, int layer) {
+    if(radialpena != nullpen) this.drawtile[layer].radialpena=radialpena;
+    if(radialpenb != nullpen) this.drawtile[layer].radialpenb=radialpenb;
+    this.drawtile[layer].radiala=radiala;
+    this.drawtile[layer].radialb=radialb;
+    this.drawtile[layer].radialra=radialra;
+    this.drawtile[layer].radialrb=radialrb;
   }
 
-  void updatelayer(tile drawtile, pen fillpen, pen drawpen, int ind) {
-    this.updatelayer(drawtile, ind);
-    this.updatelayer(fillpen, drawpen, ind);
+  void updatelayer(tile drawtile, pen fillpen, pen drawpen, int layer) {
+    this.updatelayer(drawtile, layer);
+    this.updatelayer(fillpen, drawpen, layer);
   }
 
   void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen axialpena,
-                   pair axiala, pen axialpenb, pair axialb, int ind) {
-    this.updatelayer(drawtile, ind);
-    this.updatelayer(fillpen, drawpen, ind);
-    this.updatelayer(axialpena, axiala, axialpenb, axialb, ind);
+                   pair axiala, pen axialpenb, pair axialb, int layer) {
+    this.updatelayer(drawtile, layer);
+    this.updatelayer(fillpen, drawpen, layer);
+    this.updatelayer(axialpena, axiala, axialpenb, axialb, layer);
   }
 
   void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen radialpena,
                    pair radiala, real radialra, pen radialpenb, pair radialb,
-                   real radialrb, int ind) {
-    this.updatelayer(drawtile, ind);
-    this.updatelayer(fillpen, drawpen, ind);
+                   real radialrb, int layer) {
+    this.updatelayer(drawtile, layer);
+    this.updatelayer(fillpen, drawpen, layer);
     this.updatelayer(radialpena, radiala, radialra, radialpenb, radialb,
-                     radialrb, ind);
+                     radialrb, layer);
   }
 
   void updatelayer(tile drawtile, pen fillpen, pen drawpen, pen axialpena,
                    pair axiala, pen axialpenb, pair axialb, pen radialpena,
                    pair radiala, real radialra, pen radialpenb, pair radialb,
-                   real radialrb, int ind) {
-    this.updatelayer(drawtile, ind);
-    this.updatelayer(fillpen, drawpen, ind);
-    this.updatelayer(axialpena, axiala, axialpenb, axialb, ind);
+                   real radialrb, int layer) {
+    this.updatelayer(drawtile, layer);
+    this.updatelayer(fillpen, drawpen, layer);
+    this.updatelayer(axialpena, axiala, axialpenb, axialb, layer);
     this.updatelayer(radialpena, radiala, radialra, radialpenb, radialb,
-                     radialrb, ind);
+                     radialrb, layer);
   }
 }
 
