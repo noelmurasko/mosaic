@@ -1,3 +1,7 @@
+// mosaic.asy
+// A module for creating and visulaizing substitution tilings.
+// Authors: Noel Murasko and Emily Rose Korfanty
+
 // Global inflation factor
 real inflation=1;
 private real globalinflation() {return inflation;}
