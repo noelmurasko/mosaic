@@ -58,11 +58,11 @@ substitution pinSub=substitution(tri);
 // define the substitution rule
 real varphi=aTan(1/2);
 transform T=reflect((0,0),(0,1))*rotate(180-varphi);
-pinSub.addtile(T, id="1");
-pinSub.addtile(T*shift(2,1), id="2");
-pinSub.addtile(T*reflect((2,0),(2,1)), id="3");
-pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), id="4");
-pinSub.addtile(T*shift(4,2)*rotate(-90), id="5");
+pinSub.addtile(T, "1");
+pinSub.addtile(T*shift(2,1), "2");
+pinSub.addtile(T*reflect((2,0),(2,1)), "3");
+pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), "4");
+pinSub.addtile(T*shift(4,2)*rotate(-90), "5");
 
 // create the patch
 mosaic M=mosaic(n,pinSub);
