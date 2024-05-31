@@ -457,14 +457,6 @@ tessera operator *(transform T, tessera mt1) {
   return mt2;
 }
 
-tessera[] operator *(transform T, tessera[] mt1) {
-  int L=mt1.length;
-  tessera[] mt2=new tessera[L];
-  for(int i=0; i < mt1.length; ++i)
-    mt2[i]=T*mt1[i];
-  return mt2;
-}
-
 struct mosaic {
   tessera[] tesserae;
   tile initialtile;
@@ -828,19 +820,17 @@ mosaic copy(mosaic M) {
     Mcopy.subpatch.push(subpatchj_copy);
   }
 
-  for(int j=0; j < Lp; ++j) {
-    if(M.initialtile == seen_supertiles[j]); {
-      Mcopy.initialtile=Mcopy.subpatch[j].supertile;
-      break;
-    }
-  }
+  // Set Mcopy.initialtile
+  int j=searchtile(known_supertiles,M.initialtile);
+  Mcopy.initialtile=Mcopy.subpatch[j].supertile;
 
+  // Push new tessera correct supertiles, prototiles, and drawtiles.
   for(int i=0; i < Lt; ++i) {
     tessera t=M.tesserae[i];
     int j=t.index;
     tessera t2=tessera(t.transform, Mcopy.subpatch[j].supertile,
-                       Mcopy.subpatch[j].prototile, Mcopy.subpatch[j].drawtile, j
-                       ...Mcopy.subpatch[j].id);
+                       Mcopy.subpatch[j].prototile, Mcopy.subpatch[j].drawtile,
+                      j, t.iterate ...Mcopy.subpatch[j].id);
     Mcopy.tesserae.push(t2);
   }
   return Mcopy;
@@ -848,7 +838,9 @@ mosaic copy(mosaic M) {
 
 mosaic operator *(transform T, mosaic M) {
   mosaic M2=copy(M);
-  M2.tesserae=T*M2.tesserae;
+  int L=M2.tesserae.length;
+  for(int i=0; i < L; ++i)
+    M2.tesserae[i]=T*M2.tesserae[i];
   return M2;
 }
 
