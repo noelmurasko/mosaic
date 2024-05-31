@@ -586,19 +586,9 @@ struct mosaic {
   }
 
   void operator init(tile initialtile=nulltile, int n,
-                     void updatetesserae(tessera[], int),
-                     substitution[] rules) {
-    this.initializer(initialtile, n, updatetesserae, rules);
-  }
-
-  void operator init(tile initialtile=nulltile, int n,
                      void updatetesserae(tessera[], int)
                      ...substitution[] rules) {
     this.initializer(initialtile, n, updatetesserae, rules);
-  }
-
-  void operator init(tile initialtile=nulltile, int n, substitution[] rules) {
-    this.initializer(initialtile, n, new void (tessera[], int){}, rules);
   }
 
   void operator init(tile initialtile=nulltile, int n ...substitution[] rules) {
@@ -673,7 +663,7 @@ struct mosaic {
   // Update with tile, fillpen, and drawpen
   //Update top layer
   void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
-                   pen drawpen=nullpen, int layer=this.layers-1, string[] id) {
+                   pen drawpen=nullpen, int layer=this.layers-1 ...string[] id) {
     checkLayerError(layer);
 
     if(decorateinitialtile(id))
@@ -684,26 +674,16 @@ struct mosaic {
       subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
-                   pen drawpen=nullpen, int layer=this.layers-1 ...string[] id) {
-    this.updatelayer(drawtile, fillpen, drawpen, layer, id);
-  }
-
   //Update layer 0
-  void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen,
-              string[] id) {
-    this.updatelayer(drawtile, fillpen, drawpen,0, id);
-  }
-
   void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen
               ...string[] id) {
-    this.update(drawtile, fillpen, drawpen, id);
+    this.updatelayer(drawtile, fillpen, drawpen, 0 ...id);
   }
 
   // Update with axial shading
   void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
                    pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
-                   pen drawpen=nullpen, int layer=this.layers-1, string[] id) {
+                   pen drawpen=nullpen, int layer=this.layers-1 ...string[] id) {
     checkLayerError(layer);
 
     if(decorateinitialtile(id))
@@ -716,32 +696,18 @@ struct mosaic {
                                        axiala, axialpenb, axialb, layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
-                   pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
-                   pen drawpen=nullpen, int layer=this.layers-1 ...string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
-                     drawpen, layer, id);
-  }
-
-  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
-              pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
-              pen drawpen=nullpen, string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
-                     drawpen, 0, id);
-  }
-
   void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
               pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
               pen drawpen=nullpen ...string[] id) {
-    this.update(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
-                drawpen, id);
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, fillpen,
+                     drawpen, 0 ...id);
   }
 
   // Update with radial shading
   void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
                    real radialra, pen radialpenb=nullpen, pair radialb,
                    real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
-                   int layer=this.layers-1, string[] id) {
+                   int layer=this.layers-1 ...string[] id) {
 
     checkLayerError(layer);
 
@@ -756,20 +722,12 @@ struct mosaic {
                                        radialrb, layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
-                   real radialra, pen radialpenb=nullpen, pair radialb,
-                   real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
-                   int layer=this.layers-1 ...string[] id) {
-    this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb,
-                     radialb, radialrb, fillpen, drawpen, layer, id);
-  }
-
   void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
               real radialra, pen radialpenb=nullpen, pair radialb,
-              real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
-              string[] id) {
+              real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
+              ...string[] id) {
       this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb,
-                       radialb, radialrb, fillpen, drawpen,0, id);
+                       radialb, radialrb, fillpen, drawpen, 0 ...id);
   }
 
   void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
@@ -777,7 +735,7 @@ struct mosaic {
               real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
               ...string[] id) {
       this.update(drawtile, radialpena, radiala, radialra, radialpenb, radialb,
-                  radialrb, fillpen, drawpen, id);
+                  radialrb, fillpen, drawpen ...id);
   }
 
   // Update everything
@@ -785,7 +743,7 @@ struct mosaic {
                    pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
                    pair radiala, real radialra, pen radialpenb=nullpen,
                    pair radialb, real radialrb, pen fillpen=nullpen,
-                   pen drawpen=nullpen, int layer=this.layers-1, string[] id) {
+                   pen drawpen=nullpen, int layer=this.layers-1 ...string[] id) {
     checkLayerError(layer);
 
     int[] indices=decorateIndices(id);
@@ -801,34 +759,14 @@ struct mosaic {
                                        radialrb, layer);
   }
 
-  void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
-                   pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
-                   pair radiala, real radialra, pen radialpenb=nullpen,
-                   pair radialb, real radialrb, pen fillpen=nullpen,
-                   pen drawpen=nullpen, int layer=this.layers-1 ...string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
-                     radiala, radialra, radialpenb, radialb, radialrb, fillpen,
-                     drawpen, layer, id);
-  }
-
-  void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
-              pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
-              pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,
-              real radialrb, pen fillpen=nullpen, pen drawpen=nullpen,
-              string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
-                     radiala, radialra, radialpenb, radialb, radialrb, fillpen,
-                     drawpen, 0, id);
-  }
-
   void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
               pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
               pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,
               real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
               ...string[] id) {
-    this.update(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
-                radiala, radialra, radialpenb, radialb, radialrb, fillpen,
-                drawpen, id);
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
+                     radiala, radialra, radialpenb, radialb, radialrb, fillpen,
+                     drawpen, 0 ...id);
   }
 }
 
