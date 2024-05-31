@@ -712,14 +712,6 @@ struct mosaic {
                        radialb, radialrb, fillpen, drawpen, 0 ...id);
   }
 
-  void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
-              real radialra, pen radialpenb=nullpen, pair radialb,
-              real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
-              ...string[] id) {
-      this.update(drawtile, radialpena, radiala, radialra, radialpenb, radialb,
-                  radialrb, fillpen, drawpen ...id);
-  }
-
   // Update everything
   void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
                    pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
