@@ -439,12 +439,18 @@ substitution duplicate(substitution s1) {
   return s2;
 }
 
+// Important: Mulitplying a mt1 and mt2 results in
+// tessera mt3 with mt3.transform=mt1.transform*mt2.transform.
+// The supertile, prototile, and drawtile of mt3 are shallow
+// copies of mt2.
 tessera operator *(tessera mt1, tessera mt2) {
   tessera mt3=duplicate(mt2);
   mt3.transform=mt1.transform*mt2.transform;
   return mt3;
 }
 
+// Important: Mulitplying a tessera by a transform does result
+// in a deep copy of the supertile, prototile, and drawtile.
 tessera operator *(transform T, tessera mt1) {
   tessera mt2=duplicate(mt1);
   mt2.transform=T*mt2.transform;
@@ -754,7 +760,10 @@ struct mosaic {
   }
 }
 
-int searchtile(tile[] ts, tile t) {
+// Searches an array of tiles ts for tile t. If ts contains t,
+// return the first index of ts cooresponding to t. If ts does
+// not contain t, return -1.
+private int searchtile(tile[] ts, tile t) {
   for(int i; i < ts.length; ++i) {
     if(ts[i] == t) {
       return i;
@@ -770,9 +779,10 @@ mosaic copy(mosaic M) {
   M2.n=M.n;
   M2.layers=M.layers;
   M2.inflation=M.inflation;
-
   M2.tilecount=M.tilecount;
 
+  // Each tessera in M.tesserae needs to be idetified with it's corresponding
+  // patch.
   int Lt=M.tesserae.length;
   int Lp=M.subpatch.length;
 
@@ -780,13 +790,21 @@ mosaic copy(mosaic M) {
   tile[] Mprototiles;
 
   M2.subpatch.push(copy(M.subpatch[0]));
+
+  // Collect supertiles and prototiles from first tessera in original subpatch.
   Msupertiles.push(M.subpatch[0].supertile);
   Mprototiles.push(M.subpatch[0].prototile);
 
   tessera patchj;
   for(int j=1; j < Lp; ++j) {
+    // Create copy of jth tessera in subpatch.
     patchj=copy(M.subpatch[j]);
+
+    // Search known supertiles for original supertile in jth tessera of
+    // subpatch.
     int is=searchtile(Msupertiles, M.subpatch[j].supertile);
+
+    // If supertile is not found,
     if(is != -1)
       patchj.supertile=M2.subpatch[is].supertile;
     Msupertiles.push(M.subpatch[j].supertile);
