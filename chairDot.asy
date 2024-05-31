@@ -13,7 +13,6 @@ chairRule.addtile(white);
 chairRule.addtile(shift(1,1),orange,"B");
 chairRule.addtile(shift(4,0)*rotate(90),lightblue,"C");
 chairRule.addtile(shift(0,4)*rotate(270),lightblue,"D");
-
 int n=4;
 mosaic M=mosaic(chair,n,chairRule);
 
@@ -29,5 +28,5 @@ M.addlayer();
 M.updatelayer(decorate);
 M.updatelayer(lightblue);
 M.updatelayer(white,"B");
-M.updatelayer(orange,"C","D");
+M.updatelayer(orange,"C","D","44");
 filldraw(M);

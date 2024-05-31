@@ -211,7 +211,6 @@ struct tessera {
                        radialpenb, radialb, radialrb));
 
     this.layers=1;
-
     this.id=appendunique(this.prototile.id, id);
     this.index=0;
     this.iterate=iterate;
@@ -350,10 +349,12 @@ struct substitution {
   tile supertile;
   tessera[] subpatch;
   real inflation;
+  string[] id;
 
-  void operator init(explicit tile supertile) {
+  void operator init(explicit tile supertile ...string[] id) {
     this.supertile=supertile;
     this.inflation=globalinflation();
+    this.id=id;
   }
 
   void operator init(explicit tile supertile, real inflation) {
@@ -364,7 +365,7 @@ struct substitution {
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
                explicit tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
-    tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen ...id);
+    tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen ...appendunique(this.id,id));
     this.subpatch.push(m);
   }
 
@@ -372,7 +373,7 @@ struct substitution {
                pen axialpena, pair axiala, pen axialpenb, pair axialb,
                pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
     tessera m=tessera(transform, this.supertile, prototile, axialpena, axiala,
-                      axialpenb, axialb, fillpen, drawpen ...id);
+                      axialpenb, axialb, fillpen, drawpen ...appendunique(this.id,id));
     this.subpatch.push(m);
   }
 
@@ -382,7 +383,7 @@ struct substitution {
                      pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
     tessera m=tessera(transform, this.supertile, prototile, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb, fillpen, drawpen
-                      ...id);
+                      ...appendunique(this.id,id));
     this.subpatch.push(m);
   }
 
@@ -393,7 +394,7 @@ struct substitution {
                      pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
     tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen,
                       axialpena, axiala, axialpenb, axialb, radialpena, radiala,
-                      radialra, radialpenb, radialb, radialrb ...id);
+                      radialra, radialpenb, radialb, radialrb ...appendunique(this.id,id));
     this.subpatch.push(m);
   }
 }
