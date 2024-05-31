@@ -9,10 +9,10 @@ inflation=2;
 tile chair=tile((0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle,"A");
 substitution chairRule=substitution(chair); // chair substitution rule
 
-chairRule.addtile(white,id="A");
-chairRule.addtile(shift(1,1),orange,id="B");
-chairRule.addtile(shift(4,0)*rotate(90),lightblue,id="C");
-chairRule.addtile(shift(0,4)*rotate(270),lightblue,id="D");
+chairRule.addtile(white);
+chairRule.addtile(shift(1,1),orange,"B");
+chairRule.addtile(shift(4,0)*rotate(90),lightblue,"C");
+chairRule.addtile(shift(0,4)*rotate(270),lightblue,"D");
 
 int n=4;
 mosaic M=mosaic(chair,n,chairRule);

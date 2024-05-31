@@ -7,7 +7,7 @@ import mosaic;
 inflation=2;
 
 // prototile
-tile chair=(0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle;
+tile chair=tile((0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle,"b");
 //draw(chair);
 // substitution rule
 substitution chairRule=substitution(chair);
