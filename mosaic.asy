@@ -205,10 +205,8 @@ struct tessera {
         int j=search(this.id, id[i]);
         if(j == -1) {
           this.id.push(id[i]);
-        } else if(j == this.id.length-1) {
-          if(this.id[j] != id[i]) {
+        } else if(this.id[j] != id[i]) {
             this.id.push(id[i]);
-          }
         }
       }
     }
@@ -287,10 +285,8 @@ struct tessera {
         int j=search(this.id, id[i]);
         if(j == -1) {
           this.id.push(id[i]);
-        } else if(j == this.id.length-1) {
-          if(this.id[j] != id[i]) {
+        } else if(this.id[j] != id[i]) {
             this.id.push(id[i]);
-          }
         }
       }
     }
