@@ -161,6 +161,26 @@ tile operator ^^(tile t1, tile t2) {
 
 tile nulltile=tile(nullpath);
 
+private string[] appendunique(string[] A, string[] B) {
+  int Alen=A.length;
+  string[] AB;
+  if(Alen == 0)
+    AB=copy(B);
+  else {
+    AB=copy(A);
+    for(int i=0; i < B.length; ++i) {
+      int j=search(AB, B[i]);
+      if(j == -1) {
+        AB.push(B[i]);
+      } else if(AB[j] != B[i]) {
+          AB.push(B[i]);
+      }
+    }
+  }
+  return AB;
+}
+
+
 struct tessera {
   transform transform;
   tile supertile;
@@ -192,25 +212,7 @@ struct tessera {
 
     this.layers=1;
 
-    //this.id=id.length == 0 ? this.prototile.id : id;
-    //this.id=this.prototile.id;
-    //write(this.prototile.id);
-
-    int protoidlen=this.prototile.id.length;
-    if(protoidlen == 0)
-      this.id=copy(id);
-    else {
-      this.id=copy(this.prototile.id);
-      for(int i=0; i < id.length; ++i) {
-        int j=search(this.id, id[i]);
-        if(j == -1) {
-          this.id.push(id[i]);
-        } else if(this.id[j] != id[i]) {
-            this.id.push(id[i]);
-        }
-      }
-    }
-
+    this.id=appendunique(this.prototile.id, id);
     this.index=0;
     this.iterate=iterate;
   }
@@ -275,22 +277,7 @@ struct tessera {
     this.index=index;
     this.layers=drawtile.length;
 
-    //this.id=id.length == 0 ? this.prototile.id : id;
-    int protoidlen=this.prototile.id.length;
-    if(protoidlen == 0)
-      this.id=copy(id);
-    else {
-      this.id=copy(this.prototile.id);
-      for(int i=0; i < id.length; ++i) {
-        int j=search(this.id, id[i]);
-        if(j == -1) {
-          this.id.push(id[i]);
-        } else if(this.id[j] != id[i]) {
-            this.id.push(id[i]);
-        }
-      }
-    }
-
+    this.id=appendunique(this.prototile.id, id);
     this.iterate=iterate;
   }
 
