@@ -1,5 +1,9 @@
+// Global inflation factor
 real inflation=1;
 private real globalinflation() {return inflation;}
+
+// Default pen for drawing outlines of substitution.
+pen outinepen=linetype(new real[] {4,2})+1.5;
 
 struct tile {
   path[] path;
@@ -918,7 +922,7 @@ void radialshade(picture pic=currentpicture, tessera T, int layer=0,
 // outlinepen, scaled by inflation.
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
               bool drawoutline=false,
-              pen outlinepen=linetype(new real[] {4,2})+1.5) {
+              pen outlinepen=outinepen) {
   for(int k=0; k < s.subpatch.length; ++k)
     draw(pic, s.subpatch[k], p, 1, 0);
   if(drawoutline)
@@ -927,7 +931,7 @@ void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
 
 void fill(picture pic=currentpicture, substitution s, pen p=invisible,
           bool drawoutline=false,
-          pen outlinepen=linetype(new real[] {4,2})+1.5) {
+          pen outlinepen=outinepen) {
   for(int k=0; k < s.subpatch.length; ++k)
     fill(pic, s.subpatch[k], p, 0);
   if(drawoutline)
@@ -936,7 +940,7 @@ void fill(picture pic=currentpicture, substitution s, pen p=invisible,
 
 void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
               pen drawpen=currentpen, bool drawoutline=false,
-              pen outlinepen=linetype(new real[] {4,2})+1.5) {
+              pen outlinepen=outinepen) {
   for(int k=0; k < s.subpatch.length; ++k)
     filldraw(pic, s.subpatch[k], fillpen, drawpen, 1, 0);
   if(drawoutline)
@@ -945,7 +949,7 @@ void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
 
 void axialshade(picture pic=currentpicture, substitution s, bool stroke=false,
                 bool extenda=true, bool extendb=true, bool drawoutline=false,
-                pen outlinepen=linetype(new real[] {4,2})+1.5)  {
+                pen outlinepen=outinepen)  {
   for(int k=0; k < s.subpatch.length; ++k)
     axialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda,
                extendb=extendb);
@@ -955,7 +959,7 @@ void axialshade(picture pic=currentpicture, substitution s, bool stroke=false,
 
 void radialshade(picture pic=currentpicture, substitution s, bool stroke=false,
                  bool extenda=true, bool extendb=true, bool drawoutline=false,
-                 pen outlinepen=linetype(new real[] {4,2})+1.5)  {
+                 pen outlinepen=outinepen)  {
   for(int k=0; k < s.subpatch.length; ++k)
     radialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda,
                 extendb=extendb);
