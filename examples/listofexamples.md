@@ -30,8 +30,6 @@ As of May 11, 2024.
 - periodDoubling.asy
 - pinwheel.asy
   - The epitome of a tiling with statistical circular symmetry.
-- pinwheelPlus.asy
-  - The pinwheel tiling with several decorations.
 - pinwheelVariant.asy
   - A periodic variant of the pinwheel tiling.
 - pinwheelrand.asy
