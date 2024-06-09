@@ -23,7 +23,7 @@ pinSub.addtile(T*reflect((0,1),(1,1))*shift(2,1), paleblue);
 pinSub.addtile(T*shift(4,2)*rotate(-90), heavyred);
 
 // number of iterations
-int n=4;
+int n=1;
 mosaic M=mosaic(n,pinSub);
 
 transform RotVarphi=rotate(-varphi)^n;

@@ -875,8 +875,8 @@ void fill(picture pic=currentpicture, explicit tile t, pen p=invisible) {
 
 void filldraw(picture pic=currentpicture, explicit tile t,
               pen fillpen=invisible, pen drawpen=currentpen) {
-  draw(pic, t, drawpen);
   fill(pic, t, fillpen);
+  draw(pic, t, drawpen);
 }
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
@@ -894,8 +894,8 @@ void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
 }
 
 // Draw layer l of tessera.
-void draw(picture pic=currentpicture, tessera T, pen p=currentpen,
-          real scaling=1, int layer=0) {
+void draw(picture pic=currentpicture, tessera T, int layer=0, pen p=currentpen,
+          real scaling=1) {
   tile Tdl=T.transform*T.drawtile[layer];
   pen dpl=Tdl.drawpen;
   if(dpl != nullpen) {
@@ -906,16 +906,15 @@ void draw(picture pic=currentpicture, tessera T, pen p=currentpen,
   }
 }
 
-void fill(picture pic=currentpicture, tessera T, pen p=invisible,
-          int layer=0) {
+void fill(picture pic=currentpicture, tessera T, int layer=0, pen p=invisible) {
   tile Tdl=T.drawtile[layer];
   fill(pic, T.transform*Tdl);
 }
 
-void filldraw(picture pic=currentpicture, tessera T, pen fillpen=invisible,
-              pen drawpen=currentpen, real scaling=1, int layer=0) {
-  fill(pic, T, fillpen, layer);
-  draw(pic, T, drawpen, scaling, layer);
+void filldraw(picture pic=currentpicture, tessera T, int layer=0,
+              pen fillpen=invisible, pen drawpen=currentpen, real scaling=1) {
+  fill(pic, T, layer, fillpen);
+  draw(pic, T, layer, drawpen, scaling);
 }
 
 void axialshade(picture pic=currentpicture, tessera T, int layer=0,
@@ -938,7 +937,7 @@ void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
               bool drawoutline=false,
               pen outlinepen=outinepen) {
   for(int k=0; k < s.subpatch.length; ++k)
-    draw(pic, s.subpatch[k], p, 1, 0);
+    draw(pic, s.subpatch[k], p);
   if(drawoutline)
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
@@ -947,7 +946,7 @@ void fill(picture pic=currentpicture, substitution s, pen p=invisible,
           bool drawoutline=false,
           pen outlinepen=outinepen) {
   for(int k=0; k < s.subpatch.length; ++k)
-    fill(pic, s.subpatch[k], p, 0);
+    fill(pic, s.subpatch[k], p);
   if(drawoutline)
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
@@ -956,7 +955,7 @@ void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
               pen drawpen=currentpen, bool drawoutline=false,
               pen outlinepen=outinepen) {
   for(int k=0; k < s.subpatch.length; ++k)
-    filldraw(pic, s.subpatch[k], fillpen, drawpen, 1, 0);
+    filldraw(pic, s.subpatch[k], fillpen, drawpen);
   if(drawoutline)
     draw(pic, scale(s.inflation)*s.supertile, outlinepen);
 }
@@ -991,12 +990,12 @@ void draw(picture pic=currentpicture, mosaic M, int layer, pen p=currentpen,
           bool scalelinewidth=true, int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth, M.inflation, nscale);
   for(int k=0; k < M.tesserae.length; ++k)
-    draw(pic, M.tesserae[k], p, scaling, layer);
+    draw(pic, M.tesserae[k], layer, p, scaling);
 }
 
-void fill(picture pic=currentpicture, mosaic M, pen p=invisible, int layer) {
+void fill(picture pic=currentpicture, mosaic M, int layer, pen p=invisible) {
   for(int k=0; k < M.tesserae.length; ++k)
-    fill(pic, M.tesserae[k], p, layer);
+    fill(pic, M.tesserae[k], layer, p);
 }
 
 void filldraw(picture pic=currentpicture, mosaic M, int layer,
@@ -1004,7 +1003,7 @@ void filldraw(picture pic=currentpicture, mosaic M, int layer,
               bool scalelinewidth=true, int nscale=M.n) {
   real scaling=inflationscaling(scalelinewidth, M.inflation, nscale);
   for(int k=0; k < M.tesserae.length; ++k)
-    filldraw(pic, M.tesserae[k], fillpen, drawpen, scaling, layer);
+    filldraw(pic, M.tesserae[k], layer, fillpen, drawpen, scaling);
 }
 
 void axialshade(picture pic=currentpicture, mosaic M, int layer,
@@ -1028,16 +1027,14 @@ void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
 
 void fill(picture pic=currentpicture, mosaic M, pen p=invisible) {
   for(int layer=0; layer < M.layers; ++layer)
-    fill(pic, M, p, layer);
+    fill(pic, M, layer, p);
 }
 
 void filldraw(picture pic=currentpicture, mosaic M, pen fillpen=invisible,
               pen drawpen=currentpen, bool scalelinewidth=true,
               int nscale=M.n) {
-  real scaling=inflationscaling(scalelinewidth, M.inflation, nscale);
   for(int layer=0; layer < M.layers; ++layer) {
-    fill(pic, M, fillpen, layer);
-    draw(pic, M, layer, drawpen, scalelinewidth, nscale);
+    filldraw(pic, M, layer, fillpen, drawpen, scalelinewidth, nscale);
   }
 }
 
