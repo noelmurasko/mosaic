@@ -9,6 +9,38 @@ private real globalinflation() {return inflation;}
 // Default pen for drawing outlines of substitution.
 pen outinepen=linetype(new real[] {4,2})+1.5;
 
+
+// Return an array of all distinct strings in A and B
+private string[] stringunion(string[] A, string[] B) {
+  int Alen=A.length;
+  int Blen=B.length;
+  string[] AB;
+  string[] C;
+  if(Alen == 0) {
+    if(Blen == 0) {
+      return new string[] {};
+    }
+    AB=new string[] {B[0]};
+    C=B[1:];
+  } else {
+    AB=new string[] {A[0]};
+    C=concat(A[1:],B);
+  }
+  for(int i=0; i < C.length; ++i) {
+    bool pushCi=true;
+    for(int j=0; j < AB.length; ++j) {
+      if(AB[j] == C[i]) {
+        pushCi=false;
+        break;
+      }
+    }
+    if(pushCi) {
+      AB.push(C[i]);
+    }
+  }
+  return AB;
+}
+
 struct tile {
   path[] path;
 
@@ -27,7 +59,7 @@ struct tile {
   real radialra;
   real radialrb;
 
-  string[] id;
+  restricted string[] id;
 
   private void initializer(path[] path, pen fillpen=nullpen,
                            pen drawpen=nullpen, pen axialpena=nullpen,
@@ -53,7 +85,7 @@ struct tile {
     this.radialra=radialra;
     this.radialrb=radialrb;
 
-    this.id=id;
+    this.id=stringunion(new string[0],id);
   }
 
   void operator init(path[] path={}, pen fillpen=nullpen, pen drawpen=nullpen
@@ -126,6 +158,18 @@ struct tile {
       if(!cyclic(this.path[i])) return false;
     return true;
   }
+
+  void addid(...string[] id) {
+    this.id=stringunion(this.id, id);
+  }
+
+  void deleteid(int i, int j=i) {
+    this.id.delete(i,j);
+  }
+
+  void deleteid() {
+    this.id.delete();
+  }
 }
 
 tile operator cast(path[] p) {
@@ -169,26 +213,6 @@ tile operator ^^(tile t1, tile t2) {
 
 tile nulltile=tile(nullpath);
 
-private string[] appendunique(string[] A, string[] B) {
-  int Alen=A.length;
-  string[] AB;
-  if(Alen == 0)
-    AB=copy(B);
-  else {
-    AB=copy(A);
-    for(int i=0; i < B.length; ++i) {
-      int j=search(AB, B[i]);
-      if(j == -1) {
-        AB.push(B[i]);
-      } else if(AB[j] != B[i]) {
-          AB.push(B[i]);
-      }
-    }
-  }
-  return AB;
-}
-
-
 struct tessera {
   transform transform;
   tile supertile;
@@ -219,7 +243,7 @@ struct tessera {
                        radialpenb, radialb, radialrb));
 
     this.layers=1;
-    this.id=appendunique(this.prototile.id, id);
+    this.id=stringunion(this.prototile.id, id);
     this.index=0;
     this.iterate=iterate;
   }
@@ -288,7 +312,7 @@ struct tessera {
     this.index=index;
     this.layers=drawtile.length;
 
-    this.id=appendunique(this.prototile.id, id);
+    this.id=stringunion(this.prototile.id, id);
     this.iterate=iterate;
   }
 
@@ -355,6 +379,18 @@ struct tessera {
     this.updatelayer(radialpena, radiala, radialra, radialpenb, radialb,
                      radialrb, layer);
   }
+
+  void addid(...string[] id) {
+    this.id=stringunion(this.id, id);
+  }
+
+  void deleteid(int i, int j=i) {
+    this.id.delete(i,j);
+  }
+
+  void deleteid() {
+    this.id.delete();
+  }
 }
 
 struct substitution {
@@ -378,7 +414,7 @@ struct substitution {
                explicit tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
     tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen
-                      ...appendunique(this.id,id));
+                      ...stringunion(this.id,id));
     this.subpatch.push(m);
   }
 
@@ -387,7 +423,7 @@ struct substitution {
                pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
     tessera m=tessera(transform, this.supertile, prototile, axialpena, axiala,
                       axialpenb, axialb, fillpen, drawpen
-                      ...appendunique(this.id,id));
+                      ...stringunion(this.id,id));
     this.subpatch.push(m);
   }
 
@@ -397,7 +433,7 @@ struct substitution {
                      pen fillpen=nullpen, pen drawpen=nullpen ...string[] id) {
     tessera m=tessera(transform, this.supertile, prototile, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb, fillpen, drawpen
-                      ...appendunique(this.id,id));
+                      ...stringunion(this.id,id));
     this.subpatch.push(m);
   }
 
@@ -409,7 +445,7 @@ struct substitution {
     tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen,
                       axialpena, axiala, axialpenb, axialb, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
-                      ...appendunique(this.id,id));
+                      ...stringunion(this.id,id));
     this.subpatch.push(m);
   }
 }
