@@ -408,6 +408,7 @@ struct substitution {
   void operator init(explicit tile supertile ...string[] id) {
     this.supertile=supertile;
     this.inflation=globalinflation();
+    assert(this.inflation > 0, "Cannot set inflation to "+string(this.inflation)+". Inflation factor must be a strictly positive number.");
     this.id=id;
   }
 
