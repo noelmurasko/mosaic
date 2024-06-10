@@ -222,7 +222,8 @@ struct tessera {
 
   restricted int layers;
   string[] id;
-  int index; // Used to determine location of tile in the mosaic subpatch
+  // Used to determine location of tile in the mosaic subpatch
+  restricted int index;
   bool iterate;
 
   private void initializer(transform transform, tile supertile, tile prototile,
@@ -390,6 +391,11 @@ struct tessera {
 
   void deleteid() {
     this.id.delete();
+  }
+
+  // Change index to n
+  void updateindex(int n) {
+    this.index=n;
   }
 }
 
@@ -564,7 +570,7 @@ struct mosaic {
     tessera rulesipatchj;
     for(int j=0; j < rulesipatch.length; ++j) {
       rulesipatchj=duplicate(rulesipatch[j]);
-      rulesipatchj.index=ind;
+      rulesipatchj.updateindex(ind);
       ind+=1;
       this.subpatch.push(rulesipatchj);
     }
@@ -575,7 +581,7 @@ struct mosaic {
              must have the same inflation factor.");
       for(int j=0; j < rulesipatch.length; ++j) {
         rulesipatchj=duplicate(rulesipatch[j]);
-        rulesipatchj.index=ind;
+        rulesipatchj.updateindex(ind);
         ind+=1;
         this.subpatch.push(rulesipatchj);
       }
