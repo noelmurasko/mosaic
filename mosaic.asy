@@ -538,22 +538,20 @@ struct mosaic {
   }
 
   void substitute(int n, void updatetesserae(tessera[], int)) {
-    if(n > 0) {
-      for(int k=0; k < n; ++k) {
-        tessera[] tesserae=new tessera[];
-        int sTL=this.tesserae.length;
-        for(int i=0; i < sTL; ++i)
-          if(this.tesserae[i].iterate)
-            this.iterate(this.tesserae[i], tesserae, inflation);
-          else
-            tesserae.push(this.tesserae[i]);
-        updatetesserae(tesserae, this.n+k+1);
-        this.tesserae=tesserae;
-        int tesserael=tesserae.length;
-        this.tilecount.push(tesserael);
-      }
-      this.n+=n;
+    for(int k=0; k < n; ++k) {
+      tessera[] tesserae=new tessera[];
+      int sTL=this.tesserae.length;
+      for(int i=0; i < sTL; ++i)
+        if(this.tesserae[i].iterate)
+          this.iterate(this.tesserae[i], tesserae, inflation);
+        else
+          tesserae.push(this.tesserae[i]);
+      updatetesserae(tesserae, this.n+k+1);
+      this.tesserae=tesserae;
+      int tesserael=tesserae.length;
+      this.tilecount.push(tesserael);
     }
+    this.n+=n;
   }
 
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
