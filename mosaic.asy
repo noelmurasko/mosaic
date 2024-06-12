@@ -408,7 +408,8 @@ struct substitution {
   void operator init(explicit tile supertile ...string[] id) {
     this.supertile=supertile;
     this.inflation=globalinflation();
-    assert(this.inflation > 0, "Cannot set inflation to "+string(this.inflation)+". Inflation factor must be a strictly positive number.");
+    assert(this.inflation > 0, "Cannot set inflation to "+string(this.inflation)
+           +". Inflation factor must be a strictly positive number.");
     this.id=id;
   }
 
@@ -457,20 +458,20 @@ struct substitution {
   }
 }
 
-// Create a deep copy of the tessera mt.
-tessera copy(tessera mt) {
-  int L=mt.drawtile.length;
+// Create a deep copy of the tessera t.
+tessera copy(tessera t) {
+  int L=t.drawtile.length;
   tile[] dtcopy=new tile[L];
   for(int i; i < L; ++i)
-    dtcopy[i]=copy(mt.drawtile[i]);
+    dtcopy[i]=copy(t.drawtile[i]);
   // If supertile and prototile are the same, make only one copy
-  if(mt.supertile == mt.prototile) {
-    tile super2=copy(mt.supertile);
-    return tessera(mt.transform, super2, super2, dtcopy, mt.index,
-                   mt.iterate ...mt.id);
+  if(t.supertile == t.prototile) {
+    tile super2=copy(t.supertile);
+    return tessera(t.transform, super2, super2, dtcopy, t.index,
+                   t.iterate ...t.id);
   } else
-    return tessera(mt.transform, copy(mt.supertile), copy(mt.prototile), dtcopy,
-                   mt.index, mt.iterate ...copy(mt.id));
+    return tessera(t.transform, copy(t.supertile), copy(t.prototile), dtcopy,
+                   t.index, t.iterate ...copy(t.id));
 }
 
 // Create a deep copy of the substitution s1.
@@ -481,12 +482,12 @@ substitution copy(substitution s1) {
   return s2;
 }
 
-// Create a new tessera mt2 from mt1 with a shallow copy of the supertile,
+// Create a new tessera t2 from t1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
-tessera duplicate(tessera mt1) {
-  tessera mt2=tessera(mt1.transform, mt1.supertile, mt1.prototile, mt1.drawtile,
-                      mt1.index, mt1.iterate ...copy(mt1.id));
-  return mt2;
+tessera duplicate(tessera t1) {
+  tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile,
+                      t1.index, t1.iterate ...copy(t1.id));
+  return t2;
 }
 
 // Create a new substitution s2 from s1 with a shallow copy of the subpatch.
@@ -497,63 +498,98 @@ substitution duplicate(substitution s1) {
   return s2;
 }
 
-// Important: Mulitplying a mt1 and mt2 results in
-// tessera mt3 with mt3.transform=mt1.transform*mt2.transform.
-// The supertile, prototile, and drawtile of mt3 are shallow
-// copies of mt2.
-tessera operator *(tessera mt1, tessera mt2) {
-  tessera mt3=duplicate(mt2);
-  mt3.transform=mt1.transform*mt2.transform;
-  return mt3;
+// Important: Mulitplying a t1 and t2 results in
+// tessera t3 with t3.transform=t1.transform*t2.transform.
+// The supertile, prototile, and drawtile of t3 are shallow
+// copies of t2.
+tessera operator *(tessera t1, tessera t2) {
+  tessera t3=duplicate(t2);
+  t3.transform=t1.transform*t2.transform;
+  return t3;
 }
 
 // Important: Mulitplying a tessera by a transform does result
 // in a deep copy of the supertile, prototile, and drawtile.
-tessera operator *(transform T, tessera mt1) {
-  tessera mt2=duplicate(mt1);
-  mt2.transform=T*mt2.transform;
-  return mt2;
+tessera operator *(transform T, tessera t1) {
+  tessera t2=duplicate(t1);
+  t2.transform=T*t2.transform;
+  return t2;
 }
 
 struct mosaic {
+  // Collection of tessera that make up the mosaic.
   tessera[] tesserae;
+
+  // Initial tile for mosiac. When initializing, this tile must match one of
+  // the supertiles in the passed subsitution rules.
   tile initialtile;
+
+  // Total number of substitutions performed
   int n=0;
+
+  // Collection of tessera that define the substitution rules
   tessera[] subpatch;
+
+  // Number of drawing layers in mosaic
   int layers;
+
+  // Inflation factor for mosaic
   real inflation;
 
   // tilecount[k] is the number of tesserae in iteration k
   int[] tilecount;
 
-  private void iterate(tessera T, tessera[] tesserae,
-          real inflation=inflation) {
-    tessera patchi;
+  // Perform an iteration of a tessera T, and push the result onto the array
+  // tesserae.
+  private void iterate(tessera t, tessera[] tesserae) {
+    // Loop over each tessera p in subpatch. If p.supertile is the same as
+    // t.prototile, compute t*p. Note that t*p results in a tessera that is a
+    // duplicate of p, except the transform is given by t.transform*p.transform.
+    // Then scale t*p by inflation, and push onto tesserae.
     for(int i=0; i < subpatch.length; ++i) {
-      patchi=subpatch[i];
-      if(patchi.supertile == T.prototile) {
-        tesserae.push(scale(inflation)*T*patchi);
+      tessera p=subpatch[i];
+      if(p.supertile == t.prototile) {
+        tesserae.push(scale(inflation)*t*p);
       }
     }
   }
 
+  // Apply substituion rules in the mosaic n times times (for a total of
+  // this.n+n subsitutions). After each iteration, call the function
+  // updatetesserae(tesseare, k), where tesserae is an array of tessera in the
+  // mosaic after k total iterations. Add m to this.n.
   void substitute(int n, void updatetesserae(tessera[], int)) {
+    // Perform m iterations.
     for(int k=0; k < n; ++k) {
+      // Create new tessera array for this iteration.
       tessera[] tesserae=new tessera[];
-      int sTL=this.tesserae.length;
-      for(int i=0; i < sTL; ++i)
+
+      // Loop over each tessera from previous iteration. If this.n is 0,
+      // this array contains a tessera with this.initialtile as both the
+      // supertile and prototile.
+      for(int i=0; i < this.tesserae.length; ++i)
+        // Call iterate() if iterate flag is true. Otherwise push the old
+        // tessera onto the new array. The iterate flag is always true, unless
+        // it set to false by updatetesserae.
         if(this.tesserae[i].iterate)
-          this.iterate(this.tesserae[i], tesserae, inflation);
+          this.iterate(this.tesserae[i], tesserae);
         else
           tesserae.push(this.tesserae[i]);
+
+      // Apply updatetesserae()
       updatetesserae(tesserae, this.n+k+1);
+
+      // Set this.tesserae to the new tessera array for this iteration.
       this.tesserae=tesserae;
-      int tesserael=tesserae.length;
-      this.tilecount.push(tesserael);
+
+      // Update tilecount
+      this.tilecount.push(tesserae.length);
     }
+    // Increase this.n to reflect total iterations.
     this.n+=n;
   }
 
+  // A version of subsitute without the updatetesserae function.
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
   private void initializer(tile initialtile=nulltile, int n,
