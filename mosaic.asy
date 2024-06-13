@@ -531,7 +531,7 @@ struct mosaic {
   tessera[] subpatch;
 
   // Number of drawing layers in mosaic
-  int layers;
+  int layers=1;
 
   // Inflation factor for mosaic
   real inflation;
@@ -592,71 +592,83 @@ struct mosaic {
   // A version of subsitute without the updatetesserae function.
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
+  // Common inititalization code.
+  // Mosaics are initialized with an initialtile, and perform n substitutions
+  // using the provided rules. If initialtile isn't specified or is equal to
+  // nulltile, then supertile from the first specified rule is used as the
+  // initial tile.
+  // Advanced users may also provide a function updatetesserae(). After the
+  // kth substitution (where k=0,...n), updatetesserae(this.tesserae, k) is
+  // called where this.tesserae is the array of tesserae after k substitutions
+  // have been applied. In regular usage, updatetesserae() does nothing.
   private void initializer(tile initialtile=nulltile, int n,
                            void updatetesserae(tessera[], int),
                            substitution[] rules) {
-    int ind=0;
-    int Lr=rules.length;
+    // Set index to zero. This index tracks the position of each tessera in the
+    // provided rules.
+    int index=0;
+
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
 
+    // Set the mosaic inflation to the inflation factor in the first provided
+    // rule
     this.inflation=rules[0].inflation;
-    substitution rulesi=rules[0];
-    tessera[] rulesipatch=rulesi.subpatch;
-    tessera rulesipatchj;
-    for(int j=0; j < rulesipatch.length; ++j) {
-      rulesipatchj=duplicate(rulesipatch[j]);
-      rulesipatchj.updateindex(ind);
-      ind+=1;
-      this.subpatch.push(rulesipatchj);
+
+    // Push duplicates of each tessera in the first rule onto this.subpatch,
+    // updating the index of each.
+    for(int j=0; j < rules[0].subpatch.length; ++j) {
+      tessera t=duplicate(rules[0].subpatch[j]);
+      t.updateindex(index);
+      index+=1;
+      this.subpatch.push(t);
     }
-    for(int i=1; i < Lr; ++i) {
-      rulesi=rules[i];
-      rulesipatch=rulesi.subpatch;
-      assert(rulesi.inflation == this.inflation,"All substitutions in a mosaic
+
+    // Check that each addtional rule has a matching inflation factor. Then
+    // push duplicates of each tessera in the rule onto this.subpatch,
+    // updating the index of each.
+    for(int i=1; i < rules.length; ++i) {
+      assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
              must have the same inflation factor.");
-      for(int j=0; j < rulesipatch.length; ++j) {
-        rulesipatchj=duplicate(rulesipatch[j]);
-        rulesipatchj.updateindex(ind);
-        ind+=1;
-        this.subpatch.push(rulesipatchj);
+      for(int j=0; j < rules[i].subpatch.length; ++j) {
+        tessera t=duplicate(rules[i].subpatch[j]);
+        t.updateindex(index);
+        index+=1;
+        this.subpatch.push(t);
       }
     }
-    int Lp=this.subpatch.length;
-    real deflation=1/inflation;
-    tessera patchi;
-    for(int i=0; i < Lp; ++i) {
-      patchi=subpatch[i];
-      if(patchi.prototile == nulltile) {
-        patchi.prototile=this.initialtile;
-      }
-      if(patchi.supertile == nulltile) {
-        patchi.supertile=this.initialtile;
-      }
-      transform Ti=subpatch[i].transform;
-      patchi.transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*
-                        scale(deflation);
-    }
+
     // If initialtile is not specified, use supertile from first specified rule.
     if(initialtile == nulltile) {
       this.initialtile=rules[0].supertile;
     } else {
       int i=0;
-      while(i < Lr) {
+      while(i < rules.length) {
         if(initialtile==rules[i].supertile) {
           this.initialtile=initialtile;
           break;
         }
         ++i;
       }
-      assert(i < Lr, "initialtile does not match any supertile in provided
+      assert(i < rules.length, "initialtile does not match any supertile in provided
             substitutions.");
     }
+
+    real deflation=1/inflation;
+    // Update each transform in subpatch to deflate.
+    for(int i=0; i < this.subpatch.length; ++i) {
+      transform Ti=subpatch[i].transform;
+      subpatch[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*
+                        scale(deflation);
+    }
+
+    // Create tessera from initialtile and push onto tesserae (corresponding
+    // to n=0), push 1 to tilecount, and call updatetessera().
     this.tesserae.push(tessera(this.initialtile));
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
-    this.substitute(n, updatetesserae);
-    this.layers=1;
 
+    // Call substitute to perform n substitutions.
+    this.substitute(n, updatetesserae);
   }
 
   void operator init(tile initialtile=nulltile, int n,

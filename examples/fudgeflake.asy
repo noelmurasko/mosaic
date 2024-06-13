@@ -14,7 +14,6 @@ ifs.addtile(shift(1/2,-sqrt(3)/2)*R30);
 ifs.addtile(shift(1/2,sqrt(3)/2)*R30);
 ifs.addtile(shift(-1,0)*R30);
 
-int n=2;
+int n=1;
 mosaic M=mosaic(n,ifs);
 filldraw(M);
-//    
