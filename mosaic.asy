@@ -671,13 +671,15 @@ struct mosaic {
     this.substitute(n, updatetesserae);
   }
 
-  void operator init(tile initialtile=nulltile, int n,
+  // Initialization of mosaic using a updatetesserae function.
+  void operator init(tile initialtile=nulltile, int n=0,
                      void updatetesserae(tessera[], int)
                      ...substitution[] rules) {
     this.initializer(initialtile, n, updatetesserae, rules);
   }
 
-  void operator init(tile initialtile=nulltile, int n ...substitution[] rules) {
+  // Typical initialization of mosaic.
+  void operator init(tile initialtile=nulltile, int n=0 ...substitution[] rules) {
     this.initializer(initialtile, n, new void (tessera[], int){}, rules);
   }
 
