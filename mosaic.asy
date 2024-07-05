@@ -574,7 +574,7 @@ struct mosaic {
         if(this.tesserae[i].iterate)
           this.iterate(this.tesserae[i], tesserae);
         else
-          tesserae.push(this.tesserae[i]);
+          tesserae.push(scale(inflation)*this.tesserae[i]);
 
       // Apply updatetesserae()
       updatetesserae(tesserae, this.n+k+1);
