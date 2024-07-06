@@ -7,7 +7,7 @@ real inflation=1;
 private real globalinflation() {return inflation;}
 
 // Default pen for drawing outlines of substitution.
-pen outlinepen=linetype(new real[] {4,2})+1.5;
+pen boundarypen=linetype(new real[] {4,2})+1.5;
 
 
 // Return an array of all distinct strings in A and B
@@ -1022,53 +1022,53 @@ void radialshade(picture pic=currentpicture, tessera T, int layer=0,
               extendb=extendb);
 }
 
-// Draw substitution. If drawoutline == true, also draw the supertile with
-// outlinepen, scaled by inflation.
+// Draw substitution. If drawboundary == true, also draw the supertile with
+// boundarypen, scaled by inflation.
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
-              bool drawoutline=false,
-              pen outlinepen=outlinepen) {
+              bool drawboundary=false,
+              pen boundarypen=boundarypen) {
   for(int k=0; k < s.subpatch.length; ++k)
     draw(pic, s.subpatch[k], p);
-  if(drawoutline)
-    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
+  if(drawboundary)
+    draw(pic, scale(s.inflation)*s.supertile, boundarypen);
 }
 
 void fill(picture pic=currentpicture, substitution s, pen p=invisible,
-          bool drawoutline=false,
-          pen outlinepen=outlinepen) {
+          bool drawboundary=false,
+          pen boundarypen=boundarypen) {
   for(int k=0; k < s.subpatch.length; ++k)
     fill(pic, s.subpatch[k], p);
-  if(drawoutline)
-    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
+  if(drawboundary)
+    draw(pic, scale(s.inflation)*s.supertile, boundarypen);
 }
 
 void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
-              pen drawpen=currentpen, bool drawoutline=false,
-              pen outlinepen=outlinepen) {
+              pen drawpen=currentpen, bool drawboundary=false,
+              pen boundarypen=boundarypen) {
   for(int k=0; k < s.subpatch.length; ++k)
     filldraw(pic, s.subpatch[k], fillpen, drawpen);
-  if(drawoutline)
-    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
+  if(drawboundary)
+    draw(pic, scale(s.inflation)*s.supertile, boundarypen);
 }
 
 void axialshade(picture pic=currentpicture, substitution s, bool stroke=false,
-                bool extenda=true, bool extendb=true, bool drawoutline=false,
-                pen outlinepen=outlinepen)  {
+                bool extenda=true, bool extendb=true, bool drawboundary=false,
+                pen boundarypen=boundarypen)  {
   for(int k=0; k < s.subpatch.length; ++k)
     axialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda,
                extendb=extendb);
-  if(drawoutline)
-    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
+  if(drawboundary)
+    draw(pic, scale(s.inflation)*s.supertile, boundarypen);
 }
 
 void radialshade(picture pic=currentpicture, substitution s, bool stroke=false,
-                 bool extenda=true, bool extendb=true, bool drawoutline=false,
-                 pen outlinepen=outlinepen)  {
+                 bool extenda=true, bool extendb=true, bool drawboundary=false,
+                 pen boundarypen=boundarypen)  {
   for(int k=0; k < s.subpatch.length; ++k)
     radialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda,
                 extendb=extendb);
-  if(drawoutline)
-    draw(pic, scale(s.inflation)*s.supertile, outlinepen);
+  if(drawboundary)
+    draw(pic, scale(s.inflation)*s.supertile, boundarypen);
 }
 
 // Draw layer of mosaic.
