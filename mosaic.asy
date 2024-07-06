@@ -204,9 +204,9 @@ tile operator *(transform T, tile t1) {
   return t2;
 }
 
-// Note that pens and shading settings of the new tile are the same as t1.
+// Note that pens and shading settings of the new tile are the same as t2.
 tile operator ^^(tile t1, tile t2) {
-  tile t3=copy(t1);
+  tile t3=copy(t2);
   t3.path=t1.path^^t2.path;
   return t3;
 }
