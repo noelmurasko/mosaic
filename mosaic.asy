@@ -945,7 +945,7 @@ mosaic operator *(transform T, mosaic M) {
   return M2;
 }
 
-real inflationscaling(bool scalelinewidth, real inflation, int n) {
+private real inflationscaling(bool scalelinewidth, real inflation, int n) {
   return scalelinewidth ? (inflation)^(1-max(n,1)) : 1;
 }
 
