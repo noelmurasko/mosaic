@@ -972,14 +972,14 @@ void filldraw(picture pic=currentpicture, explicit tile t,
 
 void axialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
                 bool extenda=true, bool extendb=true) {
-  if(t.fillable()) axialshade(pic, t.path, stroke=stroke, extenda=extenda,
+  if(t.fillable() || stroke) axialshade(pic, t.path, stroke=stroke, extenda=extenda,
                               extendb=extendb, t.axialpena, t.axiala,
                               t.axialpenb, t.axialb);
 }
 
 void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
                  bool extenda=true, bool extendb=true) {
-  if(t.fillable()) radialshade(pic, t.path, stroke=stroke, extenda=extenda,
+  if(t.fillable() || stroke) radialshade(pic, t.path, stroke=stroke, extenda=extenda,
                                extendb=extendb, t.radialpena
     , t.radiala, t.radialra, t.radialpenb, t.radialb, t.radialrb);
 }
