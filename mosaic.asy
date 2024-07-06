@@ -211,7 +211,7 @@ tile operator ^^(tile t1, tile t2) {
   return t3;
 }
 
-tile nulltile=tile(nullpath);
+restricted tile nulltile=tile(nullpath);
 
 struct tessera {
   transform transform;
