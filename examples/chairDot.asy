@@ -6,7 +6,7 @@ import mosaic;
 inflation=2;
 
 // prototile
-tile chair=tile((0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle,"A");
+tile chair=tile((0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle);
 
 substitution chairRule=substitution(chair); // chair substitution rule
 
@@ -29,5 +29,5 @@ M.addlayer();
 M.updatelayer(decorate);
 M.updatelayer(lightblue);
 M.updatelayer(white,"B");
-M.updatelayer(orange,"C","D","44");
+M.updatelayer(orange,"C","D");
 filldraw(M);
