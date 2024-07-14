@@ -94,16 +94,14 @@ struct tile {
   }
 
   void operator init(path[] path={}, pen axialpena=nullpen, pair axiala,
-                     pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
-                     pen drawpen=nullpen ...string[] id) {
+                     pen axialpenb=nullpen, pair axialb ...string[] id) {
     this.initializer(path, fillpen, drawpen, axialpena=axialpena, axiala=axiala,
                      axialpenb=axialpenb, axialb=axialb, id);
   }
 
   void operator init(path[] path={}, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
-                     real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
-                     ...string[] id) {
+                     real radialrb ...string[] id) {
     this.initializer(path, fillpen, drawpen, radialpena=radialpena,
                      radiala=radiala, radialra=radialra, radialpenb=radialpenb,
                      radialb=radialb, radialrb=radialrb, id);
@@ -126,16 +124,14 @@ struct tile {
   }
 
   void operator init(pair path, pen axialpena=nullpen, pair axiala,
-                     pen axialpenb=nullpen, pair axialb, pen fillpen=nullpen,
-                     pen drawpen=nullpen ...string[] id) {
+                     pen axialpenb=nullpen, pair axialb ...string[] id) {
     this.initializer(new path[] {path}, fillpen, drawpen, axialpena=axialpena,
                      axiala=axiala, axialpenb=axialpenb, axialb=axialb, id);
   }
 
   void operator init(pair path, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
-                     real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
-                     ...string[] id) {
+                     real radialrb ...string[] id) {
     this.initializer(new path[] {path}, fillpen, drawpen, radialpena=radialpena,
                      radiala=radiala, radialra=radialra, radialpenb=radialpenb,
                      radialb=radialb, radialrb=radialrb, id);
