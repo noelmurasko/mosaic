@@ -59,7 +59,7 @@ struct tile {
   real radialra;
   real radialrb;
 
-  restricted string[] id;
+  restricted string[] tag;
 
   private void initializer(path[] path, pen fillpen=nullpen,
                            pen drawpen=nullpen, pen axialpena=nullpen,
@@ -67,7 +67,7 @@ struct tile {
                            pair axialb=(0,0), pen radialpena=nullpen,
                            pair radiala=(0,0), real radialra=0,
                            pen radialpenb=nullpen, pair radialb=(0,0),
-                           real radialrb=0, string[] id) {
+                           real radialrb=0, string[] tag) {
     this.path=path;
 
     this.fillpen=fillpen;
@@ -85,68 +85,68 @@ struct tile {
     this.radialra=radialra;
     this.radialrb=radialrb;
 
-    this.id=stringunion(new string[0],id);
+    this.tag=stringunion(new string[0],tag);
   }
 
   void operator init(path[] path={}, pen fillpen=nullpen, pen drawpen=nullpen
-                     ...string[] id) {
-    this.initializer(path, fillpen, drawpen, id);
+                     ...string[] tag) {
+    this.initializer(path, fillpen, drawpen, tag);
   }
 
   void operator init(path[] path={}, pen axialpena=nullpen, pair axiala,
-                     pen axialpenb=nullpen, pair axialb ...string[] id) {
+                     pen axialpenb=nullpen, pair axialb ...string[] tag) {
     this.initializer(path, fillpen, drawpen, axialpena=axialpena, axiala=axiala,
-                     axialpenb=axialpenb, axialb=axialb, id);
+                     axialpenb=axialpenb, axialb=axialb, tag);
   }
 
   void operator init(path[] path={}, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
-                     real radialrb ...string[] id) {
+                     real radialrb ...string[] tag) {
     this.initializer(path, fillpen, drawpen, radialpena=radialpena,
                      radiala=radiala, radialra=radialra, radialpenb=radialpenb,
-                     radialb=radialb, radialrb=radialrb, id);
+                     radialb=radialb, radialrb=radialrb, tag);
   }
 
   void operator init(path[] path={}, pen fillpen=nullpen, pen drawpen=nullpen,
                      pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen,
                      pair axialb, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
-                     real radialrb ...string[] id) {
+                     real radialrb ...string[] tag) {
     this.initializer(path, fillpen, drawpen, axialpena=axialpena, axiala=axiala,
                      axialpenb=axialpenb, axialb=axialb, radialpena=radialpena,
                      radiala=radiala, radialra=radialra, radialpenb=radialpenb,
-                     radialb=radialb, radialrb=radialrb, id);
+                     radialb=radialb, radialrb=radialrb, tag);
   }
 
   void operator init(pair path, pen fillpen=nullpen, pen drawpen=nullpen
-                     ...string[] id) {
-    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, id);
+                     ...string[] tag) {
+    this.initializer(new path[] {path}, fillpen=fillpen, drawpen=drawpen, tag);
   }
 
   void operator init(pair path, pen axialpena=nullpen, pair axiala,
-                     pen axialpenb=nullpen, pair axialb ...string[] id) {
+                     pen axialpenb=nullpen, pair axialb ...string[] tag) {
     this.initializer(new path[] {path}, fillpen, drawpen, axialpena=axialpena,
-                     axiala=axiala, axialpenb=axialpenb, axialb=axialb, id);
+                     axiala=axiala, axialpenb=axialpenb, axialb=axialb, tag);
   }
 
   void operator init(pair path, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
-                     real radialrb ...string[] id) {
+                     real radialrb ...string[] tag) {
     this.initializer(new path[] {path}, fillpen, drawpen, radialpena=radialpena,
                      radiala=radiala, radialra=radialra, radialpenb=radialpenb,
-                     radialb=radialb, radialrb=radialrb, id);
+                     radialb=radialb, radialrb=radialrb, tag);
   }
 
   void operator init(pair path, pen fillpen=nullpen, pen drawpen=nullpen,
                      pen axialpena=nullpen, pair axiala, pen axialpenb=nullpen,
                      pair axialb, pen radialpena=nullpen, pair radiala,
                      real radialra, pen radialpenb=nullpen, pair radialb,
-                     real radialrb ...string[] id) {
+                     real radialrb ...string[] tag) {
     this.initializer(new path[] {path}, fillpen, drawpen, axialpena=axialpena,
                      axiala=axiala, axialpenb=axialpenb, axialb=axialb,
                      radialpena=radialpena, radiala=radiala, radialra=radialra,
                      radialpenb=radialpenb, radialb=radialb, radialrb=radialrb,
-                     id);
+                     tag);
   }
 
   bool fillable() {
@@ -155,16 +155,16 @@ struct tile {
     return true;
   }
 
-  void addid(...string[] id) {
-    this.id=stringunion(this.id, id);
+  void addid(...string[] tag) {
+    this.tag=stringunion(this.tag, tag);
   }
 
   void deleteid(int i, int j=i) {
-    this.id.delete(i,j);
+    this.tag.delete(i,j);
   }
 
   void deleteid() {
-    this.id.delete();
+    this.tag.delete();
   }
 }
 
@@ -187,7 +187,7 @@ tile operator cast(pair p) {
 tile copy(tile t) {
   return tile(copy(t.path), t.fillpen, t.drawpen, t.axialpena, t.axiala,
               t.axialpenb, t.axialb, t.radialpena, t.radiala, t.radialra,
-              t.radialpenb, t.radialb, t.radialrb ...copy(t.id));
+              t.radialpenb, t.radialb, t.radialrb ...copy(t.tag));
 }
 
 tile operator *(transform T, tile t1) {
@@ -217,7 +217,7 @@ struct tessera {
   tile[] drawtile={};
 
   restricted int layers;
-  string[] id;
+  string[] tag;
   // Used to determine location of tile in the mosaic subpatch
   restricted int index;
   bool iterate;
@@ -227,7 +227,7 @@ struct tessera {
                            pen axialpena, pair axiala, pen axialpenb,
                            pair axialb, pen radialpena, pair radiala,
                            real radialra, pen radialpenb, pair radialb,
-                           real radialrb, bool iterate=true, string[] id) {
+                           real radialrb, bool iterate=true, string[] tag) {
     this.transform=transform;
     this.supertile=supertile;
 
@@ -240,7 +240,7 @@ struct tessera {
                        radialpenb, radialb, radialrb));
 
     this.layers=1;
-    this.id=stringunion(this.prototile.id, id);
+    this.tag=stringunion(this.prototile.tag, tag);
     this.index=0;
     this.iterate=iterate;
   }
@@ -248,38 +248,38 @@ struct tessera {
   void operator init(transform transform=identity, tile supertile,
                      tile prototile=nulltile, tile drawtile=nulltile,
                      pen fillpen=nullpen, pen drawpen=nullpen,
-                     bool iterate=true ...string[] id) {
+                     bool iterate=true ...string[] tag) {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     this.initializer(transform, supertile, prototile, drawtile, fillpen,
                      drawpen, dt.axialpena, dt.axiala, dt.axialpenb, dt.axialb,
                      dt.radialpena, dt.radiala, dt.radialra, dt.radialpenb,
-                     dt.radialb, dt.radialrb, iterate, id);
+                     dt.radialb, dt.radialrb, iterate, tag);
   }
 
   void operator init(transform transform=identity, tile supertile,
                      tile prototile=nulltile, tile drawtile=nulltile,
                      pen axialpena, pair axiala, pen axialpenb, pair axialb,
-                     bool iterate=true ...string[] id) {
+                     bool iterate=true ...string[] tag) {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     this.initializer(transform, supertile, prototile, drawtile, nullpen,
                      nullpen, axialpena, axiala, axialpenb, axialb,
                      dt.radialpena, dt.radiala, dt.radialra, dt.radialpenb,
-                     dt.radialb, dt.radialrb, iterate, id);
+                     dt.radialb, dt.radialrb, iterate, tag);
   }
 
   void operator init(transform transform=identity, tile supertile,
                      tile prototile=nulltile, tile drawtile=nulltile,
                      pen radialpena, pair radiala, real radialra,
                      pen radialpenb, pair radialb, real radialrb,
-                     bool iterate=true ...string[] id) {
+                     bool iterate=true ...string[] tag) {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     this.initializer(transform, supertile, prototile, drawtile, nullpen,
                      nullpen, dt.axialpena, dt.axiala, dt.axialpenb, dt.axialb,
                      radialpena, radiala, radialra, radialpenb, radialb,
-                     radialrb, iterate, id);
+                     radialrb, iterate, tag);
   }
 
   void operator init(transform transform=identity, tile supertile,
@@ -287,18 +287,18 @@ struct tessera {
                      pen fillpen=nullpen, pen drawpen=nullpen, pen axialpena,
                      pair axiala, pen axialpenb, pair axialb, pen radialpena,
                      pair radiala, real radialra, pen radialpenb, pair radialb,
-                     real radialrb, bool iterate=true ...string[] id) {
+                     real radialrb, bool iterate=true ...string[] tag) {
     this.prototile = prototile == nulltile ? supertile : prototile;
     tile dt=drawtile == nulltile ? this.prototile : drawtile;
     this.initializer(transform, supertile, prototile, drawtile, fillpen,
                      drawpen, axialpena, axiala, axialpenb, axialb, radialpena,
                      radiala, radialra, radialpenb, radialb, radialrb, iterate,
-                     id);
+                     tag);
   }
 
   void operator init(transform transform=identity, tile supertile,
                      tile prototile=nulltile, tile[] drawtile, int index, bool
-                     iterate=true ...string[] id) {
+                     iterate=true ...string[] tag) {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
@@ -307,7 +307,7 @@ struct tessera {
     this.index=index;
     this.layers=drawtile.length;
 
-    this.id=stringunion(this.prototile.id, id);
+    this.tag=stringunion(this.prototile.tag, tag);
     this.iterate=iterate;
   }
 
@@ -372,16 +372,16 @@ struct tessera {
                      radialrb, layer);
   }
 
-  void addid(...string[] id) {
-    this.id=stringunion(this.id, id);
+  void addid(...string[] tag) {
+    this.tag=stringunion(this.tag, tag);
   }
 
   void deleteid(int i, int j=i) {
-    this.id.delete(i,j);
+    this.tag.delete(i,j);
   }
 
   void deleteid() {
-    this.id.delete();
+    this.tag.delete();
   }
 
   // Change index to n
@@ -394,14 +394,14 @@ struct substitution {
   tile supertile;
   tessera[] subpatch;
   real inflation;
-  string[] id;
+  string[] tag;
 
-  void operator init(explicit tile supertile ...string[] id) {
+  void operator init(explicit tile supertile ...string[] tag) {
     this.supertile=supertile;
     this.inflation=globalinflation();
     assert(this.inflation > 0, "Cannot set inflation to "+string(this.inflation)
            +". Inflation factor must be a strictly positive number.");
-    this.id=id;
+    this.tag=tag;
   }
 
   void operator init(explicit tile supertile, real inflation) {
@@ -411,26 +411,26 @@ struct substitution {
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
                explicit tile drawtile=nulltile, pen fillpen=nullpen,
-               pen drawpen=nullpen ...string[] id) {
+               pen drawpen=nullpen ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen
-                      ...stringunion(this.id,id));
+                      ...stringunion(this.tag,tag));
     this.subpatch.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
                pen axialpena, pair axiala, pen axialpenb, pair axialb
-               ...string[] id) {
+               ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, axialpena, axiala,
-                      axialpenb, axialb ...stringunion(this.id,id));
+                      axialpenb, axialb ...stringunion(this.tag,tag));
     this.subpatch.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
                pen radialpena, pair radiala, real radialra, pen radialpenb,
-               pair radialb, real radialrb ...string[] id) {
+               pair radialb, real radialrb ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
-                      ...stringunion(this.id,id));
+                      ...stringunion(this.tag,tag));
     this.subpatch.push(m);
   }
 
@@ -438,11 +438,11 @@ struct substitution {
                pen axialpena, pair axiala, pen axialpenb, pair axialb,
                pen radialpena, pair radiala, real radialra, pen radialpenb,
                pair radialb, real radialrb, pen fillpen=nullpen,
-               pen drawpen=nullpen ...string[] id) {
+               pen drawpen=nullpen ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen,
                       axialpena, axiala, axialpenb, axialb, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
-                      ...stringunion(this.id,id));
+                      ...stringunion(this.tag,tag));
     this.subpatch.push(m);
   }
 }
@@ -457,10 +457,10 @@ tessera copy(tessera t) {
   if(t.supertile == t.prototile) {
     tile super2=copy(t.supertile);
     return tessera(t.transform, super2, super2, dtcopy, t.index,
-                   t.iterate ...t.id);
+                   t.iterate ...t.tag);
   } else
     return tessera(t.transform, copy(t.supertile), copy(t.prototile), dtcopy,
-                   t.index, t.iterate ...copy(t.id));
+                   t.index, t.iterate ...copy(t.tag));
 }
 
 // Create a deep copy of the substitution s1.
@@ -475,7 +475,7 @@ substitution copy(substitution s1) {
 // prototile, and  drawtile.
 tessera duplicate(tessera t1) {
   tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile,
-                      t1.index, t1.iterate ...copy(t1.id));
+                      t1.index, t1.iterate ...copy(t1.tag));
   return t2;
 }
 
@@ -702,21 +702,21 @@ struct mosaic {
   }
 
   // Return true if start tile should be decorated
-  private bool decorateinitialtile(string[] id) {
-    int idlength=id.length;
+  private bool decorateinitialtile(string[] tag) {
+    int idlength=tag.length;
     if(n != 0) return false;
     if(idlength == 0) return true;
     for(int j=0; j < idlength; ++j)
-      for(int k=0; k < tesserae[0].id.length; ++k)
-        if(tesserae[0].id[k] == id[j])
+      for(int k=0; k < tesserae[0].tag.length; ++k)
+        if(tesserae[0].tag[k] == tag[j])
           return true;
     return false;
   }
 
   // Return indices of subpatch for decoration
-  private int[] decorateIndices(string[] id) {
+  private int[] decorateIndices(string[] tag) {
     int[] indices={};
-    int idlength=id.length;
+    int idlength=tag.length;
     for(int i=0; i < subpatch.length; ++i) {
       if(idlength == 0) {
         indices.push(i);
@@ -724,8 +724,8 @@ struct mosaic {
       }
       bool pushedi=false;
       for(int j=0; j < max(idlength,1); ++j) {
-        for(int k=0; k < subpatch[i].id.length; ++k) {
-          if(subpatch[i].id[k] == id[j]) {
+        for(int k=0; k < subpatch[i].tag.length; ++k) {
+          if(subpatch[i].tag[k] == tag[j]) {
             indices.push(i);
             pushedi=true;
             break;
@@ -741,57 +741,57 @@ struct mosaic {
   //Update top layer
   void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
                    pen drawpen=nullpen, int layer=this.layers-1
-                   ...string[] id) {
+                   ...string[] tag) {
     checkLayerError(layer);
 
-    if(decorateinitialtile(id))
+    if(decorateinitialtile(tag))
       tesserae[0].updatelayer(drawtile, fillpen, drawpen, layer);
 
-    int[] indices=decorateIndices(id);
+    int[] indices=decorateIndices(tag);
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, layer);
   }
 
   //Update layer 0
   void update(tile drawtile=nulltile, pen fillpen=nullpen, pen drawpen=nullpen
-              ...string[] id) {
-    this.updatelayer(drawtile, fillpen, drawpen, 0 ...id);
+              ...string[] tag) {
+    this.updatelayer(drawtile, fillpen, drawpen, 0 ...tag);
   }
 
   // Update with axial shading
   void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
                    pen axialpenb=nullpen, pair axialb, int layer=this.layers-1
-                   ...string[] id) {
+                   ...string[] tag) {
     checkLayerError(layer);
 
-    if(decorateinitialtile(id))
+    if(decorateinitialtile(tag))
       tesserae[0].updatelayer(drawtile, axialpena, axiala,
                               axialpenb, axialb, layer);
 
-    int[] indices=decorateIndices(id);
+    int[] indices=decorateIndices(tag);
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].updatelayer(drawtile, axialpena, axiala, axialpenb,
                                        axialb, layer);
   }
 
   void update(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
-              pen axialpenb=nullpen, pair axialb ...string[] id) {
-    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, 0 ...id);
+              pen axialpenb=nullpen, pair axialb ...string[] tag) {
+    this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, 0 ...tag);
   }
 
   // Update with radial shading
   void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
                    real radialra, pen radialpenb=nullpen, pair radialb,
                    real radialrb,
-                   int layer=this.layers-1 ...string[] id) {
+                   int layer=this.layers-1 ...string[] tag) {
 
     checkLayerError(layer);
 
-    if(decorateinitialtile(id))
+    if(decorateinitialtile(tag))
       tesserae[0].updatelayer(drawtile, radialpena, radiala,
                               radialra, radialpenb, radialb, radialrb, layer);
 
-    int[] indices=decorateIndices(id);
+    int[] indices=decorateIndices(tag);
     for(int i=0; i < indices.length; ++i)
       subpatch[indices[i]].updatelayer(drawtile, radialpena,
                                        radiala, radialra, radialpenb, radialb,
@@ -800,9 +800,9 @@ struct mosaic {
 
   void update(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
               real radialra, pen radialpenb=nullpen, pair radialb,
-              real radialrb ...string[] id) {
+              real radialrb ...string[] tag) {
       this.updatelayer(drawtile, radialpena, radiala, radialra, radialpenb,
-                       radialb, radialrb, 0 ...id);
+                       radialb, radialrb, 0 ...tag);
   }
 
   // Update everything
@@ -811,11 +811,11 @@ struct mosaic {
                    pair radiala, real radialra, pen radialpenb=nullpen,
                    pair radialb, real radialrb, pen fillpen=nullpen,
                    pen drawpen=nullpen, int layer=this.layers-1
-                   ...string[] id) {
+                   ...string[] tag) {
     checkLayerError(layer);
 
-    int[] indices=decorateIndices(id);
-    if(decorateinitialtile(id))
+    int[] indices=decorateIndices(tag);
+    if(decorateinitialtile(tag))
       tesserae[0].updatelayer(drawtile, fillpen, drawpen, axialpena, axiala,
                               axialpenb, axialb, radialpena, radiala, radialra,
                               radialpenb, radialb, radialrb, layer);
@@ -831,10 +831,10 @@ struct mosaic {
               pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
               pair radiala, real radialra, pen radialpenb=nullpen, pair radialb,
               real radialrb, pen fillpen=nullpen, pen drawpen=nullpen
-              ...string[] id) {
+              ...string[] tag) {
     this.updatelayer(drawtile, axialpena, axiala, axialpenb, axialb, radialpena,
                      radiala, radialra, radialpenb, radialb, radialrb, fillpen,
-                     drawpen, 0 ...id);
+                     drawpen, 0 ...tag);
   }
 }
 
@@ -916,7 +916,7 @@ mosaic copy(mosaic M) {
     int j=t.index;
     tessera t2=tessera(t.transform, Mcopy.subpatch[j].supertile,
                        Mcopy.subpatch[j].prototile, Mcopy.subpatch[j].drawtile,
-                      j, t.iterate ...Mcopy.subpatch[j].id);
+                      j, t.iterate ...Mcopy.subpatch[j].tag);
     Mcopy.tesserae.push(t2);
   }
   return Mcopy;
