@@ -910,13 +910,21 @@ mosaic copy(mosaic M) {
   int j=searchtile(known_supertiles,M.initialtile);
   Mcopy.initialtile=Mcopy.subpatch[j].supertile;
 
-  // Push new tessera correct supertiles, prototiles, and drawtiles.
-  for(int i=0; i < Lt; ++i) {
-    tessera t=M.tesserae[i];
-    int j=t.index;
-    tessera t2=tessera(t.transform, Mcopy.subpatch[j].supertile,
-                       Mcopy.subpatch[j].prototile, Mcopy.subpatch[j].drawtile,
-                      j, t.iterate ...Mcopy.subpatch[j].tag);
+  // Push onto new tessera correct supertiles, prototiles, and drawtiles.
+  if(Lt > 1) {
+    for(int i=0; i < Lt; ++i) {
+      tessera t=M.tesserae[i];
+      int j=t.index;
+      tessera t2=tessera(t.transform, Mcopy.subpatch[j].supertile,
+                         Mcopy.subpatch[j].prototile, Mcopy.subpatch[j].drawtile,
+                        j, t.iterate ...Mcopy.subpatch[j].tag);
+      Mcopy.tesserae.push(t2);
+    }
+  } else {
+    tessera t=M.tesserae[0];
+    tessera t2=tessera(t.transform, Mcopy.initialtile,
+                         Mcopy.initialtile, new tile[] {Mcopy.initialtile},
+                        0, t.iterate ...t.tag);
     Mcopy.tesserae.push(t2);
   }
   return Mcopy;
