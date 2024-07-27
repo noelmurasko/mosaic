@@ -505,36 +505,37 @@ tessera operator *(transform T, tessera t1) {
   return t2;
 }
 
+// mosaic | Substitution tiling created from substiution rules. Contains the
+// following attributes
+//
+// tessera[] tesserae; | collection of tessera that make up the mosaic.
+//
+// tile initialtile;| Initial tile for mosiac. When initializing,
+// this tile must match one of the supertiles in the passed subsitution rules.
+//
+// int n=0; | total number of substitutions performed
+//
+// tessera[] subpatch; | Collection of tessera that define the substitution rules
+//
+// int layers=1; | Number of drawing layers in mosaic
+//
+// real inflation; | inflation factor for mosaic
+//
+//
+// int[] tilecount; | int tilecount[k] is the number of tesserae in iteration k
+
 struct mosaic {
-  // Collection of tessera that make up the mosaic.
   tessera[] tesserae;
-
-  // Initial tile for mosiac. When initializing, this tile must match one of
-  // the supertiles in the passed subsitution rules.
   tile initialtile;
-
-  // Total number of substitutions performed
   int n=0;
-
-  // Collection of tessera that define the substitution rules
   tessera[] subpatch;
-
-  // Number of drawing layers in mosaic
   int layers=1;
-
-  // Inflation factor for mosaic
   real inflation;
-
-  // tilecount[k] is the number of tesserae in iteration k
   int[] tilecount;
 
   // Perform an iteration of a tessera T, and push the result onto the array
   // tesserae.
   private void iterate(tessera t, tessera[] tesserae) {
-    // Loop over each tessera p in subpatch. If p.supertile is the same as
-    // t.prototile, compute t*p. Note that t*p results in a tessera that is a
-    // duplicate of p, except the transform is given by t.transform*p.transform.
-    // Then scale t*p by inflation, and push onto tesserae.
     for(int i=0; i < subpatch.length; ++i) {
       tessera p=subpatch[i];
       if(p.supertile == t.prototile) {
@@ -548,33 +549,20 @@ struct mosaic {
   // updatetesserae(tesseare, k), where tesserae is an array of tessera in the
   // mosaic after k total iterations. Add m to this.n.
   void substitute(int n, void updatetesserae(tessera[], int)) {
-    // Perform m iterations.
     for(int k=0; k < n; ++k) {
-      // Create new tessera array for this iteration.
       tessera[] tesserae=new tessera[];
-
-      // Loop over each tessera from previous iteration. If this.n is 0,
-      // this array contains a tessera with this.initialtile as both the
-      // supertile and prototile.
       for(int i=0; i < this.tesserae.length; ++i)
-        // Call iterate() if iterate flag is true. Otherwise push the old
-        // tessera onto the new array. The iterate flag is always true, unless
-        // it set to false by updatetesserae.
         if(this.tesserae[i].iterate)
           this.iterate(this.tesserae[i], tesserae);
         else
           tesserae.push(scale(inflation)*this.tesserae[i]);
 
-      // Apply updatetesserae()
       updatetesserae(tesserae, this.n+k+1);
 
-      // Set this.tesserae to the new tessera array for this iteration.
       this.tesserae=tesserae;
 
-      // Update tilecount
       this.tilecount.push(tesserae.length);
     }
-    // Increase this.n to reflect total iterations.
     this.n+=n;
   }
 
@@ -593,18 +581,12 @@ struct mosaic {
   private void initializer(tile initialtile=nulltile, int n,
                            void updatetesserae(tessera[], int),
                            substitution[] rules) {
-    // Set index to zero. This index tracks the position of each tessera in the
-    // provided rules.
     int index=0;
 
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
 
-    // Set the mosaic inflation to the inflation factor in the first provided
-    // rule
     this.inflation=rules[0].inflation;
 
-    // Push duplicates of each tessera in the first rule onto this.subpatch,
-    // updating the index of each.
     for(int j=0; j < rules[0].subpatch.length; ++j) {
       tessera t=duplicate(rules[0].subpatch[j]);
       t.updateindex(index);
@@ -612,9 +594,6 @@ struct mosaic {
       this.subpatch.push(t);
     }
 
-    // Check that each addtional rule has a matching inflation factor. Then
-    // push duplicates of each tessera in the rule onto this.subpatch,
-    // updating the index of each.
     for(int i=1; i < rules.length; ++i) {
       assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
              must have the same inflation factor.");
@@ -626,7 +605,6 @@ struct mosaic {
       }
     }
 
-    // If initialtile is not specified, use supertile from first specified rule.
     if(initialtile == nulltile) {
       this.initialtile=rules[0].supertile;
     } else {
@@ -650,13 +628,10 @@ struct mosaic {
                         scale(deflation);
     }
 
-    // Create tessera from initialtile and push onto tesserae (corresponding
-    // to n=0), push 1 to tilecount, and call updatetessera().
     this.tesserae.push(tessera(this.initialtile));
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
 
-    // Call substitute to perform n substitutions.
     this.substitute(n, updatetesserae);
   }
 
@@ -667,7 +642,7 @@ struct mosaic {
     this.initializer(initialtile, n, updatetesserae, rules);
   }
 
-  // Typical initialization of mosaic.
+  // Typical initialization of mosaic without updatetessserae function.
   void operator init(tile initialtile=nulltile, int n=0 ...substitution[] rules) {
     this.initializer(initialtile, n, new void (tessera[], int){}, rules);
   }
@@ -869,40 +844,32 @@ mosaic copy(mosaic M) {
 
   Mcopy.subpatch.push(copy(M.subpatch[0]));
 
-  // Collect supertiles and prototiles from first tessera in original subpatch.
   known_supertiles.push(M.subpatch[0].supertile);
   known_prototiles.push(M.subpatch[0].prototile);
-
   tessera subpatchj_copy;
-  for(int j=1; j < Lp; ++j) {
-    // Create copy of jth tessera in subpatch.
-    subpatchj_copy=copy(M.subpatch[j]);
 
-    // Search known_supertiles for original supertile in jth tessera of
-    // subpatch.
+  // Create copy of jth tessera in subpatch.
+  // Search known_supertiles for original supertile in jth tessera of
+  // subpatch.
+  // If supertile is found, set subpatchj_copy supertile to coresponding
+  // supertile in Mcopy
+  // Push original supertile in jth tessera of subpatch to known_supertiles.
+  // Repeat for prototiles.
+  for(int j=1; j < Lp; ++j) {
+
+    subpatchj_copy=copy(M.subpatch[j]);
     int is=searchtile(known_supertiles, M.subpatch[j].supertile);
 
-    // If supertile is found, set subpatchj_copy supertile to coresponding
-    // supertile in Mcopy
     if(is != -1)
       subpatchj_copy.supertile=Mcopy.subpatch[is].supertile;
 
-    // Push original supertile in jth tessera of subpatch to known_supertiles.
     known_supertiles.push(M.subpatch[j].supertile);
-
-    // Search known_prototiles for original supertile in jth tessera of
-    // subpatch.
     int ip=searchtile(known_prototiles, M.subpatch[j].prototile);
 
-    // If prototile is found, set subpatchj_copy supertile to coresponding
-    // prototile in Mcopy
     if(ip != -1)
       subpatchj_copy.prototile=Mcopy.subpatch[ip].prototile;
 
-    // Push original prototile in jth tessera of subpatch to known_supertiles.
     known_prototiles.push(M.subpatch[j].supertile);
-
-    // Push patch copy to Mcopy.
     Mcopy.subpatch.push(subpatchj_copy);
   }
 
