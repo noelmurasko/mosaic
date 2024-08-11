@@ -3,13 +3,9 @@ size(300);
 
 import mosaic;
 
-inflation=(1+sqrt(5))/2;    // inflation factor
+inflation=(1+sqrt(5))/2; // inflation factor
 
-real a=Sin(18);
-real b=Cos(18);
-real c=Sin(36);
-real d=Cos(36);
-void f(tessera[]);
+real a=Sin(18), b=Cos(18), c=Sin(36), d=Cos(36);
 
 pair r1l=(-c,d), r1m=(0,2*d), r1r=(c,d);
 pair r2l=(-b,a), r2m=(0,2*a), r2r=(b,a);
