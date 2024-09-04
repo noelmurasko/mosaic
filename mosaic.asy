@@ -843,8 +843,10 @@ mosaic copy(mosaic M) {
 
   known_supertiles.push(M.subpatch[0].supertile);
   known_prototiles.push(M.subpatch[0].prototile);
-  tessera subpatchj_copy;
 
+  tessera subpatchj_copy;
+  int is;
+  int ip;
   // Create copy of jth tessera in subpatch.
   // Search known_supertiles for original supertile in jth tessera of
   // subpatch.
@@ -853,23 +855,30 @@ mosaic copy(mosaic M) {
   // Push original supertile in jth tessera of subpatch to known_supertiles.
   // Repeat for prototiles.
   for(int j=1; j < Lp; ++j) {
-
     subpatchj_copy=copy(M.subpatch[j]);
-    int is=searchtile(known_supertiles, M.subpatch[j].supertile);
 
-    if(is != -1)
+    is=searchtile(known_supertiles, M.subpatch[j].supertile);
+    ip=searchtile(known_prototiles, M.subpatch[j].supertile);
+
+    if(is != -1) {
       subpatchj_copy.supertile=Mcopy.subpatch[is].supertile;
-
+    } else if (ip != -1) {
+      subpatchj_copy.supertile=Mcopy.subpatch[ip].prototile;
+    }
     known_supertiles.push(M.subpatch[j].supertile);
-    int ip=searchtile(known_prototiles, M.subpatch[j].prototile);
 
-    if(ip != -1)
+    is=searchtile(known_supertiles, M.subpatch[j].prototile);
+    ip=searchtile(known_prototiles, M.subpatch[j].prototile);
+
+    if(ip != -1) {
       subpatchj_copy.prototile=Mcopy.subpatch[ip].prototile;
+    } else if (is != -1) {
+      subpatchj_copy.prototile=Mcopy.subpatch[is].supertile;
+    }
+    known_prototiles.push(M.subpatch[j].prototile);
 
-    known_prototiles.push(M.subpatch[j].supertile);
     Mcopy.subpatch.push(subpatchj_copy);
   }
-
   // Set Mcopy.initialtile
   int j=searchtile(known_supertiles,M.initialtile);
   Mcopy.initialtile=Mcopy.subpatch[j].supertile;
