@@ -620,13 +620,10 @@ struct mosaic {
             substitutions.");
     }
 
-    real deflation=1/inflation;
+    transform D=scale(1/inflation);
     // Update each transform in subpatch to deflate.
-    for(int i=0; i < this.subpatch.length; ++i) {
-      transform Ti=subpatch[i].transform;
-      subpatch[i].transform=(shiftless(Ti)+scale(deflation)*shift(Ti))*
-                        scale(deflation);
-    }
+    for(int i=0; i < this.subpatch.length; ++i)
+      subpatch[i].transform=D*subpatch[i].transform;
 
     this.tesserae.push(tessera(this.initialtile));
     this.tilecount.push(1);
