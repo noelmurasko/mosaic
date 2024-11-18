@@ -965,7 +965,7 @@ void draw(picture pic=currentpicture, tessera T, int layer=0, pen p=currentpen,
 
 void fill(picture pic=currentpicture, tessera T, int layer=0, pen p=invisible) {
   tile Tdl=T.drawtile[layer];
-  fill(pic, T.transform*Tdl);
+  fill(pic, T.transform*Tdl,p);
 }
 
 void filldraw(picture pic=currentpicture, tessera T, int layer=0,

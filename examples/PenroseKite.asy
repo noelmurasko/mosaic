@@ -28,6 +28,8 @@ kiteRule.addtile(rotate(-36),dart);
 kiteRule.addtile(shift(A,A*c)*rotate(108),kite);
 kiteRule.addtile(shift(-A,A*c)*rotate(-108),kite);
 
+substitution[] S={dartRule,kiteRule};
+
 int n=4;
-mosaic M=mosaic(kite,n,dartRule,kiteRule);
+mosaic M=mosaic(kite,n ...S);
 filldraw(M);
