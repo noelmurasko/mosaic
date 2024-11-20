@@ -661,7 +661,7 @@ struct mosaic {
     return ttiles;
   }
 
-  // addlayer() Adds a new layer to mosaic
+  // addlayer(int n=1) Adds n > 0 new layers to mosaic.
   void addlayer(int n=1) {
     assert(n >= 1, "Cannot add less than 1 layer.");
     for(int i=0; i < n; ++i) {
