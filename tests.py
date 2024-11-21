@@ -26,9 +26,9 @@ def main():
           try:
               subprocess.run([command, filepath], stdout=subprocess.DEVNULL,  stderr=subprocess.STDOUT,check=True)
               if verbose:
-                print(f"{f"{j+1}. {filename}":<30} {passed:>10}")
+                print(f'{f"{j+1}. {filename}":<30} {passed:>10}')
           except subprocess.CalledProcessError as e:
-              print(f"{f"{j+1}. {filename}":<30} {failed:>10}")
+              print(f'{f"{j+1}. {filename}":<30} {failed:>10}')
               failureCount+=1
               failedTests.append(filename)
 
