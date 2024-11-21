@@ -859,22 +859,21 @@ mosaic copy(mosaic M) {
 
     is=searchtile(known_supertiles, M.subpatch[j].supertile);
     ip=searchtile(known_prototiles, M.subpatch[j].supertile);
-
     if(is != -1) {
       subpatchj_copy.supertile=Mcopy.subpatch[is].supertile;
     } else if (ip != -1) {
       subpatchj_copy.supertile=Mcopy.subpatch[ip].prototile;
     }
-    known_supertiles.push(M.subpatch[j].supertile);
 
     is=searchtile(known_supertiles, M.subpatch[j].prototile);
     ip=searchtile(known_prototiles, M.subpatch[j].prototile);
-
     if(ip != -1) {
       subpatchj_copy.prototile=Mcopy.subpatch[ip].prototile;
     } else if (is != -1) {
       subpatchj_copy.prototile=Mcopy.subpatch[is].supertile;
     }
+
+    known_supertiles.push(M.subpatch[j].supertile);
     known_prototiles.push(M.subpatch[j].prototile);
 
     Mcopy.subpatch.push(subpatchj_copy);
