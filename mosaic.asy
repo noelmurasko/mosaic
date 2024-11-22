@@ -392,7 +392,7 @@ struct tessera {
 
 struct substitution {
   tile supertile;
-  tessera[] subpatch;
+  tessera[] tesserae;
   real inflation;
   string[] tag;
 
@@ -414,7 +414,7 @@ struct substitution {
                pen drawpen=nullpen ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen
                       ...stringunion(this.tag,tag));
-    this.subpatch.push(m);
+    this.tesserae.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
@@ -422,7 +422,7 @@ struct substitution {
                ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, axialpena, axiala,
                       axialpenb, axialb ...stringunion(this.tag,tag));
-    this.subpatch.push(m);
+    this.tesserae.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
@@ -431,7 +431,7 @@ struct substitution {
     tessera m=tessera(transform, this.supertile, prototile, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
                       ...stringunion(this.tag,tag));
-    this.subpatch.push(m);
+    this.tesserae.push(m);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
@@ -443,7 +443,7 @@ struct substitution {
                       axialpena, axiala, axialpenb, axialb, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
                       ...stringunion(this.tag,tag));
-    this.subpatch.push(m);
+    this.tesserae.push(m);
   }
 }
 
@@ -466,8 +466,8 @@ tessera copy(tessera t) {
 // Create a deep copy of the substitution s1.
 substitution copy(substitution s1) {
   substitution s2=substitution(copy(s1.supertile), s1.inflation);
-  for(int i=0; i < s1.subpatch.length; ++i)
-    s2.subpatch.push(copy(s1.subpatch[i]));
+  for(int i=0; i < s1.tesserae.length; ++i)
+    s2.tesserae.push(copy(s1.tesserae[i]));
   return s2;
 }
 
@@ -479,10 +479,10 @@ tessera duplicate(tessera t1) {
   return t2;
 }
 
-// Create a new substitution s2 from s1 with a shallow copy of the subpatch.
+// Create a new substitution s2 from s1 with a shallow copy of the tesserae.
 substitution duplicate(substitution s1) {
   substitution s2=substitution(s1.supertile);
-  s2.subpatch=s1.subpatch;
+  s2.tesserae=s1.tesserae;
   s2.inflation=s1.inflation;
   return s2;
 }
@@ -515,7 +515,7 @@ tessera operator *(transform T, tessera t1) {
 //
 // int n=0; | total number of substitutions performed
 //
-// tessera[] subpatch; | Collection of tessera that define the substitution rules
+// tessera[] tesserae; | Collection of tessera that define the substitution rules
 //
 // int layers=1; | Number of drawing layers in mosaic
 //
@@ -587,8 +587,8 @@ struct mosaic {
 
     this.inflation=rules[0].inflation;
 
-    for(int j=0; j < rules[0].subpatch.length; ++j) {
-      tessera t=duplicate(rules[0].subpatch[j]);
+    for(int j=0; j < rules[0].tesserae.length; ++j) {
+      tessera t=duplicate(rules[0].tesserae[j]);
       t.updateindex(index);
       index+=1;
       this.subpatch.push(t);
@@ -597,8 +597,8 @@ struct mosaic {
     for(int i=1; i < rules.length; ++i) {
       assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
              must have the same inflation factor.");
-      for(int j=0; j < rules[i].subpatch.length; ++j) {
-        tessera t=duplicate(rules[i].subpatch[j]);
+      for(int j=0; j < rules[i].tesserae.length; ++j) {
+        tessera t=duplicate(rules[i].tesserae[j]);
         t.updateindex(index);
         index+=1;
         this.subpatch.push(t);
@@ -994,8 +994,8 @@ void radialshade(picture pic=currentpicture, tessera T, int layer=0,
 void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
               bool drawboundary=false,
               pen boundarypen=boundarypen) {
-  for(int k=0; k < s.subpatch.length; ++k)
-    draw(pic, s.subpatch[k], p);
+  for(int k=0; k < s.tesserae.length; ++k)
+    draw(pic, s.tesserae[k], p);
   if(drawboundary)
     draw(pic, scale(s.inflation)*s.supertile, boundarypen);
 }
@@ -1003,8 +1003,8 @@ void draw(picture pic=currentpicture, substitution s, pen p=currentpen,
 void fill(picture pic=currentpicture, substitution s, pen p=invisible,
           bool drawboundary=false,
           pen boundarypen=boundarypen) {
-  for(int k=0; k < s.subpatch.length; ++k)
-    fill(pic, s.subpatch[k], p);
+  for(int k=0; k < s.tesserae.length; ++k)
+    fill(pic, s.tesserae[k], p);
   if(drawboundary)
     draw(pic, scale(s.inflation)*s.supertile, boundarypen);
 }
@@ -1012,8 +1012,8 @@ void fill(picture pic=currentpicture, substitution s, pen p=invisible,
 void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
               pen drawpen=currentpen, bool drawboundary=false,
               pen boundarypen=boundarypen) {
-  for(int k=0; k < s.subpatch.length; ++k)
-    filldraw(pic, s.subpatch[k], fillpen, drawpen);
+  for(int k=0; k < s.tesserae.length; ++k)
+    filldraw(pic, s.tesserae[k], fillpen, drawpen);
   if(drawboundary)
     draw(pic, scale(s.inflation)*s.supertile, boundarypen);
 }
@@ -1021,8 +1021,8 @@ void filldraw(picture pic=currentpicture, substitution s, pen fillpen=invisible,
 void axialshade(picture pic=currentpicture, substitution s, bool stroke=false,
                 bool extenda=true, bool extendb=true, bool drawboundary=false,
                 pen boundarypen=boundarypen)  {
-  for(int k=0; k < s.subpatch.length; ++k)
-    axialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda,
+  for(int k=0; k < s.tesserae.length; ++k)
+    axialshade(pic, s.tesserae[k], stroke=stroke, extenda=extenda,
                extendb=extendb);
   if(drawboundary)
     draw(pic, scale(s.inflation)*s.supertile, boundarypen);
@@ -1031,8 +1031,8 @@ void axialshade(picture pic=currentpicture, substitution s, bool stroke=false,
 void radialshade(picture pic=currentpicture, substitution s, bool stroke=false,
                  bool extenda=true, bool extendb=true, bool drawboundary=false,
                  pen boundarypen=boundarypen)  {
-  for(int k=0; k < s.subpatch.length; ++k)
-    radialshade(pic, s.subpatch[k], stroke=stroke, extenda=extenda,
+  for(int k=0; k < s.tesserae.length; ++k)
+    radialshade(pic, s.tesserae[k], stroke=stroke, extenda=extenda,
                 extendb=extendb);
   if(drawboundary)
     draw(pic, scale(s.inflation)*s.supertile, boundarypen);
