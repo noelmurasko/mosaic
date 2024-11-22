@@ -44,7 +44,7 @@ void updatetesserae(tessera[] tesserae, int) {
 
 // number of iterations
 int n=5;
-mosaic M=mosaic(trip,n,updatetesserae,pinaSub,pinpSub);
+mosaic M=mosaic(n,updatetesserae,pinaSub,pinpSub);
 
 // draw the patch
 filldraw(M);

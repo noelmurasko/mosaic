@@ -570,22 +570,23 @@ struct mosaic {
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
   // Common inititalization code.
-  // Mosaics are initialized with an initialtile, and perform n substitutions
+  // Mosaics are initialized with the supertile from the first specified rule. 
+  // Starting forom this initial tile, n substitution iterations are performed
   // using the provided rules. If initialtile isn't specified or is equal to
-  // nulltile, then supertile from the first specified rule is used as the
-  // initial tile.
+  // nulltile, then 
   // Advanced users may also provide a function updatetesserae(). After the
   // kth substitution (where k=0,...n), updatetesserae(this.tesserae, k) is
   // called where this.tesserae is the array of tesserae after k substitutions
   // have been applied. In regular usage, updatetesserae() does nothing.
-  private void initializer(tile initialtile=nulltile, int n,
-                           void updatetesserae(tessera[], int),
+  private void initializer(int n, void updatetesserae(tessera[], int),
                            substitution[] rules) {
     int index=0;
 
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
 
     this.inflation=rules[0].inflation;
+    this.initialtile=rules[0].supertile;
+
 
     for(int j=0; j < rules[0].tesserae.length; ++j) {
       tessera t=duplicate(rules[0].tesserae[j]);
@@ -605,21 +606,6 @@ struct mosaic {
       }
     }
 
-    if(initialtile == nulltile) {
-      this.initialtile=rules[0].supertile;
-    } else {
-      int i=0;
-      while(i < rules.length) {
-        if(initialtile==rules[i].supertile) {
-          this.initialtile=initialtile;
-          break;
-        }
-        ++i;
-      }
-      assert(i < rules.length, "initialtile does not match any supertile in provided
-            substitutions.");
-    }
-
     transform D=scale(1/inflation);
     // Update each transform in subpatch to deflate.
     for(int i=0; i < this.subpatch.length; ++i)
@@ -633,15 +619,14 @@ struct mosaic {
   }
 
   // Initialization of mosaic using a updatetesserae function.
-  void operator init(tile initialtile=nulltile, int n=0,
-                     void updatetesserae(tessera[], int)
+  void operator init(int n=0, void updatetesserae(tessera[], int)
                      ...substitution[] rules) {
-    this.initializer(initialtile, n, updatetesserae, rules);
+    this.initializer(n, updatetesserae, rules);
   }
 
   // Typical initialization of mosaic without updatetessserae function.
-  void operator init(tile initialtile=nulltile, int n=0 ...substitution[] rules) {
-    this.initializer(initialtile, n, new void (tessera[], int){}, rules);
+  void operator init(int n=0 ...substitution[] rules) {
+    this.initializer(n, new void (tessera[], int){}, rules);
   }
 
   // Assert that layer must be valid

@@ -15,5 +15,5 @@ ifs.addtile(shift(2,0));
 
 // draw patch
 int n=4;
-mosaic M=mosaic(triangle,n,ifs);
+mosaic M=mosaic(n,ifs);
 filldraw(M);
