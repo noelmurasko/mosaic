@@ -26,5 +26,5 @@ straightRule.addtile(reflect((1,0),(1,1))*shift(0,1)*rotate(-90),bent);
 
 // draw patch
 int n=4;
-mosaic M=mosaic(bent,n,bentRule,straightRule);
+mosaic M=mosaic(n,bentRule,straightRule);
 filldraw(M,black+5);

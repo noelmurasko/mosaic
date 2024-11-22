@@ -26,5 +26,5 @@ void updatetesserae(tessera[] tesserae, int) {
 }
 
 int n=6;
-mosaic M=mosaic(chair,n,updatetesserae,chairRule);
+mosaic M=mosaic(n,updatetesserae,chairRule);
 filldraw(M);

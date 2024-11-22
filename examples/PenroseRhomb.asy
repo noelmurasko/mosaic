@@ -31,5 +31,5 @@ rhomb2Rule.addtile(shift(-b,a)*rotate(-108),rhomb1);
 rhomb2Rule.addtile(shift(b,a)*rotate(108),rhomb1);
 
 int n=4;
-mosaic M=mosaic(rhomb1,n,rhomb1Rule,rhomb2Rule);
+mosaic M=mosaic(n,rhomb1Rule,rhomb2Rule);
 filldraw(M);

@@ -15,7 +15,7 @@ chairRule.addtile(shift(1,1),orange,"B");
 chairRule.addtile(shift(4,0)*rotate(90),lightblue,"C");
 chairRule.addtile(shift(0,4)*rotate(270),lightblue,"D");
 int n=4;
-mosaic M=mosaic(chair,n,chairRule);
+mosaic M=mosaic(n,chairRule);
 
 tile dot=(1/2,1/2);
 M.addlayer();
