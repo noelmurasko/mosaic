@@ -482,7 +482,11 @@ tessera duplicate(tessera t1) {
 // Create a new substitution s2 from s1 with a shallow copy of the tesserae.
 substitution duplicate(substitution s1) {
   substitution s2=substitution(s1.supertile);
-  s2.tesserae=s1.tesserae;// duplicate these
+  int n=s1.tesserae.length;
+  s2.tesserae=new tessera[n];
+  for(int j=0; j < n; ++j) {
+    s2.tesserae[j]=duplicate(s1.tesserae[j]);
+  }
   s2.inflation=s1.inflation;
   return s2;
 }
