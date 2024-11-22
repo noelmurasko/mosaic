@@ -533,6 +533,7 @@ struct mosaic {
   tile initialtile;
   int n=0;
   tessera[] subpatch;
+  substitution[] rules;
   int layers=1;
   real inflation;
   int[] tilecount;
@@ -588,8 +589,11 @@ struct mosaic {
     int index=0;
 
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
-
     this.inflation=rules[0].inflation;
+
+
+    this.rules=new substitution[rules.length];
+    this.rules[0]=duplicate(rules[0]);
 
     for(int j=0; j < rules[0].tesserae.length; ++j) {
       tessera t=duplicate(rules[0].tesserae[j]);
@@ -601,6 +605,8 @@ struct mosaic {
     for(int i=1; i < rules.length; ++i) {
       assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
              must have the same inflation factor.");
+      this.rules[i]=duplicate(rules[i]);
+
       for(int j=0; j < rules[i].tesserae.length; ++j) {
         tessera t=duplicate(rules[i].tesserae[j]);
         t.updateindex(index);
@@ -626,9 +632,15 @@ struct mosaic {
 
     transform D=scale(1/inflation);
     // Update each transform in subpatch to deflate.
-    for(int i=0; i < this.subpatch.length; ++i)
-      subpatch[i].transform=D*subpatch[i].transform;
+    for(int j=0; j < this.subpatch.length; ++j) {
+      this.subpatch[j].transform=D*this.subpatch[j].transform;
+    }
 
+    for(int i=0; i < this.rules.length; ++i){
+      for(int j=0; j < this.rules[i].tesserae.length; ++j) {
+        this.rules[i].tesserae[j].transform=D*this.rules[i].tesserae[j].transform;
+      }
+    }
     this.tesserae.push(tessera(this.initialtile));
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
