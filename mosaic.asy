@@ -463,14 +463,6 @@ tessera copy(tessera t) {
                    t.index, t.iterate ...copy(t.tag));
 }
 
-// Create a deep copy of the substitution s1.
-substitution copy(substitution s1) {
-  substitution s2=substitution(copy(s1.supertile), s1.inflation);
-  for(int i=0; i < s1.tesserae.length; ++i)
-    s2.tesserae.push(copy(s1.tesserae[i]));
-  return s2;
-}
-
 // Create a new tessera t2 from t1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
 tessera duplicate(tessera t1) {
