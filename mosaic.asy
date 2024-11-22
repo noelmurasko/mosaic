@@ -532,7 +532,7 @@ struct mosaic {
   tessera[] tesserae;
   tile initialtile;
   int n=0;
-  tessera[] subpatch;
+  //tessera[] subpatch;
   substitution[] rules;
   int layers=1;
   real inflation;
@@ -541,12 +541,22 @@ struct mosaic {
   // Perform an iteration of a tessera T, and push the result onto the array
   // tesserae.
   private void iterate(tessera t, tessera[] tesserae) {
+    for(int i=0; i < rules.length; ++i) {
+      for(int j=0; j < rules[i].tesserae.length; ++j) {
+        tessera p=rules[i].tesserae[j];
+        if(p.supertile == t.prototile) {
+          tesserae.push(scale(inflation)*t*p);
+        }
+      }
+    }
+    /*
     for(int i=0; i < subpatch.length; ++i) {
       tessera p=subpatch[i];
       if(p.supertile == t.prototile) {
         tesserae.push(scale(inflation)*t*p);
       }
     }
+    */
   }
 
   // Apply substituion rules in the mosaic n times times (for a total of
@@ -575,10 +585,10 @@ struct mosaic {
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
   // Common inititalization code.
-  // Mosaics are initialized with the supertile from the first specified rule. 
+  // Mosaics are initialized with the supertile from the first specified rule.
   // Starting forom this initial tile, n substitution iterations are performed
   // using the provided rules. If initialtile isn't specified or is equal to
-  // nulltile, then 
+  // nulltile, then
   // Advanced users may also provide a function updatetesserae(). After the
   // kth substitution (where k=0,...n), updatetesserae(this.tesserae, k) is
   // called where this.tesserae is the array of tesserae after k substitutions
@@ -591,37 +601,38 @@ struct mosaic {
     this.inflation=rules[0].inflation;
     this.initialtile=rules[0].supertile;
 
-
-
     this.rules=new substitution[rules.length];
     this.rules[0]=duplicate(rules[0]);
 
+    /*
     for(int j=0; j < rules[0].tesserae.length; ++j) {
       tessera t=duplicate(rules[0].tesserae[j]);
       t.updateindex(index);
       index+=1;
       this.subpatch.push(t);
     }
-
+    */
     for(int i=1; i < rules.length; ++i) {
       assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
              must have the same inflation factor.");
       this.rules[i]=duplicate(rules[i]);
-
+      /*
       for(int j=0; j < rules[i].tesserae.length; ++j) {
         tessera t=duplicate(rules[i].tesserae[j]);
         t.updateindex(index);
         index+=1;
         this.subpatch.push(t);
       }
+      */
     }
 
     transform D=scale(1/inflation);
     // Update each transform in subpatch to deflate.
+    /*
     for(int j=0; j < this.subpatch.length; ++j) {
       this.subpatch[j].transform=D*this.subpatch[j].transform;
     }
-
+    */
     for(int i=0; i < this.rules.length; ++i){
       for(int j=0; j < this.rules[i].tesserae.length; ++j) {
         this.rules[i].tesserae[j].transform=D*this.rules[i].tesserae[j].transform;
@@ -666,12 +677,14 @@ struct mosaic {
   void addlayer(int n=1) {
     assert(n >= 1, "Cannot add less than 1 layer.");
     for(int i=0; i < n; ++i) {
-      for(int i=0; i < subpatch.length; ++i) {
-        subpatch[i].addlayer();
+      for(int j=0; j < this.rules.length; ++j) {
+        for(int k=0; k < this.rules[j].tesserae.length; ++k) {
+          this.rules[j].tesserae[k].addlayer();
+        }
       }
-      if(this.n == 0) tesserae[0].addlayer();
-      this.layers+=1;
     }
+    if(this.n == 0) tesserae[0].addlayer();
+      this.layers+=1;
   }
 
   // Return true if start tile should be decorated
@@ -687,24 +700,27 @@ struct mosaic {
   }
 
   // Return indices of subpatch for decoration
-  private int[] decorateIndices(string[] tag) {
-    int[] indices={};
+  private int[][] decorateIndices(string[] tag) {
+    int[][] indices={};
     int idlength=tag.length;
-    for(int i=0; i < subpatch.length; ++i) {
-      if(idlength == 0) {
-        indices.push(i);
-        continue;
-      }
-      bool pushedi=false;
-      for(int j=0; j < max(idlength,1); ++j) {
-        for(int k=0; k < subpatch[i].tag.length; ++k) {
-          if(subpatch[i].tag[k] == tag[j]) {
-            indices.push(i);
-            pushedi=true;
-            break;
-          }
+
+    for(int l=0; l < this.rules.length; ++l) {
+      for(int i=0; i < this.rules[l].tesserae.length; ++i) {
+        if(idlength == 0) {
+          indices.push(new int[] {l,i});
+          continue;
         }
-        if(pushedi) break;
+        bool pushedi=false;
+        for(int j=0; j < max(idlength,1); ++j) {
+          for(int k=0; k < this.rules[l].tesserae[i].tag.length; ++k) {
+            if(this.rules[l].tesserae[i].tag[k] == tag[j]) {
+              indices.push(new int[] {l,i});
+              pushedi=true;
+              break;
+            }
+          }
+          if(pushedi) break;
+        }
       }
     }
     return indices;
@@ -720,9 +736,9 @@ struct mosaic {
     if(decorateinitialtile(tag))
       tesserae[0].updatelayer(drawtile, fillpen, drawpen, layer);
 
-    int[] indices=decorateIndices(tag);
+    int[][] indices=decorateIndices(tag);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, layer);
+      this.rules[indices[i][0]].tesserae[indices[i][1]].updatelayer(drawtile, fillpen, drawpen, layer);
   }
 
   //Update layer 0
@@ -741,9 +757,9 @@ struct mosaic {
       tesserae[0].updatelayer(drawtile, axialpena, axiala,
                               axialpenb, axialb, layer);
 
-    int[] indices=decorateIndices(tag);
+    int[][] indices=decorateIndices(tag);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile, axialpena, axiala, axialpenb,
+      this.rules[indices[i][0]].tesserae[indices[i][1]].updatelayer(drawtile, axialpena, axiala, axialpenb,
                                        axialb, layer);
   }
 
@@ -764,9 +780,9 @@ struct mosaic {
       tesserae[0].updatelayer(drawtile, radialpena, radiala,
                               radialra, radialpenb, radialb, radialrb, layer);
 
-    int[] indices=decorateIndices(tag);
+    int[][] indices=decorateIndices(tag);
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile, radialpena,
+      this.rules[indices[i][0]].tesserae[indices[i][1]].updatelayer(drawtile, radialpena,
                                        radiala, radialra, radialpenb, radialb,
                                        radialrb, layer);
   }
@@ -787,14 +803,14 @@ struct mosaic {
                    ...string[] tag) {
     checkLayerError(layer);
 
-    int[] indices=decorateIndices(tag);
+    int[][] indices=decorateIndices(tag);
     if(decorateinitialtile(tag))
       tesserae[0].updatelayer(drawtile, fillpen, drawpen, axialpena, axiala,
                               axialpenb, axialb, radialpena, radiala, radialra,
                               radialpenb, radialb, radialrb, layer);
 
     for(int i=0; i < indices.length; ++i)
-      subpatch[indices[i]].updatelayer(drawtile, fillpen, drawpen, axialpena,
+      this.rules[indices[i][0]].tesserae[indices[i][1]].updatelayer(drawtile, fillpen, drawpen, axialpena,
                                        axiala, axialpenb, axialb, radialpena,
                                        radiala, radialra, radialpenb, radialb,
                                        radialrb, layer);
@@ -823,6 +839,7 @@ private int searchtile(tile[] ts, tile t) {
   return -1;
 }
 
+/*
 // Create a deep copy of the mosaic M.
 mosaic copy(mosaic M) {
   mosaic Mcopy;
@@ -912,6 +929,7 @@ mosaic operator *(transform T, mosaic M) {
     M2.tesserae[i]=T*M2.tesserae[i];
   return M2;
 }
+*/
 
 private real inflationscaling(bool scalelinewidth, real inflation, int n) {
   return scalelinewidth ? (inflation)^(1-max(n,1)) : 1;
