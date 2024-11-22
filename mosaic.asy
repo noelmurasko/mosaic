@@ -482,7 +482,7 @@ tessera duplicate(tessera t1) {
 // Create a new substitution s2 from s1 with a shallow copy of the tesserae.
 substitution duplicate(substitution s1) {
   substitution s2=substitution(s1.supertile);
-  s2.tesserae=s1.tesserae;
+  s2.tesserae=s1.tesserae;// duplicate these
   s2.inflation=s1.inflation;
   return s2;
 }
