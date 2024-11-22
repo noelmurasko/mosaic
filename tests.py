@@ -5,7 +5,6 @@ import subprocess
 
 def main():
   directory=f".{os.sep}examples"
-  command = "asy"
 
   passed="PASSED"
   failed="FAILED"
@@ -24,7 +23,7 @@ def main():
           filepath = os.path.join(directory, filename)
           # Run the command on the file
           try:
-              subprocess.run([command, filepath], stdout=subprocess.DEVNULL,  stderr=subprocess.STDOUT,check=True)
+              subprocess.run(["asy", filepath,"-noV"], stdout=subprocess.DEVNULL,  stderr=subprocess.STDOUT,check=True)
               if verbose:
                 print(f'{f"{j+1}. {filename}":<30} {passed:>10}')
           except subprocess.CalledProcessError as e:
