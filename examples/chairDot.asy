@@ -30,4 +30,4 @@ M.updatelayer(decorate);
 M.updatelayer(lightblue);
 M.updatelayer(white,"B");
 M.updatelayer(orange,"C","D");
-filldraw(M);
+filldraw(rotate(45)*M);

@@ -852,26 +852,32 @@ mosaic copy(mosaic M) {
   int[] sup_index;
   int[] pro_index;
 
+
   for(int i=0; i < M.rules.length; ++i) {
     substitution rulei=M.rules[i];
-    int ks=searchtile(knowntiles,rulei.supertile);
-    if(ks == -1) {
-        knowntiles.push(rulei.supertile);
-        knowntiles_copy.push(copy(rulei.supertile));
-        sup_index.push(knowntiles.length-1);
-    } else {
-      sup_index.push(ks);
-    }
-    tessera[] tessi=rulei.tesserae;
+    knowntiles.push(rulei.supertile);
+    knowntiles_copy.push(copy(rulei.supertile));
+    sup_index.push(knowntiles.length-1);
+  }
+
+  for(int i=0; i < M.rules.length; ++i) {
+    tessera[] tessi=M.rules[i].tesserae;
     for(int j=0; j < tessi.length; ++j) {
       tessera tessij=tessi[j];
-      int kp=searchtile(knowntiles,tessij.prototile);
-      if(kp == -1) {
-        knowntiles.push(tessij.prototile);
-        knowntiles_copy.push(copy(tessij.prototile));
-        pro_index.push(knowntiles.length-1);
+      if(tessij.index[2] != -1) {
+        // If this tessera already corresponds to a known supertile,
+        // we can use that.
+        pro_index.push(tessij.index[2]);
       } else {
-        pro_index.push(kp);
+        // This case only occurs if a prototile doesn't have it's own rule.
+        int kp=searchtile(knowntiles,tessij.prototile);
+        if(kp == -1) {
+          knowntiles.push(tessij.prototile);
+          knowntiles_copy.push(copy(tessij.prototile));
+          pro_index.push(knowntiles.length-1);
+        } else {
+          pro_index.push(kp);
+        }
       }
     }
   }
