@@ -209,6 +209,18 @@ tile operator ^^(tile t1, tile t2) {
 
 restricted tile nulltile=tile(nullpath);
 
+// Searches an array of tiles ts for tile t. If ts contains t,
+// return the first index of ts cooresponding to t. If ts does
+// not contain t, return -1.
+private int searchtile(tile[] ts, tile t) {
+  for(int i; i < ts.length; ++i) {
+    if(ts[i] == t) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 struct tessera {
   transform transform;
   tile supertile;
@@ -531,7 +543,6 @@ tessera operator *(transform T, tessera t1) {
 // real inflation; | inflation factor for mosaic
 //
 // int[] tilecount; | int tilecount[k] is the number of tesserae in iteration k
-
 struct mosaic {
   tessera[] tesserae;
   tile initialtile;
@@ -579,6 +590,25 @@ struct mosaic {
   // A version of subsitute without the updatetesserae function.
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
+  private void checkrules() {
+    tile[] supertiles={this.rules[0].supertile};
+    for(int i=1; i < this.rules.length; ++i) {
+      int k=searchtile(supertiles, this.rules[i].supertile);
+      assert(k == -1, "Each substitution must correspond to a unique supertile: supertile for substitution "+string(k)+" and substitution "+string(i)+" have same supertile.");
+      supertiles.push(this.rules[i].supertile);
+    }
+
+    for(int i=0; i < this.rules.length; ++i) {
+      tessera[] tessi=this.rules[i].tesserae;
+      for(int j=0; j < tessi.length; ++j) {
+        int k=searchtile(supertiles, tessi[j].prototile);
+        if(k == -1) {
+          this.rules[i].tesserae[j].iterate=false;
+        }
+      }
+    }
+  }
+
   // Common inititalization code.
   // Mosaics are initialized with the supertile from the first specified rule.
   // Starting forom this initial tile, n substitution iterations are performed
@@ -612,6 +642,9 @@ struct mosaic {
         this.rules[i].tesserae[j].transform=D*this.rules[i].tesserae[j].transform;
       }
     }
+
+    this.checkrules();
+
     this.tesserae.push(tessera(this.initialtile));
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
@@ -799,18 +832,6 @@ struct mosaic {
                      radiala, radialra, radialpenb, radialb, radialrb, fillpen,
                      drawpen, 0 ...tag);
   }
-}
-
-// Searches an array of tiles ts for tile t. If ts contains t,
-// return the first index of ts cooresponding to t. If ts does
-// not contain t, return -1.
-private int searchtile(tile[] ts, tile t) {
-  for(int i; i < ts.length; ++i) {
-    if(ts[i] == t) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 // Create a deep copy of the mosaic M.
