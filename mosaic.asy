@@ -523,7 +523,7 @@ tessera operator *(tessera t1, tessera t2) {
   return t3;
 }
 
-// Important: Mulitplying a tessera by a transform does result
+// Important: Mulitplying a tessera by a transform does not result
 // in a deep copy of the supertile, prototile, and drawtile.
 tessera operator *(transform T, tessera t1) {
   tessera t2=duplicate(t1);
@@ -1250,6 +1250,6 @@ mosaic operator *(transform T, mosaic M) {
   mosaic M2=copy(M);
   int L=M2.tesserae.length;
   for(int i=0; i < L; ++i)
-    M2.tesserae[i]=T*M2.tesserae[i]; // FIX ME (This seems very very wrong. We shouldn't copy all these)
+    M2.tesserae[i]=T*M2.tesserae[i];
   return M2;
 }
