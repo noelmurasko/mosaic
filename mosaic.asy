@@ -218,8 +218,7 @@ struct tessera {
 
   restricted int layers;
   string[] tag;
-  // Used to determine location of tile in the mosaic subpatch
-  restricted int index;
+  restricted int[] index;
   bool iterate;
 
   private void initializer(transform transform, tile supertile, tile prototile,
@@ -241,7 +240,7 @@ struct tessera {
 
     this.layers=1;
     this.tag=stringunion(this.prototile.tag, tag);
-    this.index=0;
+    this.index=new int[] {0,0};
     this.iterate=iterate;
   }
 
@@ -297,7 +296,7 @@ struct tessera {
   }
 
   void operator init(transform transform=identity, tile supertile,
-                     tile prototile=nulltile, tile[] drawtile, int index, bool
+                     tile prototile=nulltile, tile[] drawtile, int[] index, bool
                      iterate=true ...string[] tag) {
     this.transform=transform;
     this.supertile=supertile;
@@ -383,11 +382,6 @@ struct tessera {
   void deleteid() {
     this.tag.delete();
   }
-
-  // Change index to n
-  void updateindex(int n) {
-    this.index=n;
-  }
 }
 
 struct substitution {
@@ -414,6 +408,7 @@ struct substitution {
                pen drawpen=nullpen ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, fillpen, drawpen
                       ...stringunion(this.tag,tag));
+    m.index[1]=tesserae.length;
     this.tesserae.push(m);
   }
 
@@ -422,6 +417,7 @@ struct substitution {
                ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, axialpena, axiala,
                       axialpenb, axialb ...stringunion(this.tag,tag));
+    m.index[1]=tesserae.length;
     this.tesserae.push(m);
   }
 
@@ -431,6 +427,7 @@ struct substitution {
     tessera m=tessera(transform, this.supertile, prototile, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
                       ...stringunion(this.tag,tag));
+    m.index[1]=tesserae.length;
     this.tesserae.push(m);
   }
 
@@ -443,7 +440,14 @@ struct substitution {
                       axialpena, axiala, axialpenb, axialb, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
                       ...stringunion(this.tag,tag));
+    m.index[1]=tesserae.length;
     this.tesserae.push(m);
+  }
+
+  void updateindex0(int i) {
+    for(int j=0; j < tesserae.length; ++j) {
+      tesserae[j].index[0]=i;
+    }
   }
 }
 
@@ -456,11 +460,11 @@ tessera copy(tessera t) {
   // If supertile and prototile are the same, make only one copy
   if(t.supertile == t.prototile) {
     tile super2=copy(t.supertile);
-    return tessera(t.transform, super2, super2, dtcopy, t.index,
+    return tessera(t.transform, super2, super2, dtcopy, copy(t.index),
                    t.iterate ...t.tag);
   } else
     return tessera(t.transform, copy(t.supertile), copy(t.prototile), dtcopy,
-                   t.index, t.iterate ...copy(t.tag));
+                   copy(t.index), t.iterate ...copy(t.tag));
 }
 
 // Create a deep copy of the substitution s1.
@@ -475,7 +479,7 @@ substitution copy(substitution s1) {
 // prototile, and  drawtile.
 tessera duplicate(tessera t1) {
   tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile,
-                      t1.index, t1.iterate ...copy(t1.tag));
+                      copy(t1.index), t1.iterate ...copy(t1.tag));
   return t2;
 }
 
@@ -595,7 +599,6 @@ struct mosaic {
   // have been applied. In regular usage, updatetesserae() does nothing.
   private void initializer(int n, void updatetesserae(tessera[], int),
                            substitution[] rules) {
-    int index=0;
 
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
     this.inflation=rules[0].inflation;
@@ -616,6 +619,7 @@ struct mosaic {
       assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
              must have the same inflation factor.");
       this.rules[i]=duplicate(rules[i]);
+      this.rules[i].updateindex0(i);
       /*
       for(int j=0; j < rules[i].tesserae.length; ++j) {
         tessera t=duplicate(rules[i].tesserae[j]);
