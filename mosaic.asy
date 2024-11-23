@@ -474,8 +474,6 @@ tessera copy(tessera t) {
                    copy(t.index), t.iterate ...copy(t.tag));
 }
 
-
-
 // Create a new tessera t2 from t1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
 tessera duplicate(tessera t1) {
@@ -538,7 +536,6 @@ struct mosaic {
   tessera[] tesserae;
   tile initialtile;
   int n=0;
-  //tessera[] subpatch;
   substitution[] rules;
   int layers=1;
   real inflation;
