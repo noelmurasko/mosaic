@@ -252,7 +252,7 @@ struct tessera {
 
     this.layers=1;
     this.tag=stringunion(this.prototile.tag, tag);
-    this.index=new int[] {0,0};
+    this.index=new int[] {-1,-1,-1};
     this.iterate=iterate;
   }
 
@@ -555,12 +555,11 @@ struct mosaic {
   // Perform an iteration of a tessera T, and push the result onto the array
   // tesserae.
   private void iterate(tessera t, tessera[] tesserae) {
-    for(int i=0; i < rules.length; ++i) {
-      for(int j=0; j < rules[i].tesserae.length; ++j) {
-        tessera p=rules[i].tesserae[j];
-        if(p.supertile == t.prototile) {
-          tesserae.push(scale(inflation)*t*p);
-        }
+    tessera[] tess_t=rules[t.index[2]].tesserae;
+    for(int j=0; j < tess_t.length; ++j) {
+      tessera p=tess_t[j];
+      if(p.supertile == t.prototile) {
+        tesserae.push(scale(inflation)*t*p);
       }
     }
   }
@@ -604,6 +603,8 @@ struct mosaic {
         int k=searchtile(supertiles, tessi[j].prototile);
         if(k == -1) {
           this.rules[i].tesserae[j].iterate=false;
+        } else {
+          this.rules[i].tesserae[j].index[2]=k;
         }
       }
     }
@@ -623,10 +624,11 @@ struct mosaic {
 
     assert(rules.length > 0,"Mosaics must have at least one substitution.");
     this.inflation=rules[0].inflation;
-    this.initialtile=rules[0].supertile;
 
     this.rules=new substitution[rules.length];
     this.rules[0]=duplicate(rules[0]);
+    this.initialtile=this.rules[0].supertile;
+    this.rules[0].updateindex0(0);
 
     for(int i=1; i < rules.length; ++i) {
       assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
@@ -646,6 +648,7 @@ struct mosaic {
     this.checkrules();
 
     this.tesserae.push(tessera(this.initialtile));
+    this.tesserae[0].index[2]=0;
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
 
@@ -906,7 +909,7 @@ mosaic copy(mosaic M) {
     tessera t=M.tesserae[0];
     tessera t2=tessera(t.transform, Mcopy.initialtile,
                          Mcopy.initialtile, new tile[] {Mcopy.initialtile},
-                        new int[] {0,0}, t.iterate ...copy(t.tag));
+                        new int[] {0,0,0}, t.iterate ...copy(t.tag));
     Mcopy.tesserae.push(t2);
   }
 
