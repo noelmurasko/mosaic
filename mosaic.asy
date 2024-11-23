@@ -246,10 +246,10 @@ struct tessera {
     dt.radialpenb=radialpenb;
     dt.radialb=radialb;
     dt.radialrb=radialrb;
-    this.drawtile.push(dt);
-    //this.drawtile.push(tile(dt.path, fp, dp, axialpena, axiala,
-    //                   axialpenb, axialb, radialpena, radiala, radialra,
-    //                   radialpenb, radialb, radialrb));
+    //this.drawtile.push(dt);
+    this.drawtile.push(tile(dt.path, fp, dp, axialpena, axiala,
+                       axialpenb, axialb, radialpena, radiala, radialra,
+                       radialpenb, radialb, radialrb));
 
     this.layers=1;
     this.tag=stringunion(this.prototile.tag, tag);
