@@ -18,22 +18,19 @@ real A=b*tau;
 real B=(1+a)*tau;
 
 substitution dartRule=substitution(dart); // dart substitution rule
-dartRule.addtile(shift(A,B)*rotate(144), dart,purple);
-dartRule.addtile(shift(-A,B)*rotate(-144),dart,yellow);
-dartRule.addtile(kite,pink);
+dartRule.addtile(shift(A,B)*rotate(144), dart);
+dartRule.addtile(shift(-A,B)*rotate(-144),dart);
+dartRule.addtile(kite);
 
 substitution kiteRule=substitution(kite); // kite substitution rule
-kiteRule.addtile(rotate(36),dart,blue);
-kiteRule.addtile(rotate(-36),dart,black);
-kiteRule.addtile(shift(A,A*c)*rotate(108),kite,green);
-kiteRule.addtile(shift(-A,A*c)*rotate(-108),kite,red);
+kiteRule.addtile(rotate(36),dart);
+kiteRule.addtile(rotate(-36),dart);
+kiteRule.addtile(shift(A,A*c)*rotate(108),kite);
+kiteRule.addtile(shift(-A,A*c)*rotate(-108),kite);
 
 substitution[] S={dartRule,kiteRule};
 
-int n=3;
+int n=4;
 mosaic M=mosaic(n ...S);
 
-//M=rotate(45)*M;
-//M.substitute(2);
-M=copy(M);
 filldraw(M);

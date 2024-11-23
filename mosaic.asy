@@ -1202,15 +1202,14 @@ mosaic copy(mosaic M) {
       rulei_copy.tesserae[j].supertile=knowntiles_copy[sup_index[i]];
       rulei_copy.tesserae[j].prototile=knowntiles_copy[pro_index[j]];
       for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
-        rulei_copy.tesserae[j].drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);//knowntiles_copy[dra_index[j][k]];
+        // We simply copy all drawtiles as they don't affect the substitution rules
+        rulei_copy.tesserae[j].drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
       }
     }
     Mcopy.rules.push(rulei_copy);
 
   }
-  //filldraw(Mcopy.rules[1]);
   Mcopy.initialtile=Mcopy.rules[0].supertile;
-
 
   /*
   write();
@@ -1233,7 +1232,6 @@ mosaic copy(mosaic M) {
       tessera t2=tessera(t.transform, Mcopy.rules[i].supertile,
                          Mcopy.rules[i].tesserae[j].prototile, Mcopy.rules[i].tesserae[j].drawtile,
                         Mcopy.rules[i].tesserae[j].index, t.iterate ...Mcopy.rules[i].tesserae[j].tag);
-
 
       Mcopy.tesserae.push(t2);
     }
