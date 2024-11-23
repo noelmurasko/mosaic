@@ -32,4 +32,6 @@ substitution[] S={dartRule,kiteRule};
 
 int n=4;
 mosaic M=mosaic(n ...S);
+M=rotate(45)*M;
+M.substitute(2);
 filldraw(M);

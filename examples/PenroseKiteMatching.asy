@@ -28,9 +28,9 @@ kiteRule.addtile(rotate(-36),dart);
 kiteRule.addtile(shift(A,A*c)*rotate(108),kite);
 kiteRule.addtile(shift(-A,A*c)*rotate(-108),kite);
 
-int n=4;
+int n=6;
 mosaic M=mosaic(n,dartRule,kiteRule);
-filldraw(M);
+//filldraw(M);
 
 path[] matchingrule(real radlower, pair l, pair m, pair r) {
   pair rlower=radlower*r/abs(r);
