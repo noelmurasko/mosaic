@@ -329,7 +329,7 @@ struct tessera {
   }
 
   void updatelayer(tile drawtile, int layer) {
-    if(drawtile != nulltile) this.drawtile[layer]=drawtile;
+    if(drawtile != nulltile) this.drawtile[layer]=copy(drawtile);
   }
 
   void updatelayer(pen fillpen, pen drawpen, int layer) {
@@ -931,7 +931,7 @@ mosaic copy(mosaic M) {
   Mcopy.initialtile=Mcopy.rules[0].supertile;
 
 
-  /*
+
   write();
   write(sup_index);
   write();
@@ -939,7 +939,8 @@ mosaic copy(mosaic M) {
   write();
   for(int i=0; i < dra_index.length; ++i)
     write(dra_index[i]);
-  */
+
+
 
   if(M.tesserae.length > 1) {
     for(int l=0; l < M.tesserae.length; ++l) {

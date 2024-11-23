@@ -28,7 +28,7 @@ kiteRule.addtile(rotate(-36),dart);
 kiteRule.addtile(shift(A,A*c)*rotate(108),kite);
 kiteRule.addtile(shift(-A,A*c)*rotate(-108),kite);
 
-int n=6;
+int n=3;
 mosaic M=mosaic(n,dartRule,kiteRule);
 //filldraw(M);
 
@@ -62,5 +62,8 @@ M.addlayer();
 M.updatelayer(kitematching[1],"kite");
 M.updatelayer(dartmatching[1],"dart");
 
-draw(M,blue+1.5,layer=1);
-draw(M,red+1.5,layer=2);
+//draw(M,blue+1.5,layer=1);
+//draw(M,red+1.5,layer=2);
+copy(M);
+//M=M;
+//filldraw(M);
