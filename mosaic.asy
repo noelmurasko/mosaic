@@ -233,21 +233,7 @@ struct tessera {
 
     pen fp=fillpen == nullpen ? dt.fillpen : fillpen;
     pen dp=drawpen == nullpen ? dt.drawpen : drawpen;
-    /*
-    dt.fillpen=fp;
-    dt.drawpen=dp;
-    dt.axialpena=axialpena;
-    dt.axialpenb=axialpenb;
-    dt.axiala=axiala;
-    dt.axialb=axialb;
-    dt.radialpena=radialpena;
-    dt.radiala=radiala;
-    dt.radialra=radialra;
-    dt.radialpenb=radialpenb;
-    dt.radialb=radialb;
-    dt.radialrb=radialrb;
-    */
-    //this.drawtile.push(dt);
+
     this.drawtile.push(tile(dt.path, fp, dp, axialpena, axiala,
                        axialpenb, axialb, radialpena, radiala, radialra,
                        radialpenb, radialb, radialrb));
@@ -458,8 +444,11 @@ struct substitution {
     this.tesserae.push(m);
   }
 
-  void addtile(tessera tessera) {
-    this.tesserae.push(tessera);
+  // Update supertile in all tessera in tesserae
+  void updatesupertile(tile t) {
+    for(int j=0; j < tesserae.length; ++j) {
+        tesserae[j].supertile=t;
+      }
   }
 
   void updateindex0(int i) {
@@ -485,13 +474,7 @@ tessera copy(tessera t) {
                    copy(t.index), t.iterate ...copy(t.tag));
 }
 
-// Create a deep copy of the substitution s1.
-substitution copy(substitution s1) {
-  substitution s2=substitution(copy(s1.supertile), s1.inflation);
-  for(int i=0; i < s1.tesserae.length; ++i)
-    s2.tesserae.push(copy(s1.tesserae[i]));
-  return s2;
-}
+
 
 // Create a new tessera t2 from t1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
@@ -1197,17 +1180,18 @@ mosaic copy(mosaic M) {
 
   for(int i=0; i < M.rules.length; ++i) {
     substitution rulei=M.rules[i];
-    substitution rulei_copy=copy(rulei); //FIX ME
+    substitution rulei_copy=substitution(knowntiles_copy[sup_index[i]], M.inflation);
     for(int j=0; j < rulei.tesserae.length; ++j) {
-      rulei_copy.tesserae[j].supertile=knowntiles_copy[sup_index[i]];
-      rulei_copy.tesserae[j].prototile=knowntiles_copy[pro_index[j]];
+      tessera tesseraj=copy(rulei.tesserae[j]);
+      tesseraj.supertile=knowntiles_copy[sup_index[i]];
+      tesseraj.prototile=knowntiles_copy[pro_index[j]];
       for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
-        // We simply copy all drawtiles as they don't affect the substitution rules
-        rulei_copy.tesserae[j].drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
+        // We copy all drawtiles as they don't affect the substitution rules
+        tesseraj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
       }
+      rulei_copy.tesserae.push(tesseraj);
     }
     Mcopy.rules.push(rulei_copy);
-
   }
   Mcopy.initialtile=Mcopy.rules[0].supertile;
 
