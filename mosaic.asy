@@ -519,8 +519,10 @@ tessera operator *(transform T, tessera t1) {
 //
 // tessera[] tesserae; | collection of tessera that make up the mosaic.
 //
-// tile initialtile;| Initial tile for mosiac. When initializing,
-// this tile must match one of the supertiles in the passed subsitution rules.
+// substituion[] rules; | array of substituion rules for mosaic.
+//
+// tile initialtile;| Initial tile for mosiac. Always the first supertile of the
+// first rule passed in initialization.
 //
 // int n=0; | total number of substitutions performed
 //
@@ -529,7 +531,6 @@ tessera operator *(transform T, tessera t1) {
 // int layers=1; | Number of drawing layers in mosaic
 //
 // real inflation; | inflation factor for mosaic
-//
 //
 // int[] tilecount; | int tilecount[k] is the number of tesserae in iteration k
 
@@ -554,14 +555,6 @@ struct mosaic {
         }
       }
     }
-    /*
-    for(int i=0; i < subpatch.length; ++i) {
-      tessera p=subpatch[i];
-      if(p.supertile == t.prototile) {
-        tesserae.push(scale(inflation)*t*p);
-      }
-    }
-    */
   }
 
   // Apply substituion rules in the mosaic n times times (for a total of
@@ -608,38 +601,15 @@ struct mosaic {
     this.rules=new substitution[rules.length];
     this.rules[0]=duplicate(rules[0]);
 
-
-    /*
-    for(int j=0; j < rules[0].tesserae.length; ++j) {
-      tessera t=duplicate(rules[0].tesserae[j]);
-      t.updateindex(index);
-      index+=1;
-      this.subpatch.push(t);
-    }
-    */
     for(int i=1; i < rules.length; ++i) {
       assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
              must have the same inflation factor.");
       this.rules[i]=duplicate(rules[i]);
       this.rules[i].updateindex0(i);
-
-      /*
-      for(int j=0; j < rules[i].tesserae.length; ++j) {
-        tessera t=duplicate(rules[i].tesserae[j]);
-        t.updateindex(index);
-        index+=1;
-        this.subpatch.push(t);
-      }
-      */
     }
 
     transform D=scale(1/inflation);
-    // Update each transform in subpatch to deflate.
-    /*
-    for(int j=0; j < this.subpatch.length; ++j) {
-      this.subpatch[j].transform=D*this.subpatch[j].transform;
-    }
-    */
+    // Update each transform to deflate.
     for(int i=0; i < this.rules.length; ++i){
       for(int j=0; j < this.rules[i].tesserae.length; ++j) {
         this.rules[i].tesserae[j].transform=D*this.rules[i].tesserae[j].transform;
@@ -846,10 +816,6 @@ private int searchtile(tile[] ts, tile t) {
   return -1;
 }
 
-
-
-
-/*
 // Create a deep copy of the mosaic M.
 mosaic copy(mosaic M) {
   mosaic Mcopy;
@@ -859,76 +825,73 @@ mosaic copy(mosaic M) {
   Mcopy.inflation=M.inflation;
   Mcopy.tilecount=M.tilecount;
 
-  // Each tessera in M.tesserae needs to be idetified with it's corresponding
-  // patch.
-  int Lt=M.tesserae.length;
-  int Lp=M.subpatch.length;
+  tile[] knowntiles;
+  tile[] knowntiles_copy;
 
-  tile[] known_supertiles;
-  tile[] known_prototiles;
+  int[] sup_index;
+  int[] pro_index;
 
-  Mcopy.subpatch.push(copy(M.subpatch[0]));
-
-  known_supertiles.push(M.subpatch[0].supertile);
-  known_prototiles.push(M.subpatch[0].prototile);
-
-  tessera subpatchj_copy;
-  int is;
-  int ip;
-  // Create copy of jth tessera in subpatch.
-  // Search known_supertiles for original supertile in jth tessera of
-  // subpatch.
-  // If supertile is found, set subpatchj_copy supertile to coresponding
-  // supertile in Mcopy
-  // Push original supertile in jth tessera of subpatch to known_supertiles.
-  // Repeat for prototiles.
-  for(int j=1; j < Lp; ++j) {
-    subpatchj_copy=copy(M.subpatch[j]);
-
-    is=searchtile(known_supertiles, M.subpatch[j].supertile);
-    ip=searchtile(known_prototiles, M.subpatch[j].supertile);
-    if(is != -1) {
-      subpatchj_copy.supertile=Mcopy.subpatch[is].supertile;
-    } else if (ip != -1) {
-      subpatchj_copy.supertile=Mcopy.subpatch[ip].prototile;
+  for(int i=0; i < M.rules.length; ++i) {
+    substitution rulei=M.rules[i];
+    int ks=searchtile(knowntiles,rulei.supertile);
+    if(ks == -1) {
+        knowntiles.push(rulei.supertile);
+        knowntiles_copy.push(copy(rulei.supertile));
+        sup_index.push(knowntiles.length-1);
+    } else {
+      sup_index.push(ks);
     }
-
-    known_supertiles.push(M.subpatch[j].supertile);
-
-    is=searchtile(known_supertiles, M.subpatch[j].prototile);
-    ip=searchtile(known_prototiles, M.subpatch[j].prototile);
-    if(ip != -1) {
-      subpatchj_copy.prototile=Mcopy.subpatch[ip].prototile;
-    } else if (is != -1 && is != j) {
-        // is == j when encountering new supertile and prototile == supertile
-        subpatchj_copy.prototile=Mcopy.subpatch[is].supertile;
+    tessera[] tessi=rulei.tesserae;
+    for(int j=0; j < tessi.length; ++j) {
+      tessera tessij=tessi[j];
+      int kp=searchtile(knowntiles,tessij.prototile);
+      if(kp == -1) {
+        knowntiles.push(tessij.prototile);
+        knowntiles_copy.push(copy(tessij.prototile));
+        pro_index.push(knowntiles.length-1);
+      } else {
+        pro_index.push(kp);
+      }
     }
-
-    known_prototiles.push(M.subpatch[j].prototile);
-
-    Mcopy.subpatch.push(subpatchj_copy);
   }
-  // Set Mcopy.initialtile
-  int j=searchtile(known_supertiles,M.initialtile);
-  Mcopy.initialtile=Mcopy.subpatch[j].supertile;
 
-  // Push onto new tessera correct supertiles, prototiles, and drawtiles.
-  if(Lt > 1) {
-    for(int i=0; i < Lt; ++i) {
-      tessera t=M.tesserae[i];
-      int j=t.index;
-      tessera t2=tessera(t.transform, Mcopy.subpatch[j].supertile,
-                         Mcopy.subpatch[j].prototile, Mcopy.subpatch[j].drawtile,
-                        j, t.iterate ...Mcopy.subpatch[j].tag);
+  for(int i=0; i < M.rules.length; ++i) {
+    substitution rulei=M.rules[i];
+    substitution rulei_copy=substitution(knowntiles_copy[sup_index[i]], M.inflation);
+    for(int j=0; j < rulei.tesserae.length; ++j) {
+      tessera tesseraj=copy(rulei.tesserae[j]);
+      tesseraj.supertile=knowntiles_copy[sup_index[i]];
+      tesseraj.prototile=knowntiles_copy[pro_index[j]];
+      for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
+        // We copy all drawtiles as they don't affect the substitution rules
+        tesseraj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
+      }
+      rulei_copy.tesserae.push(tesseraj);
+    }
+    Mcopy.rules.push(rulei_copy);
+  }
+  Mcopy.initialtile=Mcopy.rules[0].supertile;
+
+  if(M.tesserae.length > 1) {
+    for(int l=0; l < M.tesserae.length; ++l) {
+      tessera t=M.tesserae[l];
+      int i=t.index[0];
+      int j=t.index[1];
+
+      tessera t2=tessera(t.transform, Mcopy.rules[i].supertile,
+                         Mcopy.rules[i].tesserae[j].prototile, Mcopy.rules[i].tesserae[j].drawtile,
+                        Mcopy.rules[i].tesserae[j].index, t.iterate ...Mcopy.rules[i].tesserae[j].tag);
+
       Mcopy.tesserae.push(t2);
     }
   } else {
     tessera t=M.tesserae[0];
     tessera t2=tessera(t.transform, Mcopy.initialtile,
                          Mcopy.initialtile, new tile[] {Mcopy.initialtile},
-                        0, t.iterate ...t.tag);
+                        new int[] {0,0}, t.iterate ...copy(t.tag));
     Mcopy.tesserae.push(t2);
   }
+
   return Mcopy;
 }
 
@@ -939,7 +902,6 @@ mosaic operator *(transform T, mosaic M) {
     M2.tesserae[i]=T*M2.tesserae[i];
   return M2;
 }
-*/
 
 private real inflationscaling(bool scalelinewidth, real inflation, int n) {
   return scalelinewidth ? (inflation)^(1-max(n,1)) : 1;
@@ -1135,105 +1097,4 @@ void radialshade(picture pic=currentpicture, mosaic M, bool stroke=false,
                  bool extenda=true, bool extendb=true) {
   for(int layer=0; layer < M.layers; ++layer)
     radialshade(pic, M, layer, stroke, extenda, extendb);
-}
-
-
-// Create a deep copy of the mosaic M.
-// What to do about drawtiles
-mosaic copy(mosaic M) {
-  mosaic Mcopy;
-
-  Mcopy.n=M.n;
-  Mcopy.layers=M.layers;
-  Mcopy.inflation=M.inflation;
-  Mcopy.tilecount=M.tilecount;
-
-  tile[] knowntiles;
-  tile[] knowntiles_copy;
-
-  int[] sup_index;
-  int[] pro_index;
-
-  for(int i=0; i < M.rules.length; ++i) {
-    substitution rulei=M.rules[i];
-    int ks=searchtile(knowntiles,rulei.supertile);
-    if(ks == -1) {
-        knowntiles.push(rulei.supertile);
-        knowntiles_copy.push(copy(rulei.supertile));
-        sup_index.push(knowntiles.length-1);
-    } else {
-      sup_index.push(ks);
-    }
-    tessera[] tessi=rulei.tesserae;
-    for(int j=0; j < tessi.length; ++j) {
-      tessera tessij=tessi[j];
-      int kp=searchtile(knowntiles,tessij.prototile);
-      if(kp == -1) {
-        knowntiles.push(tessij.prototile);
-        knowntiles_copy.push(copy(tessij.prototile));
-        pro_index.push(knowntiles.length-1);
-      } else {
-        pro_index.push(kp);
-      }
-    }
-  }
-
-  for(int i=0; i < M.rules.length; ++i) {
-    substitution rulei=M.rules[i];
-    substitution rulei_copy=substitution(knowntiles_copy[sup_index[i]], M.inflation);
-    for(int j=0; j < rulei.tesserae.length; ++j) {
-      tessera tesseraj=copy(rulei.tesserae[j]);
-      tesseraj.supertile=knowntiles_copy[sup_index[i]];
-      tesseraj.prototile=knowntiles_copy[pro_index[j]];
-      for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
-        // We copy all drawtiles as they don't affect the substitution rules
-        tesseraj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
-      }
-      rulei_copy.tesserae.push(tesseraj);
-    }
-    Mcopy.rules.push(rulei_copy);
-  }
-  Mcopy.initialtile=Mcopy.rules[0].supertile;
-
-  /*
-  write();
-  write(sup_index);
-  write();
-  write(pro_index);
-  write();
-
-  for(int i=0; i < dra_index.length; ++i)
-    write(dra_index[i]);
-
-  */
-
-  if(M.tesserae.length > 1) {
-    for(int l=0; l < M.tesserae.length; ++l) {
-      tessera t=M.tesserae[l];
-      int i=t.index[0];
-      int j=t.index[1];
-
-      tessera t2=tessera(t.transform, Mcopy.rules[i].supertile,
-                         Mcopy.rules[i].tesserae[j].prototile, Mcopy.rules[i].tesserae[j].drawtile,
-                        Mcopy.rules[i].tesserae[j].index, t.iterate ...Mcopy.rules[i].tesserae[j].tag);
-
-      Mcopy.tesserae.push(t2);
-    }
-  } else {
-    tessera t=M.tesserae[0];
-    tessera t2=tessera(t.transform, Mcopy.initialtile,
-                         Mcopy.initialtile, new tile[] {Mcopy.initialtile},
-                        new int[] {0,0}, t.iterate ...copy(t.tag));
-    Mcopy.tesserae.push(t2);
-  }
-
-  return Mcopy;
-}
-
-mosaic operator *(transform T, mosaic M) {
-  mosaic M2=copy(M);
-  int L=M2.tesserae.length;
-  for(int i=0; i < L; ++i)
-    M2.tesserae[i]=T*M2.tesserae[i];
-  return M2;
 }
