@@ -53,7 +53,6 @@ path[] kitematching=matchingrule(krad,kl,km,kr);
 real drad=abs(kr)-krad;
 path[] dartmatching=matchingrule(drad,dl,dm,dr);
 
-
 M.addlayer();
 M.updatelayer(kitematching[0],"kite");
 M.updatelayer(dartmatching[0],"dart");
@@ -61,6 +60,7 @@ M.updatelayer(dartmatching[0],"dart");
 M.addlayer();
 M.updatelayer(kitematching[1],"kite");
 M.updatelayer(dartmatching[1],"dart");
+
 
 draw(M,blue+1.5,layer=1);
 draw(M,red+1.5,layer=2);
