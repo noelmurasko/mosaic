@@ -556,12 +556,8 @@ struct mosaic {
   // tesserae.
   private void iterate(tessera t, tessera[] tesserae) {
     tessera[] tess_t=rules[t.index[2]].tesserae;
-    for(int j=0; j < tess_t.length; ++j) {
-      tessera p=tess_t[j];
-      if(p.supertile == t.prototile) {
-        tesserae.push(scale(inflation)*t*p);
-      }
-    }
+    for(int j=0; j < tess_t.length; ++j)
+      tesserae.push(scale(inflation)*t*tess_t[j]);
   }
 
   // Apply substituion rules in the mosaic n times times (for a total of
