@@ -313,7 +313,7 @@ struct tessera {
 
   void operator init(transform transform=identity, tile supertile,
                      tile prototile=nulltile, tile[] drawtile, int ruleindex,
-                     int tessindex, int iterindex, bool iterate=true 
+                     int tessindex, int iterindex, bool iterate=true
                      ...string[] tag) {
     this.transform=transform;
     this.supertile=supertile;
@@ -486,19 +486,19 @@ tessera copy(tessera t) {
   // If supertile and prototile are the same, make only one copy
   if(t.supertile == t.prototile) {
     tile super2=copy(t.supertile);
-    return tessera(t.transform, super2, super2, dtcopy, t.ruleindex, t.tessindex, 
+    return tessera(t.transform, super2, super2, dtcopy, t.ruleindex, t.tessindex,
                    t.iterindex, t.iterate ...t.tag);
   } else
     return tessera(t.transform, copy(t.supertile), copy(t.prototile), dtcopy,
-                   t.ruleindex, t.tessindex, t.iterindex, t.iterate 
+                   t.ruleindex, t.tessindex, t.iterindex, t.iterate
                    ...copy(t.tag));
 }
 
 // Create a new tessera t2 from t1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
 tessera duplicate(tessera t1) {
-  tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile, 
-                     t1.ruleindex, t1.tessindex, t1.iterindex, t1.iterate 
+  tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile,
+                     t1.ruleindex, t1.tessindex, t1.iterindex, t1.iterate
                      ...copy(t1.tag));
   return t2;
 }
@@ -913,11 +913,11 @@ mosaic copy(mosaic M) {
       int j=t.tessindex;
 
       tessera t2=tessera(t.transform, Mcopy.rules[i].supertile,
-                         Mcopy.rules[i].tesserae[j].prototile, 
+                         Mcopy.rules[i].tesserae[j].prototile,
                          Mcopy.rules[i].tesserae[j].drawtile,
-                         Mcopy.rules[i].tesserae[j].ruleindex, 
-                         Mcopy.rules[i].tesserae[j].tessindex, 
-                         Mcopy.rules[i].tesserae[j].iterindex, t.iterate 
+                         Mcopy.rules[i].tesserae[j].ruleindex,
+                         Mcopy.rules[i].tesserae[j].tessindex,
+                         Mcopy.rules[i].tesserae[j].iterindex, t.iterate
                          ...Mcopy.rules[i].tesserae[j].tag);
 
       Mcopy.tesserae.push(t2);
