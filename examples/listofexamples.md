@@ -1,5 +1,5 @@
 # List of examples in mosaic
-As of May 11, 2024.
+As of Nov. 24, 2024.
 
 - AmmanBeenker.asy
 - boxRect.asy
@@ -21,6 +21,7 @@ As of May 11, 2024.
   - Hilbert curve, using substitution (see https://tilings.math.uni-bielefeld.de/substitution/hilbert-curve/).
 - KenyonNonFLC.asy
   - Keynon's non FLC tiling which is not of finite local complexity (see https://tilings.math.uni-bielefeld.de/substitution/kenyons-non-flc/).
+- Kochsnowflake.asy
 - PenroseKite.asy
 - PenroseKiteMatching.asy
   - A modification of PenroseKite.asy that shows a matching rule.
