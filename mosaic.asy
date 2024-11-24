@@ -847,16 +847,16 @@ mosaic copy(mosaic M) {
   tile[] knowntiles;
   tile[] knowntiles_copy;
 
-  int[] sup_index;
-  int[] pro_index;
 
 
   for(int i=0; i < M.rules.length; ++i) {
     substitution rulei=M.rules[i];
     knowntiles.push(rulei.supertile);
     knowntiles_copy.push(copy(rulei.supertile));
-    sup_index.push(knowntiles.length-1);
   }
+
+  int[] sup_index=sequence(knowntiles.length);
+  int[] pro_index;
 
   for(int i=0; i < M.rules.length; ++i) {
     tessera[] tessi=M.rules[i].tesserae;
