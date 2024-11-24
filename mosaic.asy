@@ -622,6 +622,7 @@ struct mosaic {
     this.inflation=rules[0].inflation;
 
     this.rules=new substitution[rules.length];
+
     this.rules[0]=duplicate(rules[0]);
     this.initialtile=this.rules[0].supertile;
     this.rules[0].updateindex0(0);
@@ -632,6 +633,8 @@ struct mosaic {
       this.rules[i]=duplicate(rules[i]);
       this.rules[i].updateindex0(i);
     }
+    
+    this.checkrules();
 
     transform D=scale(1/inflation);
     // Update each transform to deflate.
@@ -641,7 +644,6 @@ struct mosaic {
       }
     }
 
-    this.checkrules();
 
     this.tesserae.push(tessera(this.initialtile));
     this.tesserae[0].index[2]=0;
