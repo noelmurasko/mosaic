@@ -230,7 +230,9 @@ struct tessera {
 
   restricted int layers;
   string[] tag;
-  restricted int[] index;
+  int ruleindex;
+  int tessindex;
+  int iterindex;
   bool iterate;
 
   private void initializer(transform transform, tile supertile, tile prototile,
@@ -252,7 +254,9 @@ struct tessera {
 
     this.layers=1;
     this.tag=stringunion(this.prototile.tag, tag);
-    this.index=new int[] {-1,-1,-1};
+    this.ruleindex=-1;
+    this.tessindex=-1;
+    this.iterindex=-1;
     this.iterate=iterate;
   }
 
@@ -308,14 +312,17 @@ struct tessera {
   }
 
   void operator init(transform transform=identity, tile supertile,
-                     tile prototile=nulltile, tile[] drawtile, int[] index, bool
-                     iterate=true ...string[] tag) {
+                     tile prototile=nulltile, tile[] drawtile, int ruleindex,
+                     int tessindex, int iterindex, bool iterate=true 
+                     ...string[] tag) {
     this.transform=transform;
     this.supertile=supertile;
     this.prototile = prototile == nulltile ? supertile : prototile;
 
     this.drawtile=drawtile;
-    this.index=index;
+    this.ruleindex=ruleindex;
+    this.tessindex=tessindex;
+    this.iterindex=iterindex;
     this.layers=drawtile.length;
 
     this.tag=stringunion(this.prototile.tag, tag);
@@ -420,7 +427,7 @@ struct substitution {
                pen drawpen=nullpen ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, drawtile, fillpen, drawpen
                       ...stringunion(this.tag,tag));
-    m.index[1]=tesserae.length;
+    m.tessindex=tesserae.length;
     this.tesserae.push(m);
   }
 
@@ -429,7 +436,7 @@ struct substitution {
                ...string[] tag) {
     tessera m=tessera(transform, this.supertile, prototile, drawtile, axialpena, axiala,
                       axialpenb, axialb ...stringunion(this.tag,tag));
-    m.index[1]=tesserae.length;
+    m.tessindex=tesserae.length;
     this.tesserae.push(m);
   }
 
@@ -439,7 +446,7 @@ struct substitution {
     tessera m=tessera(transform, this.supertile, prototile, drawtile, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
                       ...stringunion(this.tag,tag));
-    m.index[1]=tesserae.length;
+    m.tessindex=tesserae.length;
     this.tesserae.push(m);
   }
 
@@ -452,7 +459,7 @@ struct substitution {
                       axialpena, axiala, axialpenb, axialb, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
                       ...stringunion(this.tag,tag));
-    m.index[1]=tesserae.length;
+    m.tessindex=tesserae.length;
     this.tesserae.push(m);
   }
 
@@ -463,9 +470,9 @@ struct substitution {
       }
   }
 
-  void updateindex0(int i) {
+  void set_ruleindex(int i) {
     for(int j=0; j < tesserae.length; ++j) {
-      tesserae[j].index[0]=i;
+      tesserae[j].ruleindex=i;
     }
   }
 }
@@ -479,18 +486,20 @@ tessera copy(tessera t) {
   // If supertile and prototile are the same, make only one copy
   if(t.supertile == t.prototile) {
     tile super2=copy(t.supertile);
-    return tessera(t.transform, super2, super2, dtcopy, copy(t.index),
-                   t.iterate ...t.tag);
+    return tessera(t.transform, super2, super2, dtcopy, t.ruleindex, t.tessindex, 
+                   t.iterindex, t.iterate ...t.tag);
   } else
     return tessera(t.transform, copy(t.supertile), copy(t.prototile), dtcopy,
-                   copy(t.index), t.iterate ...copy(t.tag));
+                   t.ruleindex, t.tessindex, t.iterindex, t.iterate 
+                   ...copy(t.tag));
 }
 
 // Create a new tessera t2 from t1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
 tessera duplicate(tessera t1) {
-  tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile,
-                      copy(t1.index), t1.iterate ...copy(t1.tag));
+  tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile, 
+                     t1.ruleindex, t1.tessindex, t1.iterindex, t1.iterate 
+                     ...copy(t1.tag));
   return t2;
 }
 
@@ -555,7 +564,7 @@ struct mosaic {
   // Perform an iteration of a tessera T, and push the result onto the array
   // tesserae.
   private void iterate(tessera t, tessera[] tesserae) {
-    tessera[] tess_t=rules[t.index[2]].tesserae;
+    tessera[] tess_t=rules[t.iterindex].tesserae;
     for(int j=0; j < tess_t.length; ++j)
       tesserae.push(scale(inflation)*t*tess_t[j]);
   }
@@ -600,7 +609,7 @@ struct mosaic {
         if(k == -1) {
           this.rules[i].tesserae[j].iterate=false;
         } else {
-          this.rules[i].tesserae[j].index[2]=k;
+          this.rules[i].tesserae[j].iterindex=k;
         }
       }
     }
@@ -625,13 +634,13 @@ struct mosaic {
 
     this.rules[0]=duplicate(rules[0]);
     this.initialtile=this.rules[0].supertile;
-    this.rules[0].updateindex0(0);
+    this.rules[0].set_ruleindex(0);
 
     for(int i=1; i < rules.length; ++i) {
       assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
              must have the same inflation factor.");
       this.rules[i]=duplicate(rules[i]);
-      this.rules[i].updateindex0(i);
+      this.rules[i].set_ruleindex(i);
     }
 
     this.set_iterindex();
@@ -646,7 +655,7 @@ struct mosaic {
 
 
     this.tesserae.push(tessera(this.initialtile));
-    this.tesserae[0].index[2]=0;
+    this.tesserae[0].iterindex=0;
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
 
@@ -862,10 +871,10 @@ mosaic copy(mosaic M) {
     tessera[] tessi=M.rules[i].tesserae;
     for(int j=0; j < tessi.length; ++j) {
       tessera tessij=tessi[j];
-      if(tessij.index[2] != -1) {
+      if(tessij.iterindex != -1) {
         // If this tessera already corresponds to a known supertile,
         // we can use that.
-        pro_index.push(tessij.index[2]);
+        pro_index.push(tessij.iterindex);
       } else {
         // This case only occurs if a prototile doesn't have it's own rule.
         int kp=searchtile(knowntiles,tessij.prototile);
@@ -900,12 +909,16 @@ mosaic copy(mosaic M) {
   if(M.tesserae.length > 1) {
     for(int l=0; l < M.tesserae.length; ++l) {
       tessera t=M.tesserae[l];
-      int i=t.index[0];
-      int j=t.index[1];
+      int i=t.ruleindex;
+      int j=t.tessindex;
 
       tessera t2=tessera(t.transform, Mcopy.rules[i].supertile,
-                         Mcopy.rules[i].tesserae[j].prototile, Mcopy.rules[i].tesserae[j].drawtile,
-                        Mcopy.rules[i].tesserae[j].index, t.iterate ...Mcopy.rules[i].tesserae[j].tag);
+                         Mcopy.rules[i].tesserae[j].prototile, 
+                         Mcopy.rules[i].tesserae[j].drawtile,
+                         Mcopy.rules[i].tesserae[j].ruleindex, 
+                         Mcopy.rules[i].tesserae[j].tessindex, 
+                         Mcopy.rules[i].tesserae[j].iterindex, t.iterate 
+                         ...Mcopy.rules[i].tesserae[j].tag);
 
       Mcopy.tesserae.push(t2);
     }
@@ -913,7 +926,7 @@ mosaic copy(mosaic M) {
     tessera t=M.tesserae[0];
     tessera t2=tessera(t.transform, Mcopy.initialtile,
                          Mcopy.initialtile, new tile[] {Mcopy.initialtile},
-                        new int[] {0,0,0}, t.iterate ...copy(t.tag));
+                         0, 0, 0, t.iterate ...copy(t.tag));
     Mcopy.tesserae.push(t2);
   }
 
