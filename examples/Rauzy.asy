@@ -21,7 +21,7 @@ X2rule.addtile(b*A,X1);
 substitution X3rule=substitution(X3);
 X3rule.addtile(b*A,X2);
 
-int n=15;
+int n=4;
 mosaic m1=mosaic(n,X1rule,X2rule,X3rule);
 mosaic m2=mosaic(n,X2rule,X1rule,X3rule);
 m2=copy(m2);
@@ -29,9 +29,7 @@ m2.updatelayer(fillpen=blue);
 mosaic m3=mosaic(n,X3rule,X2rule,X1rule);
 m3=copy(m3);
 m3.updatelayer(fillpen=red);
-filldraw(m1);
 m1.updatelayer(fillpen=green);
 filldraw(A*m1);
 filldraw(A*m2);
 filldraw(A*m3);
-
