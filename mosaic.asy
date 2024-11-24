@@ -585,7 +585,7 @@ struct mosaic {
   // A version of subsitute without the updatetesserae function.
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
-  private void checkrules() {
+  private void set_iterindex() {
     tile[] supertiles={this.rules[0].supertile};
     for(int i=1; i < this.rules.length; ++i) {
       int k=searchtile(supertiles, this.rules[i].supertile);
@@ -633,8 +633,8 @@ struct mosaic {
       this.rules[i]=duplicate(rules[i]);
       this.rules[i].updateindex0(i);
     }
-    
-    this.checkrules();
+
+    this.set_iterindex();
 
     transform D=scale(1/inflation);
     // Update each transform to deflate.
