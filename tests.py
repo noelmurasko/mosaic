@@ -31,7 +31,6 @@ def main():
               failureCount+=1
               failedTests.append(filename)
 
-
   if len(failedTests) > 0:
     print(f"\n{failureCount} out of {totaltests} tests failed:")
     for test in failedTests:
