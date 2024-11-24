@@ -1,4 +1,4 @@
-//settings.outformat="pdf";
+settings.outformat="pdf";
 size(300);
 
 import mosaic;
