@@ -35,6 +35,7 @@ As of Nov. 24, 2024.
   - A periodic variant of the pinwheel tiling.
 - pinwheelrand.asy
   - Each iteration randomly chooses between the aperiodic and periodic pinwheel substitution rule.
+- Rauzy.asy (experimental)
 - SierpinskiGasket.asy
 - square.asy
 - tromino1.asy
