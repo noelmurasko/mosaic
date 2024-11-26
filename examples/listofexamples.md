@@ -12,7 +12,7 @@ As of Nov. 24, 2024.
 - chairaxialshade.asy
   - A modification of chair.asy, which uses the axial shading features of mosaic.
 - chairradialshade.asy
-  - A modification of chair.asy, which uses the radial shading features of mosaic.
+  - A modification of chair.asy, which `uses the radial shading features of mosaic.
 - chairrand.asy
   - A modification of chair.asy, in which it is random whether or not a tile is iterated.
 - domino.asy

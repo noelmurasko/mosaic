@@ -3,7 +3,10 @@ size(300);
 
 import mosaic;
 
-tile X1=tile(polygon(4), fillpen=black);
+Label EMILY=scale(0.02)*Label("EMILY",(0.8,1));
+tile X1=tile(texpath(EMILY),black);
+
+//tile X1=tile(polygon(4), fillpen=black);
 tile X2=copy(X1);
 tile X3=copy(X1);
 
