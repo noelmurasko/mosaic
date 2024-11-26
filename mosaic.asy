@@ -667,6 +667,7 @@ struct mosaic {
   }
 
   // Sets the ruleindex and iterindex in this.rules
+  // If prototile doesn't correspond to supertile, set iterate=0.
   private void set_index() {
     for(int i=0; i < this.rules.length; ++i)
       this.rules[i].set_ruleindex(i);
@@ -676,9 +677,8 @@ struct mosaic {
       supertiles[i]=this.rules[i].supertile;
 
     for(int i=0; i < this.rules.length; ++i) {
-      tessera[] tessi=this.rules[i].tesserae;
-      for(int j=0; j < tessi.length; ++j) {
-        int k=searchtile(supertiles, tessi[j].prototile);
+      for(int j=0; j < this.rules[i].tesserae.length; ++j) {
+        int k=searchtile(supertiles, this.rules[i].tesserae[j].prototile);
         if(k == -1) {
           this.rules[i].tesserae[j].iterate=false;
         } else {
@@ -687,6 +687,25 @@ struct mosaic {
       }
     }
   }
+
+  // Update each transform to deflate.
+  private void deflate_rules() {
+    transform D=scale(1/inflation);
+    for(int i=0; i < this.rules.length; ++i){
+      for(int j=0; j < this.rules[i].tesserae.length; ++j) {
+        this.rules[i].tesserae[j].transform=D*this.rules[i].tesserae[j].transform;
+      }
+    }
+  }
+
+  // Intialize tesserae in mosaic with initialtile (n=0).
+  private void intialize_tesserae(void updatetesserae(tessera[], int)) {
+    this.tesserae.push(tessera(this.initialtile));
+    this.tesserae[0].iterindex=0;
+    this.tilecount.push(1);
+    updatetesserae(this.tesserae,0);
+  }
+
 
   // Common inititalization code.
   // Mosaics are initialized with the supertile from the first specified rule.
@@ -700,40 +719,29 @@ struct mosaic {
   private void initializer(int n, void updatetesserae(tessera[], int),
                            substitution[] rules) {
 
-
     this.checkRulesError(rules);
-    this.rules=rules;
+
+    this.rules=rulecopy(rules);
 
     this.inflation=this.rules[0].inflation;
     this.initialtile=this.rules[0].supertile;
 
     this.set_index();
+    this.deflate_rules();
 
-    transform D=scale(1/inflation);
-    // Update each transform to deflate.
-    for(int i=0; i < this.rules.length; ++i){
-      for(int j=0; j < this.rules[i].tesserae.length; ++j) {
-        this.rules[i].tesserae[j].transform=D*this.rules[i].tesserae[j].transform;
-      }
-    }
-
-    this.tesserae.push(tessera(this.initialtile));
-    this.tesserae[0].iterindex=0;
-    this.tilecount.push(1);
-    updatetesserae(this.tesserae,0);
-
+    this.intialize_tesserae(updatetesserae);
     this.substitute(n, updatetesserae);
   }
 
   // Initialization of mosaic using a updatetesserae function.
   void operator init(int n=0, void updatetesserae(tessera[], int)
                      ...substitution[] rules) {
-    this.initializer(n, updatetesserae, rulecopy(rules));
+    this.initializer(n, updatetesserae, rules);
   }
 
   // Typical initialization of mosaic without updatetessserae function.
   void operator init(int n=0 ...substitution[] rules) {
-    this.initializer(n, new void (tessera[], int){}, rulecopy(rules));
+    this.initializer(n, new void (tessera[], int){}, rules);
   }
 
   // Assert that layer must be valid
@@ -907,6 +915,34 @@ struct mosaic {
   }
 }
 
+// Copy a mosaic tessera to a new new mosaic with new rules.
+// Used by the copy(mosaic) function.
+private tessera[] copy_mosaic_tesserae(tessera[] tesserae, substitution[] rules) {
+  tessera[] tesserae_copy=new tessera[tesserae.length];
+  if(tesserae.length > 1) {
+    for(int l=0; l < tesserae.length; ++l) {
+      tessera t=tesserae[l];
+      int i=t.ruleindex;
+      int j=t.tessindex;
+
+      tessera t2=tessera(t.transform, rules[i].supertile,
+                         rules[i].tesserae[j].prototile,
+                         rules[i].tesserae[j].drawtile,
+                         rules[i].tesserae[j].ruleindex,
+                         rules[i].tesserae[j].tessindex,
+                         rules[i].tesserae[j].iterindex, t.iterate
+                         ...copy(rules[i].tesserae[j].tag));
+      tesserae_copy[l]=t2;
+    }
+  } else {
+    tessera t=tesserae[0];
+    tessera t2=tessera(t.transform, rules[0].supertile,
+                         rules[0].supertile, new tile[] {rules[0].supertile},
+                         0, 0, 0, t.iterate ...copy(t.tag));
+    tesserae_copy[0]=t2;
+  }
+  return tesserae_copy;
+}
 
 // Create a deep copy of the mosaic M.
 mosaic copy(mosaic M) {
@@ -918,31 +954,9 @@ mosaic copy(mosaic M) {
   Mcopy.tilecount=M.tilecount;
 
   Mcopy.rules=rulecopy(M.rules);
-
   Mcopy.initialtile=Mcopy.rules[0].supertile;
 
-  if(M.tesserae.length > 1) {
-    for(int l=0; l < M.tesserae.length; ++l) {
-      tessera t=M.tesserae[l];
-      int i=t.ruleindex;
-      int j=t.tessindex;
-
-      tessera t2=tessera(t.transform, Mcopy.rules[i].supertile,
-                         Mcopy.rules[i].tesserae[j].prototile,
-                         Mcopy.rules[i].tesserae[j].drawtile,
-                         Mcopy.rules[i].tesserae[j].ruleindex,
-                         Mcopy.rules[i].tesserae[j].tessindex,
-                         Mcopy.rules[i].tesserae[j].iterindex, t.iterate
-                         ...Mcopy.rules[i].tesserae[j].tag);
-      Mcopy.tesserae.push(t2);
-    }
-  } else {
-    tessera t=M.tesserae[0];
-    tessera t2=tessera(t.transform, Mcopy.initialtile,
-                         Mcopy.initialtile, new tile[] {Mcopy.initialtile},
-                         0, 0, 0, t.iterate ...copy(t.tag));
-    Mcopy.tesserae.push(t2);
-  }
+  Mcopy.tesserae=copy_mosaic_tesserae(M.tesserae, Mcopy.rules);
 
   return Mcopy;
 }
