@@ -3,10 +3,7 @@ size(300);
 
 import mosaic;
 
-Label EMILY=scale(0.02)*Label("EMILY",(0.8,1));
-tile X1=tile(texpath(EMILY),black);
-
-//tile X1=tile(polygon(4), fillpen=black);
+tile X1=tile(polygon(4), fillpen=black);
 tile X2=copy(X1);
 tile X3=copy(X1);
 
@@ -27,12 +24,11 @@ X3rule.addtile(b*A,X2);
 int n=4;
 mosaic m1=mosaic(n,X1rule,X2rule,X3rule);
 mosaic m2=mosaic(n,X2rule,X1rule,X3rule);
-m2=copy(m2);
 mosaic m3=mosaic(n,X3rule,X2rule,X1rule);
-m3=copy(m3);
-m3.updatelayer(fillpen=red);
+
 m1.updatelayer(fillpen=green);
 m2.updatelayer(fillpen=blue);
+m3.updatelayer(fillpen=red);
 
 filldraw(A*m1);
 filldraw(A*m2);

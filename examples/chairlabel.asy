@@ -10,6 +10,8 @@ inflation=2;
 Label L=scale(0.2)*Label("L",(0.8,1));
 tile chair=tile(texpath(L),black);
 
+
+
 // substitution rule
 substitution chairRule=substitution(chair);
 chairRule.addtile();

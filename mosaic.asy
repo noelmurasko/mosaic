@@ -213,11 +213,9 @@ restricted tile nulltile=tile(nullpath);
 // return the first index of ts cooresponding to t. If ts does
 // not contain t, return -1.
 private int searchtile(tile[] ts, tile t) {
-  for(int i; i < ts.length; ++i) {
-    if(ts[i] == t) {
+  for(int i=0; i < ts.length; ++i)
+    if(ts[i] == t)
       return i;
-    }
-  }
   return -1;
 }
 
@@ -557,7 +555,8 @@ private substitution[] rulecopy(substitution[] rules) {
         // we can use that.
         pro_index.push(tessij.iterindex);
       } else {
-        // This case only occurs if a prototile doesn't have it's own rule.
+        // This case occurs during initialization or if a prototile doesn't
+        // have it's own rule.
         int kp=searchtile(knowntiles,tessij.prototile);
         if(kp == -1) {
           knowntiles.push(tessij.prototile);
@@ -570,19 +569,22 @@ private substitution[] rulecopy(substitution[] rules) {
     }
   }
 
+  int L=0;
   for(int i=0; i < rules.length; ++i) {
     substitution rulei=rules[i];
     substitution rulei_copy=substitution(knowntiles_copy[sup_index[i]], rulei.inflation);
     for(int j=0; j < rulei.tesserae.length; ++j) {
       tessera tesseraj=copy(rulei.tesserae[j]);
       tesseraj.supertile=knowntiles_copy[sup_index[i]];
-      tesseraj.prototile=knowntiles_copy[pro_index[j]];
+      tesseraj.prototile=knowntiles_copy[pro_index[L+j]];
       for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
         // We copy all drawtiles as they don't affect the substitution rules
         tesseraj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
       }
       rulei_copy.tesserae.push(tesseraj);
     }
+    L=L+rules[i].tesserae.length;
+
     rules_copy.push(rulei_copy);
   }
 
@@ -652,28 +654,31 @@ struct mosaic {
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
   private void checkRulesError(substitution[] rules) {
+    assert(rules.length > 0,"Mosaics must have at least one substitution.");
     tile[] supertiles={rules[0].supertile};
+    real inflation=rules[0].inflation;
     for(int i=1; i < rules.length; ++i) {
+      assert(rules[i].inflation == inflation,"All substitutions in a mosaic
+             must have the same inflation factor.");
       int k=searchtile(supertiles, rules[i].supertile);
       assert(k == -1, "Each substitution must correspond to a unique supertile: supertile for substitution "+string(k)+" and substitution "+string(i)+" have same supertile.");
       supertiles.push(rules[i].supertile);
     }
   }
 
-  private void set_iterindex() {
-    tile[] supertiles={this.rules[0].supertile};
-    for(int i=1; i < this.rules.length; ++i) {
-      supertiles.push(this.rules[i].supertile);
+  private void set_iterindex(substitution[] rules) {
+    tile[] supertiles={rules[0].supertile};
+    for(int i=1; i < rules.length; ++i) {
+      supertiles.push(rules[i].supertile);
     }
-
-    for(int i=0; i < this.rules.length; ++i) {
-      tessera[] tessi=this.rules[i].tesserae;
+    for(int i=0; i < rules.length; ++i) {
+      tessera[] tessi=rules[i].tesserae;
       for(int j=0; j < tessi.length; ++j) {
         int k=searchtile(supertiles, tessi[j].prototile);
         if(k == -1) {
-          this.rules[i].tesserae[j].iterate=false;
+          rules[i].tesserae[j].iterate=false;
         } else {
-          this.rules[i].tesserae[j].iterindex=k;
+          rules[i].tesserae[j].iterindex=k;
         }
       }
     }
@@ -695,23 +700,18 @@ struct mosaic {
     this.checkRulesError(rules);
     this.inflation=rules[0].inflation;
 
-    assert(rules.length > 0,"Mosaics must have at least one substitution.");
-
     this.rules=new substitution[rules.length];
     this.rules[0]=duplicate(rules[0]);
     this.initialtile=this.rules[0].supertile;
     this.rules[0].set_ruleindex(0);
 
     for(int i=1; i < rules.length; ++i) {
-      assert(rules[i].inflation == this.inflation,"All substitutions in a mosaic
-             must have the same inflation factor.");
       this.rules[i]=duplicate(rules[i]);
       this.rules[i].set_ruleindex(i);
     }
 
-    this.set_iterindex();
-
     this.rules=rulecopy(this.rules);
+    this.set_iterindex(this.rules);
 
     transform D=scale(1/inflation);
     // Update each transform to deflate.

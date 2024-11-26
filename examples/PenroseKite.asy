@@ -31,7 +31,5 @@ kiteRule.addtile(shift(-A,A*c)*rotate(-108),kite);
 substitution[] S={dartRule,kiteRule};
 
 int n=4;
-mosaic M=mosaic(0 ...S);
-M=copy(M);
-M.substitute(4);
+mosaic M=mosaic(n ...S);
 filldraw(M);
