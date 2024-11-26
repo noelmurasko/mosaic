@@ -666,19 +666,23 @@ struct mosaic {
     }
   }
 
-  private void set_iterindex(substitution[] rules) {
-    tile[] supertiles={rules[0].supertile};
-    for(int i=1; i < rules.length; ++i) {
-      supertiles.push(rules[i].supertile);
-    }
-    for(int i=0; i < rules.length; ++i) {
-      tessera[] tessi=rules[i].tesserae;
+  // Sets the ruleindex and iterindex in this.rules
+  private void set_index() {
+    for(int i=0; i < this.rules.length; ++i)
+      this.rules[i].set_ruleindex(i);
+
+    tile[] supertiles=new tile[this.rules.length];
+    for(int i=0; i < this.rules.length; ++i)
+      supertiles[i]=this.rules[i].supertile;
+
+    for(int i=0; i < this.rules.length; ++i) {
+      tessera[] tessi=this.rules[i].tesserae;
       for(int j=0; j < tessi.length; ++j) {
         int k=searchtile(supertiles, tessi[j].prototile);
         if(k == -1) {
-          rules[i].tesserae[j].iterate=false;
+          this.rules[i].tesserae[j].iterate=false;
         } else {
-          rules[i].tesserae[j].iterindex=k;
+          this.rules[i].tesserae[j].iterindex=k;
         }
       }
     }
@@ -698,20 +702,12 @@ struct mosaic {
 
 
     this.checkRulesError(rules);
-    this.inflation=rules[0].inflation;
+    this.rules=rules;
 
-    this.rules=new substitution[rules.length];
-    this.rules[0]=duplicate(rules[0]);
+    this.inflation=this.rules[0].inflation;
     this.initialtile=this.rules[0].supertile;
-    this.rules[0].set_ruleindex(0);
 
-    for(int i=1; i < rules.length; ++i) {
-      this.rules[i]=duplicate(rules[i]);
-      this.rules[i].set_ruleindex(i);
-    }
-
-    this.rules=rulecopy(this.rules);
-    this.set_iterindex(this.rules);
+    this.set_index();
 
     transform D=scale(1/inflation);
     // Update each transform to deflate.
@@ -732,12 +728,12 @@ struct mosaic {
   // Initialization of mosaic using a updatetesserae function.
   void operator init(int n=0, void updatetesserae(tessera[], int)
                      ...substitution[] rules) {
-    this.initializer(n, updatetesserae, rules);
+    this.initializer(n, updatetesserae, rulecopy(rules));
   }
 
   // Typical initialization of mosaic without updatetessserae function.
   void operator init(int n=0 ...substitution[] rules) {
-    this.initializer(n, new void (tessera[], int){}, rules);
+    this.initializer(n, new void (tessera[], int){}, rulecopy(rules));
   }
 
   // Assert that layer must be valid
