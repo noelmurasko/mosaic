@@ -533,6 +533,63 @@ tessera operator *(transform T, tessera t1) {
   return t2;
 }
 
+private substitution[] rulecopy(substitution[] rules) {
+  substitution[] rules_copy;
+
+  tile[] knowntiles;
+  tile[] knowntiles_copy;
+
+  for(int i=0; i < rules.length; ++i) {
+    substitution rulei=rules[i];
+    knowntiles.push(rulei.supertile);
+    knowntiles_copy.push(copy(rulei.supertile));
+  }
+
+  int[] sup_index=sequence(knowntiles.length);
+  int[] pro_index;
+
+  for(int i=0; i < rules.length; ++i) {
+    tessera[] tessi=rules[i].tesserae;
+    for(int j=0; j < tessi.length; ++j) {
+      tessera tessij=tessi[j];
+      if(tessij.iterindex != -1) {
+        // If this tessera already corresponds to a known supertile,
+        // we can use that.
+        pro_index.push(tessij.iterindex);
+      } else {
+        // This case only occurs if a prototile doesn't have it's own rule.
+        int kp=searchtile(knowntiles,tessij.prototile);
+        if(kp == -1) {
+          knowntiles.push(tessij.prototile);
+          knowntiles_copy.push(copy(tessij.prototile));
+          pro_index.push(knowntiles.length-1);
+        } else {
+          pro_index.push(kp);
+        }
+      }
+    }
+  }
+
+  for(int i=0; i < rules.length; ++i) {
+    substitution rulei=rules[i];
+    substitution rulei_copy=substitution(knowntiles_copy[sup_index[i]], rulei.inflation);
+    for(int j=0; j < rulei.tesserae.length; ++j) {
+      tessera tesseraj=copy(rulei.tesserae[j]);
+      tesseraj.supertile=knowntiles_copy[sup_index[i]];
+      tesseraj.prototile=knowntiles_copy[pro_index[j]];
+      for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
+        // We copy all drawtiles as they don't affect the substitution rules
+        tesseraj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
+      }
+      rulei_copy.tesserae.push(tesseraj);
+    }
+    rules_copy.push(rulei_copy);
+  }
+
+  return rules_copy;
+
+}
+
 // mosaic | Substitution tiling created from substiution rules. Contains the
 // following attributes
 //
@@ -594,11 +651,18 @@ struct mosaic {
   // A version of subsitute without the updatetesserae function.
   void substitute(int n) {this.substitute(n, new void (tessera[], int){});}
 
+  private void checkRulesError(substitution[] rules) {
+    tile[] supertiles={rules[0].supertile};
+    for(int i=1; i < rules.length; ++i) {
+      int k=searchtile(supertiles, rules[i].supertile);
+      assert(k == -1, "Each substitution must correspond to a unique supertile: supertile for substitution "+string(k)+" and substitution "+string(i)+" have same supertile.");
+      supertiles.push(rules[i].supertile);
+    }
+  }
+
   private void set_iterindex() {
     tile[] supertiles={this.rules[0].supertile};
     for(int i=1; i < this.rules.length; ++i) {
-      int k=searchtile(supertiles, this.rules[i].supertile);
-      assert(k == -1, "Each substitution must correspond to a unique supertile: supertile for substitution "+string(k)+" and substitution "+string(i)+" have same supertile.");
       supertiles.push(this.rules[i].supertile);
     }
 
@@ -627,8 +691,11 @@ struct mosaic {
   private void initializer(int n, void updatetesserae(tessera[], int),
                            substitution[] rules) {
 
-    assert(rules.length > 0,"Mosaics must have at least one substitution.");
+
+    this.checkRulesError(rules);
     this.inflation=rules[0].inflation;
+
+    assert(rules.length > 0,"Mosaics must have at least one substitution.");
 
     this.rules=new substitution[rules.length];
     this.rules[0]=duplicate(rules[0]);
@@ -643,6 +710,8 @@ struct mosaic {
     }
 
     this.set_iterindex();
+
+    this.rules=rulecopy(this.rules);
 
     transform D=scale(1/inflation);
     // Update each transform to deflate.
@@ -842,6 +911,7 @@ struct mosaic {
   }
 }
 
+
 // Create a deep copy of the mosaic M.
 mosaic copy(mosaic M) {
   mosaic Mcopy;
@@ -851,55 +921,8 @@ mosaic copy(mosaic M) {
   Mcopy.inflation=M.inflation;
   Mcopy.tilecount=M.tilecount;
 
-  tile[] knowntiles;
-  tile[] knowntiles_copy;
+  Mcopy.rules=rulecopy(M.rules);
 
-  for(int i=0; i < M.rules.length; ++i) {
-    substitution rulei=M.rules[i];
-    knowntiles.push(rulei.supertile);
-    knowntiles_copy.push(copy(rulei.supertile));
-  }
-
-  int[] sup_index=sequence(knowntiles.length);
-  int[] pro_index;
-
-  for(int i=0; i < M.rules.length; ++i) {
-    tessera[] tessi=M.rules[i].tesserae;
-    for(int j=0; j < tessi.length; ++j) {
-      tessera tessij=tessi[j];
-      if(tessij.iterindex != -1) {
-        // If this tessera already corresponds to a known supertile,
-        // we can use that.
-        pro_index.push(tessij.iterindex);
-      } else {
-        // This case only occurs if a prototile doesn't have it's own rule.
-        int kp=searchtile(knowntiles,tessij.prototile);
-        if(kp == -1) {
-          knowntiles.push(tessij.prototile);
-          knowntiles_copy.push(copy(tessij.prototile));
-          pro_index.push(knowntiles.length-1);
-        } else {
-          pro_index.push(kp);
-        }
-      }
-    }
-  }
-
-  for(int i=0; i < M.rules.length; ++i) {
-    substitution rulei=M.rules[i];
-    substitution rulei_copy=substitution(knowntiles_copy[sup_index[i]], M.inflation);
-    for(int j=0; j < rulei.tesserae.length; ++j) {
-      tessera tesseraj=copy(rulei.tesserae[j]);
-      tesseraj.supertile=knowntiles_copy[sup_index[i]];
-      tesseraj.prototile=knowntiles_copy[pro_index[j]];
-      for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
-        // We copy all drawtiles as they don't affect the substitution rules
-        tesseraj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
-      }
-      rulei_copy.tesserae.push(tesseraj);
-    }
-    Mcopy.rules.push(rulei_copy);
-  }
   Mcopy.initialtile=Mcopy.rules[0].supertile;
 
   if(M.tesserae.length > 1) {

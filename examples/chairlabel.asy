@@ -9,7 +9,6 @@ inflation=2;
 // prototile
 Label L=scale(0.2)*Label("L",(0.8,1));
 tile chair=tile(texpath(L),black);
-draw(chair);
 
 // substitution rule
 substitution chairRule=substitution(chair);
@@ -21,4 +20,4 @@ chairRule.addtile(shift(0,4)*rotate(270));
 // draw patch
 int n=4;
 mosaic M=mosaic(n,chairRule);
-//filldraw(M);
+filldraw(M);
