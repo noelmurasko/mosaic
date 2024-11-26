@@ -602,7 +602,7 @@ private substitution[] rulecopy(substitution[] rules) {
 // tile initialtile;| Initial tile for mosiac. Always the first supertile of the
 // first rule passed in initialization.
 //
-// int n=0; | total number of substitutions performed
+// int n; | total number of substitutions performed
 //
 // tessera[] tesserae; | Collection of tessera that define the substitution rules
 //
@@ -614,7 +614,7 @@ private substitution[] rulecopy(substitution[] rules) {
 struct mosaic {
   tessera[] tesserae;
   tile initialtile;
-  int n=0;
+  int n;
   substitution[] rules;
   int layers=1;
   real inflation;
@@ -705,7 +705,6 @@ struct mosaic {
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
   }
-
 
   // Common inititalization code.
   // Mosaics are initialized with the supertile from the first specified rule.
