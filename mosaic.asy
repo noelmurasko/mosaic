@@ -423,29 +423,29 @@ struct substitution {
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
                explicit tile drawtile=nulltile, pen fillpen=nullpen,
                pen drawpen=nullpen ...string[] tag) {
-    tessera m=tessera(transform, this.supertile, prototile, drawtile, fillpen, drawpen
+    tessera t=tessera(transform, this.supertile, prototile, drawtile, fillpen, drawpen
                       ...stringunion(this.tag,tag));
-    m.tessindex=tesserae.length;
-    this.tesserae.push(m);
+    t.tessindex=tesserae.length;
+    this.tesserae.push(t);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                pen axialpena, pair axiala, pen axialpenb, pair axialb
                ...string[] tag) {
-    tessera m=tessera(transform, this.supertile, prototile, drawtile, axialpena, axiala,
+    tessera t=tessera(transform, this.supertile, prototile, drawtile, axialpena, axiala,
                       axialpenb, axialb ...stringunion(this.tag,tag));
-    m.tessindex=tesserae.length;
-    this.tesserae.push(m);
+    t.tessindex=tesserae.length;
+    this.tesserae.push(t);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
                pen radialpena, pair radiala, real radialra, pen radialpenb,
                pair radialb, real radialrb ...string[] tag) {
-    tessera m=tessera(transform, this.supertile, prototile, drawtile, radialpena, radiala,
+    tessera t=tessera(transform, this.supertile, prototile, drawtile, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
                       ...stringunion(this.tag,tag));
-    m.tessindex=tesserae.length;
-    this.tesserae.push(m);
+    t.tessindex=tesserae.length;
+    this.tesserae.push(t);
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile, explicit tile drawtile=nulltile,
@@ -453,12 +453,12 @@ struct substitution {
                pen radialpena, pair radiala, real radialra, pen radialpenb,
                pair radialb, real radialrb, pen fillpen=nullpen,
                pen drawpen=nullpen ...string[] tag) {
-    tessera m=tessera(transform, this.supertile, prototile, drawtile, fillpen, drawpen,
+    tessera t=tessera(transform, this.supertile, prototile, drawtile, fillpen, drawpen,
                       axialpena, axiala, axialpenb, axialb, radialpena, radiala,
                       radialra, radialpenb, radialb, radialrb
                       ...stringunion(this.tag,tag));
-    m.tessindex=tesserae.length;
-    this.tesserae.push(m);
+    t.tessindex=tesserae.length;
+    this.tesserae.push(t);
   }
 
   // Update supertile in all tessera in tesserae
@@ -547,20 +547,20 @@ private substitution[] rulecopy(substitution[] rules) {
   int[] pro_index;
 
   for(int i=0; i < rules.length; ++i) {
-    tessera[] tessi=rules[i].tesserae;
-    for(int j=0; j < tessi.length; ++j) {
-      tessera tessij=tessi[j];
-      if(tessij.iterindex != -1) {
+    tessera[] ti=rules[i].tesserae;
+    for(int j=0; j < ti.length; ++j) {
+      tessera tij=ti[j];
+      if(tij.iterindex != -1) {
         // If this tessera already corresponds to a known supertile,
         // we can use that.
-        pro_index.push(tessij.iterindex);
+        pro_index.push(tij.iterindex);
       } else {
         // This case occurs during initialization or if a prototile doesn't
         // have it's own rule.
-        int kp=searchtile(knowntiles,tessij.prototile);
+        int kp=searchtile(knowntiles,tij.prototile);
         if(kp == -1) {
-          knowntiles.push(tessij.prototile);
-          knowntiles_copy.push(copy(tessij.prototile));
+          knowntiles.push(tij.prototile);
+          knowntiles_copy.push(copy(tij.prototile));
           pro_index.push(knowntiles.length-1);
         } else {
           pro_index.push(kp);
@@ -574,22 +574,19 @@ private substitution[] rulecopy(substitution[] rules) {
     substitution rulei=rules[i];
     substitution rulei_copy=substitution(knowntiles_copy[sup_index[i]], rulei.inflation);
     for(int j=0; j < rulei.tesserae.length; ++j) {
-      tessera tesseraj=copy(rulei.tesserae[j]);
-      tesseraj.supertile=knowntiles_copy[sup_index[i]];
-      tesseraj.prototile=knowntiles_copy[pro_index[L+j]];
+      tessera tj=copy(rulei.tesserae[j]);
+      tj.supertile=knowntiles_copy[sup_index[i]];
+      tj.prototile=knowntiles_copy[pro_index[L+j]];
       for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
         // We copy all drawtiles as they don't affect the substitution rules
-        tesseraj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
+        tj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
       }
-      rulei_copy.tesserae.push(tesseraj);
+      rulei_copy.tesserae.push(tj);
     }
     L=L+rules[i].tesserae.length;
-
     rules_copy.push(rulei_copy);
   }
-
   return rules_copy;
-
 }
 
 // mosaic | Substitution tiling created from substiution rules. Contains the
@@ -1008,40 +1005,40 @@ void radialshade(picture pic=currentpicture, explicit tile t, bool stroke=false,
 }
 
 // Draw layer l of tessera.
-void draw(picture pic=currentpicture, tessera T, int layer=0, pen p=currentpen,
+void draw(picture pic=currentpicture, tessera t, int layer=0, pen p=currentpen,
           real scaling=1) {
-  tile Tdl=T.transform*T.drawtile[layer];
-  pen dpl=Tdl.drawpen;
+  tile tdl=t.transform*t.drawtile[layer];
+  pen dpl=tdl.drawpen;
   if(dpl != nullpen) {
-    Tdl.drawpen=dpl+scaling*linewidth(dpl);
-    draw(pic, Tdl);
+    tdl.drawpen=dpl+scaling*linewidth(dpl);
+    draw(pic, tdl);
   } else {
-    draw(pic, Tdl, p+scaling*linewidth(p));
+    draw(pic, tdl, p+scaling*linewidth(p));
   }
 }
 
-void fill(picture pic=currentpicture, tessera T, int layer=0, pen p=invisible) {
-  tile Tdl=T.drawtile[layer];
-  fill(pic, T.transform*Tdl,p);
+void fill(picture pic=currentpicture, tessera t, int layer=0, pen p=invisible) {
+  tile tdl=t.drawtile[layer];
+  fill(pic, t.transform*tdl,p);
 }
 
-void filldraw(picture pic=currentpicture, tessera T, int layer=0,
+void filldraw(picture pic=currentpicture, tessera t, int layer=0,
               pen fillpen=invisible, pen drawpen=currentpen, real scaling=1) {
-  fill(pic, T, layer, fillpen);
-  draw(pic, T, layer, drawpen, scaling);
+  fill(pic, t, layer, fillpen);
+  draw(pic, t, layer, drawpen, scaling);
 }
 
-void axialshade(picture pic=currentpicture, tessera T, int layer=0,
+void axialshade(picture pic=currentpicture, tessera t, int layer=0,
                 bool stroke=false, bool extenda=true, bool extendb=true) {
-  tile Tdl=T.drawtile[layer];
-  axialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda,
+  tile tdl=t.drawtile[layer];
+  axialshade(pic, t.transform*tdl, stroke=stroke, extenda=extenda,
              extendb=extendb);
 }
 
-void radialshade(picture pic=currentpicture, tessera T, int layer=0,
+void radialshade(picture pic=currentpicture, tessera t, int layer=0,
                  bool stroke=false, bool extenda=true, bool extendb=true) {
-  tile Tdl=T.drawtile[layer];
-  radialshade(pic, T.transform*Tdl, stroke=stroke, extenda=extenda,
+  tile tdl=t.drawtile[layer];
+  radialshade(pic, t.transform*tdl, stroke=stroke, extenda=extenda,
               extendb=extendb);
 }
 
