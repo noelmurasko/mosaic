@@ -471,7 +471,7 @@ struct substitution {
 // Create a deep copy of the tessera t.
 tessera copy(tessera t) {
   int L=t.drawtile.length;
-  tile[] dtcopy=new tile[];
+  tile[] dtcopy;
   for(tile dt : t.drawtile)
     dtcopy.push(copy(dt));
   // If supertile and prototile are the same, make only one copy
@@ -619,7 +619,7 @@ struct mosaic {
   // mosaic after k total iterations. Add m to this.n.
   void substitute(int n, void updatetesserae(tessera[], int)) {
     for(int k=0; k < n; ++k) {
-      tessera[] tesserae=new tessera[];
+      tessera[] tesserae;
       for(tessera t : this.tesserae)
         if(t.iterate)
           this.iterate(t, tesserae);
@@ -656,7 +656,7 @@ struct mosaic {
     for(int i=0; i < this.rules.length; ++i)
       this.rules[i].set_ruleindex(i);
 
-    tile[] supertiles=new tile[];
+    tile[] supertiles;
     for(substitution rule : rules)
       supertiles.push(rule.supertile);
 
@@ -743,12 +743,16 @@ struct mosaic {
   // addlayer(int n=1) adds n > 0 new layers to mosaic.
   void addlayer(int n=1) {
     assert(n >= 1, "Cannot add less than 1 layer.");
-    for(int i=0; i < n; ++i)
-      for(substitution rule : this.rules)
-        for(tessera t : rule.tesserae)
-          t.addlayer();
-    if(this.n == 0) this.tesserae[0].addlayer();
-      this.layers+=1;
+    for(int i=0; i < n; ++i) {
+      for(int j=0; j < this.rules.length; ++j) {
+        for(int k=0; k < this.rules[j].tesserae.length; ++k) {
+          this.rules[j].tesserae[k].addlayer();
+        }
+      }
+    }
+    if(this.n == 0)
+      tesserae[0].addlayer();
+    this.layers+=1;
   }
 
   // Return true if initial tile should be decorated
@@ -893,7 +897,7 @@ struct mosaic {
 // Used by the copy(mosaic) function.
 private tessera[] copy_mosaic_tesserae(tessera[] tesserae,
                                        substitution[] rules) {
-  tessera[] tesserae_copy=new tessera[];
+  tessera[] tesserae_copy;
   if(tesserae.length > 1) {
     for(tessera t : tesserae) {
       int i=t.ruleindex;
