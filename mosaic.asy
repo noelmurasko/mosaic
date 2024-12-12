@@ -471,7 +471,7 @@ struct substitution {
 // Create a deep copy of the tessera t.
 tessera copy(tessera t) {
   int L=t.drawtile.length;
-  tile[] dtcopy=new tile[L];
+  tile[] dtcopy=new tile[];
   for(tile dt : t.drawtile)
     dtcopy.push(copy(dt));
   // If supertile and prototile are the same, make only one copy
