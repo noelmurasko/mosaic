@@ -150,15 +150,15 @@ struct tile {
     return true;
   }
 
-  void addid(...string[] tag) {
+  void addtag(...string[] tag) {
     this.tag=stringunion(this.tag, tag);
   }
 
-  void deleteid(int i, int j=i) {
+  void deletetag(int i, int j=i) {
     this.tag.delete(i,j);
   }
 
-  void deleteid() {
+  void deletetag() {
     this.tag.delete();
   }
 }
@@ -382,15 +382,15 @@ struct tessera {
                      radialrb, layer);
   }
 
-  void addid(...string[] tag) {
+  void addtag(...string[] tag) {
     this.tag=stringunion(this.tag, tag);
   }
 
-  void deleteid(int i, int j=i) {
+  void deletetag(int i, int j=i) {
     this.tag.delete(i,j);
   }
 
-  void deleteid() {
+  void deletetag() {
     this.tag.delete();
   }
 }
