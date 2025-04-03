@@ -395,6 +395,50 @@ struct tessera {
   }
 }
 
+// Create a deep copy of the tessera t.
+tessera copy(tessera t) {
+  int L=t.drawtile.length;
+  tile[] dtcopy;
+  for(tile dt : t.drawtile)
+    dtcopy.push(copy(dt));
+  // If supertile and prototile are the same, make only one copy
+  if(t.supertile == t.prototile) {
+    tile super2=copy(t.supertile);
+    return tessera(t.transform, super2, super2, dtcopy, t.ruleindex,
+                   t.tessindex, t.iterindex, t.iterate ...t.tag);
+  } else
+    return tessera(t.transform, copy(t.supertile), copy(t.prototile), dtcopy,
+                   t.ruleindex, t.tessindex, t.iterindex, t.iterate
+                   ...copy(t.tag));
+}
+
+// Create a new tessera t2 from t1 with a shallow copy of the supertile,
+// prototile, and  drawtile.
+tessera duplicate(tessera t1) {
+  tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile,
+                     t1.ruleindex, t1.tessindex, t1.iterindex, t1.iterate
+                     ...copy(t1.tag));
+  return t2;
+}
+
+// Important: Mulitplying a t1 and t2 results in
+// tessera t3 with t3.transform=t1.transform*t2.transform.
+// The supertile, prototile, and drawtile of t3 are shallow
+// copies of t2.
+tessera operator *(tessera t1, tessera t2) {
+  tessera t3=duplicate(t2);
+  t3.transform=t1.transform*t2.transform;
+  return t3;
+}
+
+// Important: Mulitplying a tessera by a transform does not result
+// in a deep copy of the supertile, prototile, and drawtile.
+tessera operator *(transform T, tessera t1) {
+  tessera t2=duplicate(t1);
+  t2.transform=T*t2.transform;
+  return t2;
+}
+
 struct substitution {
   tile supertile;
   tessera[] tesserae;
@@ -468,31 +512,6 @@ struct substitution {
   }
 }
 
-// Create a deep copy of the tessera t.
-tessera copy(tessera t) {
-  int L=t.drawtile.length;
-  tile[] dtcopy;
-  for(tile dt : t.drawtile)
-    dtcopy.push(copy(dt));
-  // If supertile and prototile are the same, make only one copy
-  if(t.supertile == t.prototile) {
-    tile super2=copy(t.supertile);
-    return tessera(t.transform, super2, super2, dtcopy, t.ruleindex,
-                   t.tessindex, t.iterindex, t.iterate ...t.tag);
-  } else
-    return tessera(t.transform, copy(t.supertile), copy(t.prototile), dtcopy,
-                   t.ruleindex, t.tessindex, t.iterindex, t.iterate
-                   ...copy(t.tag));
-}
-
-// Create a new tessera t2 from t1 with a shallow copy of the supertile,
-// prototile, and  drawtile.
-tessera duplicate(tessera t1) {
-  tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile,
-                     t1.ruleindex, t1.tessindex, t1.iterindex, t1.iterate
-                     ...copy(t1.tag));
-  return t2;
-}
 
 // Create a new substitution s2 from s1 with a shallow copy of the tesserae.
 substitution duplicate(substitution s1) {
@@ -501,24 +520,6 @@ substitution duplicate(substitution s1) {
     s2.tesserae.push(duplicate(t));
   s2.inflation=s1.inflation;
   return s2;
-}
-
-// Important: Mulitplying a t1 and t2 results in
-// tessera t3 with t3.transform=t1.transform*t2.transform.
-// The supertile, prototile, and drawtile of t3 are shallow
-// copies of t2.
-tessera operator *(tessera t1, tessera t2) {
-  tessera t3=duplicate(t2);
-  t3.transform=t1.transform*t2.transform;
-  return t3;
-}
-
-// Important: Mulitplying a tessera by a transform does not result
-// in a deep copy of the supertile, prototile, and drawtile.
-tessera operator *(transform T, tessera t1) {
-  tessera t2=duplicate(t1);
-  t2.transform=T*t2.transform;
-  return t2;
 }
 
 private substitution[] rulecopy(substitution[] rules) {
