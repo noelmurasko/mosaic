@@ -24,7 +24,7 @@ pinSub.addtile(shift(2*Cos(varphi),2*Sin(varphi))*T, paleblue);  // different fr
 pinSub.addtile(T*shift(4,2)*rotate(-90), heavyred);
 
 // number of iterations
-int n=4;
+int n=1;
 mosaic M=mosaic(n,pinSub);
 
 // draw the patch
