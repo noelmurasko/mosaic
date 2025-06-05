@@ -22,7 +22,7 @@ inoRule.addtile(shift(1,0),ino);
 inoRule.addtile(shift(1,1),ino);
 inoRule.addtile(shift(3,0),dom);
 
-int n=4;
+int n=5;
 mosaic M=mosaic(n,domRule,inoRule);
 
-filldraw(M);
+draw(M);
