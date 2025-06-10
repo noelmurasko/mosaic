@@ -584,6 +584,36 @@ private substitution[] rulecopy(substitution[] rules) {
   return rules_copy;
 }
 
+// Copy a mosaic tessera to a new new mosaic with new rules.
+// Used by the copy(mosaic) function.
+private tessera[] copy_mosaic_tesserae(tessera[] tesserae,
+                                       substitution[] rules) {
+  tessera[] tesserae_copy;
+  if(tesserae.length > 1) {
+    for(tessera t : tesserae) {
+      int i=t.ruleindex;
+      int j=t.tessindex;
+
+      tessera t2=tessera(t.transform, rules[i].supertile,
+                         rules[i].tesserae[j].prototile,
+                         rules[i].tesserae[j].drawtile,
+                         rules[i].tesserae[j].ruleindex,
+                         rules[i].tesserae[j].tessindex,
+                         rules[i].tesserae[j].iterindex, t.iterate
+                         ...copy(rules[i].tesserae[j].tag));
+      tesserae_copy.push(t2);
+    }
+  } else {
+    tessera t=tesserae[0];
+    tessera t2=tessera(t.transform, rules[0].supertile,
+                         rules[0].supertile, new tile[] {rules[0].supertile},
+                         0, 0, 0, t.iterate ...copy(t.tag));
+    tesserae_copy.push(t2);
+  }
+  return tesserae_copy;
+}
+
+
 // mosaic | Substitution tiling created from substiution rules. Contains the
 // following attributes
 //
@@ -720,6 +750,17 @@ struct mosaic {
   // Typical initialization of mosaic without updatetessserae function.
   void operator init(int n=0 ...substitution[] rules) {
     this.initializer(n, new void (tessera[], int){}, rules);
+  }
+
+  // Initialization of mosaic by specifying its attributes
+  void operator init(int n, substitution[] rules, tessera[] tesserae, int layers, real inflation, int[] tilecount) {
+    this.n=n;
+    this.rules=rulecopy(rules);
+    this.tesserae=copy_mosaic_tesserae(tesserae, rules);
+    this.initialtile=this.rules[0].supertile;
+    this.layers=layers;
+    this.inflation=inflation;
+    this.tilecount=copy(tilecount);
   }
 
   // Assert that layer must be valid
@@ -892,49 +933,10 @@ struct mosaic {
   }
 }
 
-// Copy a mosaic tessera to a new new mosaic with new rules.
-// Used by the copy(mosaic) function.
-private tessera[] copy_mosaic_tesserae(tessera[] tesserae,
-                                       substitution[] rules) {
-  tessera[] tesserae_copy;
-  if(tesserae.length > 1) {
-    for(tessera t : tesserae) {
-      int i=t.ruleindex;
-      int j=t.tessindex;
-
-      tessera t2=tessera(t.transform, rules[i].supertile,
-                         rules[i].tesserae[j].prototile,
-                         rules[i].tesserae[j].drawtile,
-                         rules[i].tesserae[j].ruleindex,
-                         rules[i].tesserae[j].tessindex,
-                         rules[i].tesserae[j].iterindex, t.iterate
-                         ...copy(rules[i].tesserae[j].tag));
-      tesserae_copy.push(t2);
-    }
-  } else {
-    tessera t=tesserae[0];
-    tessera t2=tessera(t.transform, rules[0].supertile,
-                         rules[0].supertile, new tile[] {rules[0].supertile},
-                         0, 0, 0, t.iterate ...copy(t.tag));
-    tesserae_copy.push(t2);
-  }
-  return tesserae_copy;
-}
 
 // Create a deep copy of the mosaic M.
 mosaic copy(mosaic M) {
-  mosaic Mcopy;
-
-  Mcopy.n=M.n;
-  Mcopy.layers=M.layers;
-  Mcopy.inflation=M.inflation;
-  Mcopy.tilecount=M.tilecount;
-
-  Mcopy.rules=rulecopy(M.rules);
-  Mcopy.initialtile=Mcopy.rules[0].supertile;
-
-  Mcopy.tesserae=copy_mosaic_tesserae(M.tesserae, Mcopy.rules);
-
+  mosaic Mcopy=mosaic(M.n, M.rules, M.tesserae, M.layers, M.inflation, M.tilecount);
   return Mcopy;
 }
 
