@@ -753,14 +753,15 @@ struct mosaic {
   }
 
   // Initialization of mosaic by specifying its attributes
-  void operator init(int n, substitution[] rules, tessera[] tesserae, int layers, real inflation, int[] tilecount) {
-    this.n=n;
+  void operator init(substitution[] rules, tessera[] tesserae, int[] tilecount) {
     this.rules=rulecopy(rules);
+    checkRulesError(rules);
     this.tesserae=copy_mosaic_tesserae(tesserae, rules);
-    this.initialtile=this.rules[0].supertile;
-    this.layers=layers;
-    this.inflation=inflation;
     this.tilecount=copy(tilecount);
+    this.initialtile=this.rules[0].supertile;
+    this.inflation=this.rules[0].inflation;
+    this.layers=this.tesserae[0].layers;
+    this.n=this.tilecount.length-1;
   }
 
   // Assert that layer must be valid
@@ -936,7 +937,7 @@ struct mosaic {
 
 // Create a deep copy of the mosaic M.
 mosaic copy(mosaic M) {
-  mosaic Mcopy=mosaic(M.n, M.rules, M.tesserae, M.layers, M.inflation, M.tilecount);
+  mosaic Mcopy=mosaic(M.rules, M.tesserae, M.tilecount);
   return Mcopy;
 }
 
