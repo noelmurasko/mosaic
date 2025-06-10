@@ -439,6 +439,12 @@ tessera operator *(transform T, tessera t1) {
   return t2;
 }
 
+tessera operator *(tessera t1, transform T) {
+  tessera t2=duplicate(t1);
+  t2.transform=t2.transform*T;
+  return t2;
+}
+
 struct substitution {
   tile supertile;
   tessera[] tesserae;
@@ -610,8 +616,9 @@ struct mosaic {
   // Perform an iteration of a tessera t, and push the result onto the array
   // tesserae.
   private void iterate(tessera t, tessera[] tesserae) {
+    tessera rescaled_t=scale(inflation)*t*scale(1/inflation);
     for(tessera rule_t : rules[t.iterindex].tesserae)
-      tesserae.push((scale(inflation)*t)*(scale(1/inflation)*rule_t));
+      tesserae.push(rescaled_t*rule_t);
   }
 
   // Apply substituion rules in the mosaic n times times (for a total of
