@@ -611,7 +611,7 @@ struct mosaic {
   // tesserae.
   private void iterate(tessera t, tessera[] tesserae) {
     for(tessera rule_t : rules[t.iterindex].tesserae)
-      tesserae.push(scale(inflation)*t*rule_t);
+      tesserae.push((scale(inflation)*t)*(scale(1/inflation)*rule_t));
   }
 
   // Apply substituion rules in the mosaic n times times (for a total of
@@ -673,14 +673,6 @@ struct mosaic {
     }
   }
 
-  // Update each transform to deflate.
-  private void deflate_rules() {
-    transform D=scale(1/inflation);
-    for(substitution rule : this.rules)
-      for(tessera t : rule.tesserae)
-        t.transform=D*t.transform;
-  }
-
   // Intialize tesserae in mosaic with initialtile (n=0).
   private void intialize_tesserae(void updatetesserae(tessera[], int)) {
     this.tesserae.push(tessera(this.initialtile));
@@ -707,7 +699,6 @@ struct mosaic {
     this.initialtile=this.rules[0].supertile;
 
     this.set_index();
-    this.deflate_rules();
 
     this.intialize_tesserae(updatetesserae);
     this.substitute(n,updatetesserae);
