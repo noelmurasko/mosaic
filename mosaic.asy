@@ -446,10 +446,10 @@ tessera operator *(tessera t1, transform T) {
 }
 
 struct substitution {
-  tile supertile;
-  tessera[] tesserae;
-  real inflation;
-  string[] tag;
+  restricted tile supertile;
+  restricted tessera[] tesserae;
+  restricted real inflation;
+  restricted string[] tag;
 
   void operator init(explicit tile supertile ...string[] tag) {
     this.supertile=supertile;
@@ -521,10 +521,9 @@ struct substitution {
 
 // Create a new substitution s2 from s1 with a shallow copy of the tesserae.
 substitution duplicate(substitution s1) {
-  substitution s2=substitution(s1.supertile);
+  substitution s2=substitution(s1.supertile, s1.inflation);
   for(tessera t : s1.tesserae)
     s2.tesserae.push(duplicate(t));
-  s2.inflation=s1.inflation;
   return s2;
 }
 
