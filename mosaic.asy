@@ -635,13 +635,13 @@ private tessera[] copy_mosaic_tesserae(tessera[] tesserae,
 //
 // int[] tilecount; | int tilecount[k] is the number of tesserae in iteration k
 struct mosaic {
-  tessera[] tesserae;
-  tile initialtile;
-  int n;
-  substitution[] rules;
-  int layers=1;
-  real inflation;
-  int[] tilecount;
+  restricted tessera[] tesserae;
+  restricted tile initialtile;
+  restricted int n;
+  restricted substitution[] rules;
+  restricted int layers=1;
+  restricted real inflation;
+  restricted int[] tilecount;
 
   // Perform an iteration of a tessera t, and push the result onto the array
   // tesserae.
