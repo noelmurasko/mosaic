@@ -651,6 +651,13 @@ struct mosaic {
       tesserae.push(rescaled_t*rule_t);
   }
 
+  // Require that the drawtile array for every tessera has the same length
+  private void checkTesseraeError(tessera[] tesserae) {
+    int layers=tesserae[0].layers();
+    for(int i=1; i < tesserae.length; ++i)
+      assert(tesserae[i].layers() == layers, "Drawtiles of tesserae in mosaic have different lengths.");
+  }
+
   // Apply substituion rules in the mosaic n times times (for a total of
   // this.n+n subsitutions). After each iteration, call the function
   // updatetesserae(tesseare, k), where tesserae is an array of tessera in the
@@ -668,6 +675,7 @@ struct mosaic {
       this.tilecount.push(tesserae.length);
     }
     this.n+=n;
+    checkTesseraeError(this.tesserae);
   }
 
   // A version of subsitute without the updatetesserae function.
@@ -754,8 +762,10 @@ struct mosaic {
 
   // Initialization of mosaic by specifying its attributes
   void operator init(substitution[] rules, tessera[] tesserae, int[] tilecount) {
-    this.rules=rulecopy(rules);
     checkRulesError(rules);
+    checkTesseraeError(tesserae);
+
+    this.rules=rulecopy(rules);
     this.tesserae=copy_mosaic_tesserae(tesserae, rules);
     this.tilecount=copy(tilecount);
     this.initialtile=this.rules[0].supertile;
