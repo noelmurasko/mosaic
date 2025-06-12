@@ -21,4 +21,13 @@ sphinxRule.addtile(shift(6)*rotate(180)*reflect(0,1),lightblue);
 // draw patch
 int n=5;
 mosaic M=mosaic(n,sphinxRule);
-filldraw(M);
+draw(M);
+
+n=4;
+M=mosaic(n,sphinxRule);
+draw(scale(inflation)*M, p=black+3);
+
+
+n=3;
+M=mosaic(n,sphinxRule);
+draw(scale(inflation^2)*M, p=black+6);

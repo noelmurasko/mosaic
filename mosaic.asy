@@ -220,12 +220,15 @@ struct tessera {
   tile prototile;
   tile[] drawtile={};
 
-  restricted int layers;
   string[] tag;
   int ruleindex;
   int tessindex;
   int iterindex;
   bool iterate;
+
+  restricted int layers() {
+    return this.drawtile.length;
+  }
 
   private void initializer(transform transform, tile supertile, tile prototile,
                            tile drawtile, pen fillpen, pen drawpen,
@@ -244,7 +247,6 @@ struct tessera {
                        axialpenb, axialb, radialpena, radiala, radialra,
                        radialpenb, radialb, radialrb));
 
-    this.layers=1;
     this.tag=stringunion(this.prototile.tag, tag);
     this.ruleindex=-1;
     this.tessindex=-1;
@@ -315,7 +317,6 @@ struct tessera {
     this.ruleindex=ruleindex;
     this.tessindex=tessindex;
     this.iterindex=iterindex;
-    this.layers=drawtile.length;
 
     this.tag=stringunion(this.prototile.tag,tag);
     this.iterate=iterate;
@@ -323,7 +324,6 @@ struct tessera {
 
   void addlayer() {
     this.drawtile.push(tile());
-    this.layers+=1;
   }
 
   void updatelayer(tile drawtile, int layer) {
@@ -628,8 +628,6 @@ private tessera[] copy_mosaic_tesserae(tessera[] tesserae,
 // tessera[] tesserae; | Collection of tessera that define the substitution
 // rules
 //
-// int layers=1; | Number of drawing layers in mosaic
-//
 // real inflation; | inflation factor for mosaic
 //
 // int[] tilecount; | int tilecount[k] is the number of tesserae in iteration k
@@ -638,9 +636,12 @@ struct mosaic {
   restricted tile initialtile;
   restricted int n;
   restricted substitution[] rules;
-  restricted int layers=1;
   restricted real inflation;
   restricted int[] tilecount;
+
+  restricted int layers() {
+    return this.tesserae[0].layers();
+  }
 
   // Perform an iteration of a tessera t, and push the result onto the array
   // tesserae.
@@ -759,14 +760,13 @@ struct mosaic {
     this.tilecount=copy(tilecount);
     this.initialtile=this.rules[0].supertile;
     this.inflation=this.rules[0].inflation;
-    this.layers=this.tesserae[0].layers;
     this.n=this.tilecount.length-1;
   }
 
   // Assert that layer must be valid
   private void checkLayerError(int layer) {
-    assert(0 <= layer && layer < layers, "Cannot access layer "+string(layer)+
-           " in mosaic with "+string(layers)+" layers.");
+    assert(0 <= layer && layer < layers(), "Cannot access layer "+string(layer)+
+           " in mosaic with "+string(layers())+" layers.");
   }
 
   // Return transformed drawtiles of layer
@@ -792,7 +792,6 @@ struct mosaic {
     }
     if(this.n == 0)
       tesserae[0].addlayer();
-    this.layers+=1;
   }
 
   // Return true if initial tile should be decorated
@@ -835,7 +834,7 @@ struct mosaic {
   // Update with tile, fillpen, and drawpen
   // Update top layer
   void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
-                   pen drawpen=nullpen, int layer=this.layers-1
+                   pen drawpen=nullpen, int layer=this.layers()-1
                    ...string[] tag) {
     checkLayerError(layer);
 
@@ -856,7 +855,7 @@ struct mosaic {
 
   // Update with axial shading
   void updatelayer(tile drawtile=nulltile, pen axialpena=nullpen, pair axiala,
-                   pen axialpenb=nullpen, pair axialb, int layer=this.layers-1
+                   pen axialpenb=nullpen, pair axialb, int layer=this.layers()-1
                    ...string[] tag) {
     checkLayerError(layer);
 
@@ -878,7 +877,7 @@ struct mosaic {
   // Update with radial shading
   void updatelayer(tile drawtile=nulltile, pen radialpena=nullpen, pair radiala,
                    real radialra, pen radialpenb=nullpen, pair radialb,
-                   real radialrb, int layer=this.layers-1 ...string[] tag) {
+                   real radialrb, int layer=this.layers()-1 ...string[] tag) {
     checkLayerError(layer);
 
     if(decorateinitialtile(tag))
@@ -904,7 +903,7 @@ struct mosaic {
                    pen axialpenb=nullpen, pair axialb, pen radialpena=nullpen,
                    pair radiala, real radialra, pen radialpenb=nullpen,
                    pair radialb, real radialrb, pen fillpen=nullpen,
-                   pen drawpen=nullpen, int layer=this.layers-1
+                   pen drawpen=nullpen, int layer=this.layers()-1
                    ...string[] tag) {
     checkLayerError(layer);
 
@@ -1114,30 +1113,30 @@ void radialshade(picture pic=currentpicture, mosaic M, int layer,
 // Draw all layers of mosaic. Layers are drawn in increasing order.
 void draw(picture pic=currentpicture, mosaic M, pen p=currentpen,
           bool scalelinewidth=true, int nscale=M.n) {
-  for(int layer=0; layer < M.layers; ++layer)
+  for(int layer=0; layer < M.layers(); ++layer)
     draw(pic,M,layer,p,scalelinewidth,nscale);
 }
 
 void fill(picture pic=currentpicture, mosaic M, pen p=invisible) {
-  for(int layer=0; layer < M.layers; ++layer)
+  for(int layer=0; layer < M.layers(); ++layer)
     fill(pic,M,layer,p);
 }
 
 void filldraw(picture pic=currentpicture, mosaic M, pen fillpen=invisible,
               pen drawpen=currentpen, bool scalelinewidth=true,
               int nscale=M.n) {
-  for(int layer=0; layer < M.layers; ++layer)
+  for(int layer=0; layer < M.layers(); ++layer)
     filldraw(pic,M,layer,fillpen,drawpen,scalelinewidth,nscale);
 }
 
 void axialshade(picture pic=currentpicture, mosaic M, bool stroke=false,
                 bool extenda=true, bool extendb=true) {
-  for(int layer=0; layer < M.layers; ++layer)
+  for(int layer=0; layer < M.layers(); ++layer)
     axialshade(pic,M,layer,stroke,extenda,extendb);
 }
 
 void radialshade(picture pic=currentpicture, mosaic M, bool stroke=false,
                  bool extenda=true, bool extendb=true) {
-  for(int layer=0; layer < M.layers; ++layer)
+  for(int layer=0; layer < M.layers(); ++layer)
     radialshade(pic,M,layer,stroke,extenda,extendb);
 }
