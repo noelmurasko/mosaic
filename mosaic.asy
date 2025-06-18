@@ -223,7 +223,7 @@ struct tessera {
   restricted string[] tag;
   int ruleindex;
   int tessindex;
-  int iterindex;  
+  int iterindex;
   bool iterate;
 
   restricted int layers() {
@@ -789,7 +789,7 @@ struct mosaic {
 
   // addlayer(int n=1) adds n > 0 new layers to mosaic.
   void addlayer(int n=1) {
-    assert(n >= 1, "Cannot add less than 1 layer.");
+    assert(n >= 1, "Cannot add fewer than 1 layer.");
     for(int i=0; i < n; ++i) {
       for(int j=0; j < this.rules.length; ++j) {
         for(int k=0; k < this.rules[j].tesserae.length; ++k) {
@@ -838,8 +838,8 @@ struct mosaic {
     return indices;
   }
 
-  // Update with tile, fillpen, and drawpen
-  // Update top layer
+  // Update layer with tile, fillpen, and drawpen
+  // By default, the top layer is updated
   void updatelayer(tile drawtile=nulltile, pen fillpen=nullpen,
                    pen drawpen=nullpen, int layer=this.layers()-1
                    ...string[] tag) {
@@ -872,7 +872,7 @@ struct mosaic {
 
     int[][] indices=decorateindices(tag);
     for(int[] index : indices)
-      this.rules[index[0]].tesserae[index[1]].updatelayer(drawtile, axialpena,
+    this.rules[index[0]].tesserae[index[1]].updatelayer(drawtile, axialpena,
                                        axiala, axialpenb, axialb, layer);
   }
 
