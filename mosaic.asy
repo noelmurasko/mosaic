@@ -220,10 +220,10 @@ struct tessera {
   tile prototile;
   tile[] drawtile={};
 
-  string[] tag;
+  restricted string[] tag;
   int ruleindex;
   int tessindex;
-  int iterindex;
+  int iterindex;  
   bool iterate;
 
   restricted int layers() {
