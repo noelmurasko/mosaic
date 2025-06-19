@@ -864,6 +864,20 @@ struct mosaic {
     }
   }
 
+  private void set_layers() {
+    int[] layers;
+    for(substitution rule : this.rules)
+      layers.push(rule.layers());
+    int maxlayers=max(layers);
+    int l;
+    for(substitution rule : this.rules) {
+      l=rule.layers();
+      if(l < maxlayers) {
+        rule.addlayer(maxlayers-l);
+      }
+    }
+  }
+
   // Intialize tesserae in mosaic with initialtile (n=0).
   private void intialize_tesserae(void updatetesserae(tessera[], int)) {
     this.tesserae.push(tessera(this.initialtile));
@@ -890,6 +904,7 @@ struct mosaic {
     this.initialtile=this.rules[0].supertile;
 
     this.set_index();
+    this.set_layers();
 
     this.intialize_tesserae(updatetesserae);
     this.substitute(n,updatetesserae);
