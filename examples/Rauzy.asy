@@ -21,7 +21,7 @@ X2rule.addtile(b*A,X1);
 substitution X3rule=substitution(X3);
 X3rule.addtile(b*A,X2);
 
-int n=4;
+int n=14;
 mosaic m1=mosaic(n,X1rule,X2rule,X3rule);
 mosaic m2=mosaic(n,X2rule,X1rule,X3rule);
 mosaic m3=mosaic(n,X3rule,X2rule,X1rule);
