@@ -929,7 +929,7 @@ struct mosaic {
     this.tesserae=copy_mosaic_tesserae(M.tesserae,this.rules);
     this.initialtile=this.rules[0].supertile;
     this.inflation=this.rules[0].inflation;
-    this.tilecount=copy(tilecount);
+    this.tilecount=copy(M.tilecount);
     this.n=this.tilecount.length-1;
   }
 
