@@ -3,33 +3,38 @@ size(300);
 
 import mosaic;
 
-tile X1=tile(polygon(4), fillpen=black);
-tile X2=copy(X1);
-tile X3=copy(X1);
+tile W1=tile(polygon(8));
+tile W2=copy(W1);
+tile W3=copy(W1);
 
-transform A=scale(0.419)+scale(0.606)*rotate(90);
-transform b=shift(1,0);
+real s3=sqrt(3);
+real s33=sqrt(33);
+real cp19=(19+3*s33)^(1/3);
+real cm19=(19-3*s33)^(1/3);
+pair alpha=((1/3)-(1/6)*(cm19+cp19),(-s3/6)*(cm19-cp19));
+transform Alpha=scale(abs(alpha))*rotate(degrees(alpha));
+transform AlphaShift=shift(alpha)*Alpha;
 
-substitution X1rule=substitution(X1);
-X1rule.addtile(A,X1);
-X1rule.addtile(A,X2);
-X1rule.addtile(A,X3);
+substitution W1rule=substitution(W1);
+W1rule.addtile(Alpha,W1);
+W1rule.addtile(AlphaShift,W2);
 
-substitution X2rule=substitution(X2);
-X2rule.addtile(b*A,X1);
+substitution W2rule=substitution(W2);
+W2rule.addtile(Alpha,W1);
+W2rule.addtile(AlphaShift,W3);
 
-substitution X3rule=substitution(X3);
-X3rule.addtile(b*A,X2);
+substitution W3rule=substitution(W3);
+W3rule.addtile(Alpha,W1);
 
 int n=14;
-mosaic m1=mosaic(n,X1rule,X2rule,X3rule);
-mosaic m2=mosaic(n,X2rule,X1rule,X3rule);
-mosaic m3=mosaic(n,X3rule,X2rule,X1rule);
+mosaic M1=mosaic(n,W1rule,W2rule,W3rule);
+mosaic M2=mosaic(n,W2rule,W1rule,W3rule);
+mosaic M3=mosaic(n,W3rule,W2rule,W1rule);
 
-m1.updatelayer(fillpen=green);
-m2.updatelayer(fillpen=blue);
-m3.updatelayer(fillpen=red);
+transform hshift=shift(2);
+filldraw(Alpha*M1, blue, blue);
+filldraw(AlphaShift*M2, mediumred, mediumred);
+filldraw(hshift*Alpha*M1, blue, blue);
+filldraw(hshift*AlphaShift*M3, lightolive, lightolive);
+filldraw(hshift^2*Alpha*M1, blue, blue);
 
-filldraw(A*m1);
-filldraw(A*m2);
-filldraw(A*m3);
