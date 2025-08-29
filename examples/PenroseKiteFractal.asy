@@ -41,5 +41,3 @@ fill(shift(-h)*t2*kiteM, p=blue);
 fill(shift(-h)*t3*kiteM, p=lightolive);
 fill(shift(h)*t4*dartM, p=red);
 fill(shift(h)*t5*kiteM, p=lightolive);
-
-

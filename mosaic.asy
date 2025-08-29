@@ -582,7 +582,7 @@ struct substitution {
                      drawpen, layer=0 ...tag);
   }
 
-  void operator init(explicit tile supertile ...string[] tag) {
+  void operator init(explicit tile supertile, ...string[] tag) {
     this.supertile=supertile;
     this.inflation=globalinflation();
     assert(this.inflation > 0, "Cannot set inflation to "+string(this.inflation)
@@ -590,9 +590,12 @@ struct substitution {
     this.tag=tag;
   }
 
-  void operator init(explicit tile supertile, real inflation) {
+  void operator init(explicit tile supertile, real inflation ...string[] tag) {
     this.supertile=supertile;
     this.inflation=inflation;
+    assert(this.inflation > 0, "Cannot set inflation to "+string(this.inflation)
+           +". Inflation factor must be a strictly positive number.");
+    this.tag=tag;
   }
 
   void addtile(transform transform=identity, explicit tile prototile=nulltile,
@@ -669,7 +672,7 @@ struct substitution {
 
 // Create a new substitution s2 from s1 with a shallow copy of the tesserae.
 substitution duplicate(substitution s1) {
-  substitution s2=substitution(s1.supertile, s1.inflation);
+  substitution s2=substitution(s1.supertile, s1.inflation ...copy(s1.tag));
   for(tessera t : s1.tesserae)
     s2.tesserae.push(duplicate(t));
   return s2;
