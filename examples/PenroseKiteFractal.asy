@@ -31,7 +31,7 @@ transform t5=scale(1/tau);
 dartRule.addtile(t4,dart);
 dartRule.addtile(t5,kite);
 
-int n=10;
+int n=4;
 mosaic kiteM=mosaic(n,kiteRule,dartRule);  // kite fractal
 mosaic dartM=mosaic(n,dartRule,kiteRule);  // dart fractal
 

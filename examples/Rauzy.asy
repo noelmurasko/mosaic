@@ -26,7 +26,7 @@ W2rule.addtile(AlphaShift,W1);
 substitution W3rule=substitution(W3);
 W3rule.addtile(AlphaShift,W2);
 
-int n=16;
+int n=10;
 mosaic M1=mosaic(n,W1rule,W2rule,W3rule);
 mosaic M2=mosaic(n,W2rule,W1rule,W3rule);
 mosaic M3=mosaic(n,W3rule,W2rule,W1rule);
