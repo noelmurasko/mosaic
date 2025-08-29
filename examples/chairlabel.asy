@@ -4,7 +4,7 @@ size(400);
 import mosaic;
 
 // inflation factor
-inflation=2;
+currentinflation=2;
 
 // prototile
 Label L=scale(0.2)*Label("L",(0.8,1));

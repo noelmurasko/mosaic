@@ -3,7 +3,7 @@ size(300);
 
 import mosaic;
 
-inflation=2;
+currentinflation=2;
 
 // prototiles
 tile chair=tile((0,0)--(2,0)--(2,2)--(1,2)--(1,1)--(0,1)--cycle,paleyellow);

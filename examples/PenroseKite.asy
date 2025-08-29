@@ -4,7 +4,7 @@ size(300);
 import mosaic;
 
 real tau=(1+sqrt(5))/2;// inflation factor
-inflation=tau;
+currentinflation=tau;
 
 real a=Sin(18), b=Cos(18), c=Tan(54);
 

@@ -2,7 +2,7 @@ settings.outformat="pdf";
 size(300);
 
 import mosaic;
-inflation=2;
+currentinflation=2;
 
 tile dom=tile(box((0,0),(1,2)),brown);
 tile ino=tile(box((0,0),(2,1)),paleyellow);

@@ -3,8 +3,7 @@
 // Authors: Noel Murasko and Emily Rose Korfanty
 
 // Global inflation factor
-real inflation=1;
-private real globalinflation() {return inflation;}
+real currentinflation=1;
 
 // Default pen for drawing outlines of substitution.
 pen boundarypen=linetype(new real[] {4,2})+1.5;
@@ -582,15 +581,7 @@ struct substitution {
                      drawpen, layer=0 ...tag);
   }
 
-  void operator init(explicit tile supertile, ...string[] tag) {
-    this.supertile=supertile;
-    this.inflation=globalinflation();
-    assert(this.inflation > 0, "Cannot set inflation to "+string(this.inflation)
-           +". Inflation factor must be a strictly positive number.");
-    this.tag=tag;
-  }
-
-  void operator init(explicit tile supertile, real inflation ...string[] tag) {
+  void operator init(explicit tile supertile, real inflation=currentinflation ...string[] tag) {
     this.supertile=supertile;
     this.inflation=inflation;
     assert(this.inflation > 0, "Cannot set inflation to "+string(this.inflation)

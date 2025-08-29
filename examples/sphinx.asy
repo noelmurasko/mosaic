@@ -4,7 +4,7 @@ size(300);
 import mosaic;
 
 // inflation factor
-inflation=2;
+currentinflation=2;
 
 // prototile
 real h=sqrt(3)/2;
@@ -25,9 +25,9 @@ draw(M);
 
 n=4;
 M=mosaic(n,sphinxRule);
-draw(scale(inflation)*M, p=black+3);
+draw(scale(2)*M, p=black+3);
 
 
 n=3;
 M=mosaic(n,sphinxRule);
-draw(scale(inflation^2)*M, p=black+6);
+draw(scale(4)*M, p=black+6);

@@ -3,7 +3,8 @@ size(300);
 
 import mosaic;
 
-inflation=(1+sqrt(5))/2; // inflation factor
+real goldenratio=(1+sqrt(5))/2;
+currentinflation=goldenratio; // inflation factor
 
 real a=Sin(18), b=Cos(18), c=Sin(36), d=Cos(36);
 
@@ -13,7 +14,7 @@ pair r2l=(-b,a), r2m=(0,2*a), r2r=(b,a);
 tile rhomb1=tile((0,0)--r1r--r1m--r1l--cycle,lightgray,"rhomb1");
 tile rhomb2=tile((0,0)--r2r--r2m--r2l--cycle,mediumgray,"rhomb2");
 
-a*=inflation; b*=inflation; c*=inflation; d*=inflation;
+a*=goldenratio; b*=goldenratio; c*=goldenratio; d*=goldenratio;
 
 substitution rhomb1Rule=substitution(rhomb1);  // rhomb1 substitution rule
 

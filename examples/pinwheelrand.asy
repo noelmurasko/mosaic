@@ -8,7 +8,7 @@ tile tria=(0,0)--(2,0)--(2,1)--cycle;
 tile trip=(0,0)--(2,0)--(2,1)--cycle;
 
 // inflation factor
-inflation=sqrt(5);
+currentinflation=sqrt(5);
 
 transform Ta=reflect((0,0),(0,1))*rotate(90+aTan(2));
 real varphi=aTan(1/2);

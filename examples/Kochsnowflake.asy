@@ -4,7 +4,7 @@ size(300);
 import mosaic;
 
 // inflation factor
-inflation=1;
+currentinflation=1;
 
 // prototile
 tile tri=tile(polygon(3),black);

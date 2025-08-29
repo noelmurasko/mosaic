@@ -4,7 +4,7 @@ size(300);
 import mosaic;
 
 // inflation factor
-inflation=2;
+currentinflation=2;
 
 // prototile
 tile bent=(0,1/3)--(2/3,1/3)--(2/3,0);

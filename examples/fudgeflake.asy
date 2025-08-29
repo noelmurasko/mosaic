@@ -3,7 +3,7 @@ size(300);
 
 import mosaic;
 
-inflation=sqrt(3);
+currentinflation=sqrt(3);
 transform R30=rotate(30);
 
 tile hexagon=tile(R30*polygon(6),heavygray,white);

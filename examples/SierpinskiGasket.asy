@@ -3,7 +3,7 @@ size(300);
 
 import mosaic;
 
-inflation=2;
+currentinflation=2;
 // starting set
 tile triangle=tile((0,0)--(1,sqrt(3))--(2,0)--cycle,black);
 

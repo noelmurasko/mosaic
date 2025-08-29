@@ -2,7 +2,7 @@ settings.outformat="pdf";
 size(300);
 import mosaic;
 
-inflation=2;
+currentinflation=2;
 
 // prototile
 tile l1=tile((0,0)--(1,1));

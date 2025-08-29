@@ -4,7 +4,7 @@ size(300);
 import mosaic;
 
 // inflation factor
-inflation=2;
+currentinflation=2;
 
 // prototile
 tile chair=tile((0,0)--(0,2)--(1,2)--(1,1)--(2,1)--(2,0)--cycle,white, (0,0), grey,(1,1));

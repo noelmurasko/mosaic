@@ -3,7 +3,7 @@ size(300);
 
 import mosaic;
 
-inflation=3;
+currentinflation=3;
 
 // prototile
 tile s1=tile(box((0,0),(1,1)),paleyellow);

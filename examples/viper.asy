@@ -8,7 +8,7 @@ real h=sqrt(15)/2;
 tile tri=(0,0)--(1,0)--(1/2,h)--cycle;
 
 // inflation factor
-inflation=3;
+currentinflation=3;
 
 // number of iterations
 int n=4;

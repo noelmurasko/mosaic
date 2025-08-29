@@ -7,7 +7,7 @@ import mosaic;
 tile tri=(0,0)--(1,sqrt(3))--(2,0)--cycle;
 
 // inflation factor
-inflation=2;
+currentinflation=2;
 
 // number of iterations
 int n=4;

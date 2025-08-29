@@ -7,7 +7,7 @@ real sqrt2=sqrt(2);
 real sr=1+sqrt2; // silver ratio
 transform R45=rotate(45);
 
-inflation=sr;  // inflation factor
+currentinflation=sr;  // inflation factor
 
 // prototiles
 tile rhombus=tile((0,0)--(-1,1)--(-1,sr)--(0,sqrt2)--cycle,deepblue);
