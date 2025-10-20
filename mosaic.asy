@@ -782,7 +782,7 @@ struct mosaic {
   restricted int[] tilecount;
 
   restricted int layers() {
-    return this.tesserae[0].layers();
+    return this.tesserae.length > 0 ? this.tesserae[0].layers() : 0;
   }
 
   // Perform an iteration of a tessera t, and push the result onto the array
@@ -795,10 +795,12 @@ struct mosaic {
 
   // Require that the drawtile array for every tessera has the same length
   private void checkTesseraeError(tessera[] tesserae) {
-    int layers=tesserae[0].layers();
-    for(int i=1; i < tesserae.length; ++i)
-      assert(tesserae[i].layers() == layers,
-        "Drawtiles of tesserae in mosaic have different lengths.");
+    if(tesserae.length > 0) {
+      int layers=tesserae[0].layers();
+      for(int i=1; i < tesserae.length; ++i) 
+        assert(tesserae[i].layers() == layers,
+          "Drawtiles of tesserae in mosaic have different lengths.");
+    }
   }
 
   // Apply substituion rules in the mosaic n times times (for a total of
