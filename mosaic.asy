@@ -859,6 +859,9 @@ struct mosaic {
   // Intialize tesserae in mosaic with initialtile (n=0).
   private void intialize_tesserae(void updatetesserae(tessera[], int)) {
     this.tesserae.push(tessera(this.initialtile));
+    int layers=1;
+    for(substitution rule : rules) layers=max(layers,rule.layers());
+    if(layers > 1) this.tesserae[0].addlayer(layers-1);
     this.tesserae[0].iterindex=0;
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);

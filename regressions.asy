@@ -145,3 +145,23 @@ import mosaic;
   for(tessera t : shared.tesserae) assert(t.layers() == 3);
   for(tessera t : shared.rules[0].tesserae) assert(t.layers() == 3);
 }
+
+// The initial tile has the normalized rule layer count before its callback.
+{
+  tile a=unitsquare;
+  substitution s=substitution(a);
+  s.addtile();
+  s.addlayer();
+  void checkInitial(tessera[] ts,int k) {
+    if(k == 0) assert(ts[0].layers() == 2);
+  }
+  mosaic m=mosaic(0,checkInitial,s);
+  assert(m.layers() == m.rules[0].layers());
+  m.updatelayer(fillpen=red,layer=1);
+  assert(m.tesserae[0].drawtile[1].fillpen == red);
+  mosaic c=copy(m);
+  assert(c.layers() == 2);
+  assert(c.tesserae[0].drawtile[1].fillpen == red);
+  m.substitute(1);
+  assert(m.layers() == 2);
+}
