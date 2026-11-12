@@ -716,7 +716,8 @@ private struct tilecopier {
 private substitution[] rulecopy(substitution[] rules, tilecopier copies) {
   substitution[] result;
   for(substitution rule : rules) {
-    substitution rulecopy=substitution(copies.get(rule.supertile),rule.inflation);
+    substitution rulecopy=substitution(copies.get(rule.supertile),rule.inflation
+                                       ...copy(rule.tag));
     for(tessera t : rule.tesserae)
       rulecopy.tesserae.push(copies.get(t));
     result.push(rulecopy);

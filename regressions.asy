@@ -180,3 +180,20 @@ import mosaic;
   c.addtag("copy-only");
   assert(t.tag.length == 1);
 }
+
+// Rule tags survive mosaic construction and copying and reach future tiles.
+{
+  tile a=unitsquare;
+  substitution s=substitution(a,"group");
+  s.addtile();
+  s.tesserae[0].deletetag();
+  mosaic m=mosaic(1,s);
+  assert(m.rules[0].tag.length == 1);
+  assert(m.rules[0].tag[0] == "group");
+  assert(m.tesserae[0].tag.length == 0);
+  mosaic c=copy(m);
+  c.rules[0].addtile();
+  assert(c.rules[0].tesserae[1].tag[0] == "group");
+  assert(c.rules[0].tesserae[0].tag.length == 0);
+  assert(m.rules[0].tesserae.length == 1);
+}
