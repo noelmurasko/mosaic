@@ -730,8 +730,8 @@ private substitution[] rulecopy(substitution[] rules) {
 private tessera[] copy_mosaic_tesserae(tessera[] tesserae,
                                        substitution[] rules) {
   tessera[] tesserae_copy;
-  if(tesserae.length > 1) {
-    for(tessera t : tesserae) {
+  for(tessera t : tesserae) {
+    if(t.ruleindex >= 0) {
       int i=t.ruleindex;
       int j=t.tessindex;
 
@@ -743,13 +743,12 @@ private tessera[] copy_mosaic_tesserae(tessera[] tesserae,
                          rules[i].tesserae[j].iterindex, t.iterate
                          ...copy(rules[i].tesserae[j].tag));
       tesserae_copy.push(t2);
+    } else {
+      tessera t2=copy(t);
+      if(t.prototile == t.supertile) t2.prototile=rules[0].supertile;
+      t2.supertile=rules[0].supertile;
+      tesserae_copy.push(t2);
     }
-  } else {
-    tessera t=tesserae[0];
-    tessera t2=tessera(t.transform, rules[0].supertile,
-                         rules[0].supertile, new tile[] {rules[0].supertile},
-                         0, 0, 0, t.iterate ...copy(t.tag));
-    tesserae_copy.push(t2);
   }
   return tesserae_copy;
 }
@@ -927,7 +926,7 @@ struct mosaic {
     this.initialtile=this.rules[0].supertile;
     this.inflation=this.rules[0].inflation;
     this.tilecount=copy(M.tilecount);
-    this.n=this.tilecount.length-1;
+    this.n=M.n;
   }
 
   // Assert that layer must be valid
