@@ -100,3 +100,20 @@ import mosaic;
   }
   assert(mosaic(2,freezeB,sa,sb).tesserae.length == 1);
 }
+
+// Radial shading follows similarity transforms, including reflections.
+{
+  tile shaded=tile(unitsquare,red,(0,0),1,blue,(1,1),2);
+  tile enlarged=shift(2,4)*rotate(30)*scale(-3)*shaded;
+  assert(abs(enlarged.radialra-3) < sqrtEpsilon);
+  assert(abs(enlarged.radialrb-6) < sqrtEpsilon);
+  tile reflected=reflect((0,0),(0,1))*enlarged;
+  assert(abs(reflected.radialrb-6) < sqrtEpsilon);
+  tile unchanged=shift(5,8)*shaded;
+  assert(unchanged.radialra == 1 && unchanged.radialrb == 2);
+  if(find(settings.user,"radial-affine") == 0) {
+    // Must fail: circular radii cannot represent an elliptical gradient.
+    tile unsupported=xscale(2)*shaded;
+    abort("Expected rejection of nonuniform radial shading.");
+  }
+}

@@ -191,6 +191,15 @@ tile operator *(transform T, tile t1) {
   t2.axialb=T*t1.axialb;
   t2.radiala=T*t1.radiala;
   t2.radialb=T*t1.radialb;
+  if(t1.radialra != 0 || t1.radialrb != 0) {
+    pair u=(T.xx,T.yx), v=(T.xy,T.yy);
+    real s=length(u);
+    assert(abs(s-length(v)) <= sqrtEpsilon*max(s,length(v)) &&
+           abs(dot(u,v)) <= sqrtEpsilon*s*length(v),
+           "Radial shading requires uniform scaling without shear.");
+    t2.radialra=s*t1.radialra;
+    t2.radialrb=s*t1.radialrb;
+  }
   return t2;
 }
 
