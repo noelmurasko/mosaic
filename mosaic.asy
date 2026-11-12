@@ -408,27 +408,26 @@ struct tessera {
 
 // Create a deep copy of the tessera t.
 tessera copy(tessera t) {
-  int L=t.drawtile.length;
   tile[] dtcopy;
   for(tile dt : t.drawtile)
     dtcopy.push(copy(dt));
   // If supertile and prototile are the same, make only one copy
-  if(t.supertile == t.prototile) {
-    tile super2=copy(t.supertile);
-    return tessera(t.transform, super2, super2, dtcopy, t.ruleindex,
-                   t.tessindex, t.iterindex, t.iterate ...t.tag);
-  } else
-    return tessera(t.transform, copy(t.supertile), copy(t.prototile), dtcopy,
-                   t.ruleindex, t.tessindex, t.iterindex, t.iterate
-                   ...copy(t.tag));
+  tile super2=copy(t.supertile);
+  tile proto2=t.supertile == t.prototile ? super2 : copy(t.prototile);
+  tessera result=tessera(t.transform, super2, proto2, dtcopy, t.ruleindex,
+                         t.tessindex, t.iterindex, t.iterate);
+  result.deletetag();
+  result.addtag(...t.tag);
+  return result;
 }
 
 // Create a new tessera t2 from t1 with a shallow copy of the supertile,
 // prototile, and  drawtile.
 tessera duplicate(tessera t1) {
   tessera t2=tessera(t1.transform, t1.supertile, t1.prototile, t1.drawtile,
-                     t1.ruleindex, t1.tessindex, t1.iterindex, t1.iterate
-                     ...copy(t1.tag));
+                     t1.ruleindex, t1.tessindex, t1.iterindex, t1.iterate);
+  t2.deletetag();
+  t2.addtag(...t1.tag);
   return t2;
 }
 

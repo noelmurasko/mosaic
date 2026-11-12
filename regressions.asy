@@ -165,3 +165,18 @@ import mosaic;
   m.substitute(1);
   assert(m.layers() == 2);
 }
+
+// Copies and transforms preserve deleted tags instead of inheriting them again.
+{
+  tile a=tile(unitsquare,"base");
+  tessera t=tessera(a);
+  t.deletetag();
+  assert(copy(t).tag.length == 0);
+  assert(duplicate(t).tag.length == 0);
+  assert((shift(1,0)*t).tag.length == 0);
+  t.addtag("custom");
+  tessera c=copy(t);
+  assert(c.tag.length == 1 && c.tag[0] == "custom");
+  c.addtag("copy-only");
+  assert(t.tag.length == 1);
+}
