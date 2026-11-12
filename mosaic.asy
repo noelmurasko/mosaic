@@ -933,15 +933,28 @@ struct mosaic {
 
   // addlayer(int n=1) adds n > 0 new layers to mosaic.
   void addlayer(int n=1) {
+    assert(n >= 1, "Cannot add fewer than 1 layer.");
+    tessera[] all=copy(this.tesserae);
     for(substitution rule : this.rules)
-        rule.addlayer(n);
-    if(this.n == 0)
-      tesserae[0].addlayer(n);
+      all=concat(all,rule.tesserae);
+    tile[][] updated;
+    for(tessera t : all) {
+      bool seen=false;
+      for(tile[] drawtile : updated)
+        if(alias(t.drawtile,drawtile)) {
+          seen=true;
+          break;
+        }
+      if(!seen) {
+        t.addlayer(n);
+        updated.push(t.drawtile);
+      }
+    }
   }
 
   // Return true if initial tile should be decorated
   private bool decorateinitialtile(string[] tag) {
-    if(n != 0) return false;
+    if(tesserae.length == 0 || tesserae[0].ruleindex >= 0) return false;
     if(tag.length == 0) return true;
     for(string s : tag)
       for(string initial_s : tesserae[0].tag)

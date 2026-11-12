@@ -117,3 +117,31 @@ import mosaic;
     abort("Expected rejection of nonuniform radial shading.");
   }
 }
+
+// Add each layer once per drawing array, including a frozen initial tile.
+{
+  tile a=unitsquare;
+  substitution s=substitution(a);
+  s.addtile();
+  s.addtile(shift(1,0));
+  void freeze(tessera[] ts,int k) {
+    if(k == 0) ts[0].iterate=false;
+  }
+  mosaic frozen=mosaic(1,freeze,s);
+  frozen.addlayer();
+  assert(frozen.layers() == 2);
+  assert(frozen.rules[0].layers() == 2);
+  frozen.updatelayer(fillpen=red,layer=1);
+  assert(frozen.tesserae[0].drawtile[1].fillpen == red);
+
+  void customize(tessera[] ts,int k) {
+    if(k == 2) {
+      ts[0].drawtile=new tile[] {copy(ts[0].drawtile[0])};
+      ts[1].drawtile=ts[0].drawtile;
+    }
+  }
+  mosaic shared=mosaic(2,customize,s);
+  shared.addlayer(2);
+  for(tessera t : shared.tesserae) assert(t.layers() == 3);
+  for(tessera t : shared.rules[0].tesserae) assert(t.layers() == 3);
+}
