@@ -669,88 +669,58 @@ substitution duplicate(substitution s1) {
   return s2;
 }
 
-private substitution[] rulecopy(substitution[] rules) {
-  substitution[] rules_copy;
+// Preserve shared tiles and drawing arrays while copying a mosaic.
+private struct tilecopier {
+  tile[] originals;
+  tile[] copies;
+  tile[][] arrays;
+  tile[][] arraycopies;
 
-  tile[] knowntiles;
-  tile[] knowntiles_copy;
-
-  for(substitution rule : rules) {
-    knowntiles.push(rule.supertile);
-    knowntiles_copy.push(copy(rule.supertile));
-  }
-
-  int[] sup_index=sequence(knowntiles.length);
-  int[] pro_index;
-
-  for(substitution rule : rules) {
-    for(tessera t : rule.tesserae) {
-      if(t.iterindex != -1) {
-        // If this tessera already corresponds to a known supertile,
-        // we can use that.
-        pro_index.push(t.iterindex);
-      } else {
-        // This case occurs during initialization or if a prototile doesn't
-        // have it's own rule.
-        int kp=searchtile(knowntiles,t.prototile);
-        if(kp == -1) {
-          knowntiles.push(t.prototile);
-          knowntiles_copy.push(copy(t.prototile));
-          pro_index.push(knowntiles.length-1);
-        } else {
-          pro_index.push(kp);
-        }
-      }
+  tile get(tile t) {
+    int i=searchtile(originals,t);
+    if(i < 0) {
+      originals.push(t);
+      copies.push(copy(t));
+      i=originals.length-1;
     }
+    return copies[i];
   }
 
-  int L=0;
-  for(int i=0; i < rules.length; ++i) {
-    substitution rulei=rules[i];
-    substitution rulei_copy=substitution(knowntiles_copy[sup_index[i]],
-                                         rulei.inflation);
-    for(int j=0; j < rulei.tesserae.length; ++j) {
-      tessera tj=copy(rulei.tesserae[j]);
-      tj.supertile=knowntiles_copy[sup_index[i]];
-      tj.prototile=knowntiles_copy[pro_index[L+j]];
-      for(int k=0; k < rulei.tesserae[j].drawtile.length; ++k) {
-        // We copy all drawtiles as they don't affect the substitution rules
-        tj.drawtile[k]=copy(rulei.tesserae[j].drawtile[k]);
-      }
-      rulei_copy.tesserae.push(tj);
-    }
-    L=L+rules[i].tesserae.length;
-    rules_copy.push(rulei_copy);
+  tile[] get(tile[] ts) {
+    for(int i=0; i < arrays.length; ++i)
+      if(alias(arrays[i],ts)) return arraycopies[i];
+    tile[] result;
+    for(tile t : ts) result.push(get(t));
+    arrays.push(ts);
+    arraycopies.push(result);
+    return result;
   }
-  return rules_copy;
+
+  tessera get(tessera t) {
+    tessera result=duplicate(t);
+    result.supertile=get(t.supertile);
+    result.prototile=get(t.prototile);
+    result.drawtile=get(t.drawtile);
+    return result;
+  }
 }
 
-// Copy a mosaic tessera to a new mosaic with new rules.
-// Used by the copy(mosaic) function.
-private tessera[] copy_mosaic_tesserae(tessera[] tesserae,
-                                       substitution[] rules) {
-  tessera[] tesserae_copy;
-  for(tessera t : tesserae) {
-    if(t.ruleindex >= 0) {
-      int i=t.ruleindex;
-      int j=t.tessindex;
-
-      tessera t2=tessera(t.transform, rules[i].supertile,
-                         rules[i].tesserae[j].prototile,
-                         rules[i].tesserae[j].drawtile,
-                         rules[i].tesserae[j].ruleindex,
-                         rules[i].tesserae[j].tessindex,
-                         rules[i].tesserae[j].iterindex, t.iterate
-                         ...copy(rules[i].tesserae[j].tag));
-      tesserae_copy.push(t2);
-    } else {
-      tessera t2=copy(t);
-      if(t.prototile == t.supertile) t2.prototile=rules[0].supertile;
-      t2.supertile=rules[0].supertile;
-      tesserae_copy.push(t2);
-    }
+private substitution[] rulecopy(substitution[] rules, tilecopier copies) {
+  substitution[] result;
+  for(substitution rule : rules) {
+    substitution rulecopy=substitution(copies.get(rule.supertile),rule.inflation);
+    for(tessera t : rule.tesserae)
+      rulecopy.tesserae.push(copies.get(t));
+    result.push(rulecopy);
   }
-  return tesserae_copy;
+  return result;
+}
+
+// Copy current tessera state, retaining its connections to the copied rules.
+private tessera[] copy_mosaic_tesserae(tessera[] tesserae, tilecopier copies) {
+  tessera[] result;
+  for(tessera t : tesserae) result.push(copies.get(t));
+  return result;
 }
 
 
@@ -896,7 +866,8 @@ struct mosaic {
   private void initializer(int n, void updatetesserae(tessera[], int),
                            substitution[] rules) {
     this.checkRulesError(rules);
-    this.rules=rulecopy(rules);
+    tilecopier copies=new tilecopier;
+    this.rules=rulecopy(rules,copies);
 
     this.inflation=this.rules[0].inflation;
     this.initialtile=this.rules[0].supertile;
@@ -921,8 +892,9 @@ struct mosaic {
 
   // Initialization of mosaic with another mosaic
   void operator init(mosaic M) {
-    this.rules=rulecopy(M.rules);
-    this.tesserae=copy_mosaic_tesserae(M.tesserae,this.rules);
+    tilecopier copies=new tilecopier;
+    this.rules=rulecopy(M.rules,copies);
+    this.tesserae=copy_mosaic_tesserae(M.tesserae,copies);
     this.initialtile=this.rules[0].supertile;
     this.inflation=this.rules[0].inflation;
     this.tilecount=copy(M.tilecount);
