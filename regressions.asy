@@ -54,3 +54,49 @@ import mosaic;
   c.substitute(1);
   assert(c.tesserae.length == 9);
 }
+
+// Callback tile changes take effect, including original input tile references.
+{
+  tile a=unitsquare;
+  tile b=(0,0)--(2,0)--(0,2)--cycle;
+  substitution sa=substitution(a);
+  sa.addtile();
+  substitution sb=substitution(b);
+  sb.addtile();
+  sb.addtile(shift(1,0));
+  mosaic m=mosaic(0,sa,sb);
+  void chooseB(tessera[] ts,int k) {
+    if(k == 1) ts[0].prototile=m.rules[1].supertile;
+  }
+  m.substitute(1,chooseB);
+  assert(m.tesserae[0].iterindex == 1);
+  mosaic c=copy(m);
+  c.substitute(1);
+  assert(c.tesserae.length == 2);
+  void chooseOriginalB(tessera[] ts,int k) {
+    if(k == 0) ts[0].prototile=b;
+  }
+  mosaic original=mosaic(1,chooseOriginalB,sa,sb);
+  assert(original.tesserae.length == 2);
+
+  // An unknown type stops substituting without overwriting explicit freezing.
+  tile unknown=unitcircle;
+  void chooseUnknown(tessera[] ts,int k) {
+    if(k == 0) ts[0].prototile=unknown;
+  }
+  mosaic stopped=mosaic(1,chooseUnknown,sa,sb);
+  assert(stopped.tesserae.length == 1);
+  assert(stopped.tesserae[0].iterindex == -1);
+  assert(stopped.tesserae[0].iterate);
+  void restoreB(tessera[] ts,int k) {ts[0].prototile=b;}
+  stopped.substitute(1,restoreB);
+  stopped.substitute(1);
+  assert(stopped.tesserae.length == 2);
+  void freezeB(tessera[] ts,int k) {
+    if(k == 0) {
+      ts[0].prototile=b;
+      ts[0].iterate=false;
+    }
+  }
+  assert(mosaic(2,freezeB,sa,sb).tesserae.length == 1);
+}

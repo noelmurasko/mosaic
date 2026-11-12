@@ -749,9 +749,23 @@ struct mosaic {
   restricted substitution[] rules;
   restricted real inflation;
   restricted int[] tilecount;
+  private tile[] originaltiles;
 
   restricted int layers() {
     return this.tesserae.length > 0 ? this.tesserae[0].layers() : 0;
+  }
+
+  // Resolve callback tile types against both input tiles and internal copies.
+  private void set_iterindex(tessera[] tesserae) {
+    tile[] supertiles;
+    for(substitution rule : rules)
+      supertiles.push(rule.supertile);
+    for(tessera t : tesserae) {
+      int k=searchtile(supertiles,t.prototile);
+      if(k < 0) k=searchtile(originaltiles,t.prototile);
+      t.iterindex=k;
+      if(k >= 0) t.prototile=supertiles[k];
+    }
   }
 
   // Perform an iteration of a tessera t, and push the result onto the array
@@ -780,11 +794,12 @@ struct mosaic {
     for(int k=0; k < n; ++k) {
       tessera[] tesserae;
       for(tessera t : this.tesserae)
-        if(t.iterate)
+        if(t.iterate && t.iterindex >= 0)
           this.iterate(t, tesserae);
         else
           tesserae.push(scale(inflation)*t);
       updatetesserae(tesserae, this.n+k+1);
+      set_iterindex(tesserae);
       this.tesserae=tesserae;
       this.tilecount.push(tesserae.length);
     }
@@ -810,25 +825,11 @@ struct mosaic {
     }
   }
 
-  // Sets the ruleindex and iterindex in this.rules
-  // If prototile doesn't correspond to supertile, set iterate=0.
+  // Set rule provenance separately from each tessera's current tile type.
   private void set_index() {
-    for(int i=0; i < this.rules.length; ++i)
+    for(int i=0; i < this.rules.length; ++i) {
       this.rules[i].set_ruleindex(i);
-
-    tile[] supertiles;
-    for(substitution rule : rules)
-      supertiles.push(rule.supertile);
-
-    for(substitution rule : rules) {
-      for(tessera t : rule.tesserae) {
-        int k=searchtile(supertiles, t.prototile);
-        if(k == -1) {
-          t.iterate=false;
-        } else {
-          t.iterindex=k;
-        }
-      }
+      set_iterindex(this.rules[i].tesserae);
     }
   }
 
@@ -852,6 +853,7 @@ struct mosaic {
     this.tesserae[0].iterindex=0;
     this.tilecount.push(1);
     updatetesserae(this.tesserae,0);
+    set_iterindex(this.tesserae);
   }
 
   // Common inititalization code.
@@ -866,6 +868,7 @@ struct mosaic {
   private void initializer(int n, void updatetesserae(tessera[], int),
                            substitution[] rules) {
     this.checkRulesError(rules);
+    for(substitution rule : rules) originaltiles.push(rule.supertile);
     tilecopier copies=new tilecopier;
     this.rules=rulecopy(rules,copies);
 
@@ -892,6 +895,7 @@ struct mosaic {
 
   // Initialization of mosaic with another mosaic
   void operator init(mosaic M) {
+    this.originaltiles=copy(M.originaltiles);
     tilecopier copies=new tilecopier;
     this.rules=rulecopy(M.rules,copies);
     this.tesserae=copy_mosaic_tesserae(M.tesserae,copies);
