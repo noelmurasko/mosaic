@@ -1,9 +1,14 @@
-// Run with: asy -noV regressions.asy
-// Expected failures: add -u radial-affine, negative-init, or negative-substitute.
+// Run all positive checks with: asy -noV regressions.asy
+// run-tests.zsh also verifies the expected failures in separate processes.
 import mosaic;
 
+// -u selects a test; Asymptote appends a semicolon to this setting.
+bool test(string name) {
+  return settings.user == "" || find(settings.user,name+";") == 0;
+}
+
 // Copying must preserve single-tile substitutions and accept empty mosaics.
-{
+if(test("copy-mosaic")) {
   tile a=unitsquare;
   tile b=(0,0)--(2,0)--(0,2)--cycle;
   substitution sa=substitution(a);
@@ -13,6 +18,8 @@ import mosaic;
   sb.addtile(shift(1,0));
   mosaic m=mosaic(1,sa,sb);
   mosaic c=copy(m);
+  assert(c.n == m.n && c.tilecount.length == m.tilecount.length);
+  assert(c.tesserae[0].transform == m.tesserae[0].transform);
   assert(c.tesserae[0].iterindex == 1);
   assert(c.tesserae[0].drawtile[0].fillpen == red);
   m.substitute(1);
@@ -25,10 +32,11 @@ import mosaic;
   assert(initial.n == 0);
   initial.substitute(1);
   assert(initial.tesserae[0].iterindex == 1);
+  write("Single-tile copies follow the same rule; empty and initial copies work.");
 }
 
 // Copies retain independent decorations and sharing without aliasing the source.
-{
+if(test("copy-state")) {
   tile a=unitsquare;
   substitution s=substitution(a);
   s.addtile(blue);
@@ -52,12 +60,16 @@ import mosaic;
   assert(c.tesserae[2].drawtile[0].fillpen == green);
   assert(c.tesserae[0].drawtile[0].fillpen == red);
   assert(m.tesserae[2].drawtile[0].fillpen == blue);
+  mosaic moved=shift(2,3)*m;
+  assert(moved.tesserae[0].drawtile[0].fillpen == red);
+  assert(moved.tesserae[0].tag[0] == "custom");
   c.substitute(1);
   assert(c.tesserae.length == 9);
+  write("Copies and transforms preserve custom state, sharing, and source isolation.");
 }
 
 // Callback tile changes take effect, including original input tile references.
-{
+if(test("callback")) {
   tile a=unitsquare;
   tile b=(0,0)--(2,0)--(0,2)--cycle;
   substitution sa=substitution(a);
@@ -100,14 +112,17 @@ import mosaic;
     }
   }
   assert(mosaic(2,freezeB,sa,sb).tesserae.length == 1);
+  write("Callback type changes select the right rule; freezing and unknown types work.");
 }
 
 // Radial shading follows similarity transforms, including reflections.
-{
+if(test("radial") || test("radial-affine")) {
   tile shaded=tile(unitsquare,red,(0,0),1,blue,(1,1),2);
   tile enlarged=shift(2,4)*rotate(30)*scale(-3)*shaded;
   assert(abs(enlarged.radialra-3) < sqrtEpsilon);
   assert(abs(enlarged.radialrb-6) < sqrtEpsilon);
+  assert(length(enlarged.radialb-
+                (shift(2,4)*rotate(30)*scale(-3))*(1,1)) < sqrtEpsilon);
   tile reflected=reflect((0,0),(0,1))*enlarged;
   assert(abs(reflected.radialrb-6) < sqrtEpsilon);
   tile unchanged=shift(5,8)*shaded;
@@ -117,10 +132,11 @@ import mosaic;
     tile unsupported=xscale(2)*shaded;
     abort("Expected rejection of nonuniform radial shading.");
   }
+  write("Scaling by 3 changes radii 1,2 to 3,6; rigid transforms preserve radii.");
 }
 
 // Add each layer once per drawing array, including a frozen initial tile.
-{
+if(test("layers")) {
   tile a=unitsquare;
   substitution s=substitution(a);
   s.addtile();
@@ -145,10 +161,11 @@ import mosaic;
   shared.addlayer(2);
   for(tessera t : shared.tesserae) assert(t.layers() == 3);
   for(tessera t : shared.rules[0].tesserae) assert(t.layers() == 3);
+  write("Frozen tiles receive layers; shared arrays receive each new layer once.");
 }
 
 // The initial tile has the normalized rule layer count before its callback.
-{
+if(test("initial-layers")) {
   tile a=unitsquare;
   substitution s=substitution(a);
   s.addtile();
@@ -165,10 +182,11 @@ import mosaic;
   assert(c.tesserae[0].drawtile[1].fillpen == red);
   m.substitute(1);
   assert(m.layers() == 2);
+  write("Initial tiles have both layers before callbacks, updates, and copying.");
 }
 
 // Copies and transforms preserve deleted tags instead of inheriting them again.
-{
+if(test("tags")) {
   tile a=tile(unitsquare,"base");
   tessera t=tessera(a);
   t.deletetag();
@@ -180,10 +198,11 @@ import mosaic;
   assert(c.tag.length == 1 && c.tag[0] == "custom");
   c.addtag("copy-only");
   assert(t.tag.length == 1);
+  write("Deleted tags remain deleted in copies, duplicates, and transforms.");
 }
 
 // Rule tags survive mosaic construction and copying and reach future tiles.
-{
+if(test("rule-tags")) {
   tile a=unitsquare;
   substitution s=substitution(a,"group");
   s.addtile();
@@ -197,10 +216,11 @@ import mosaic;
   assert(c.rules[0].tesserae[1].tag[0] == "group");
   assert(c.rules[0].tesserae[0].tag.length == 0);
   assert(m.rules[0].tesserae.length == 1);
+  write("Rule tags survive copying and reach new tiles without restoring deleted tags.");
 }
 
 // Zero substitutions preserve state; negative counts must be rejected.
-{
+if(test("zero-count") || test("negative-init") || test("negative-substitute")) {
   tile a=unitsquare;
   substitution s=substitution(a);
   s.addtile();
@@ -216,4 +236,5 @@ import mosaic;
     m.substitute(-1);
     abort("Expected rejection of a negative substitution count.");
   }
+  write("Zero substitutions leave the iteration count, tiles, and history unchanged.");
 }
