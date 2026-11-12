@@ -800,6 +800,7 @@ struct mosaic {
   // updatetesserae(tesseare, k), where tesserae is an array of tessera in the
   // mosaic after k total iterations. Add m to this.n.
   void substitute(int n, void updatetesserae(tessera[], int)) {
+    assert(n >= 0, "Substitution count must be nonnegative.");
     for(int k=0; k < n; ++k) {
       tessera[] tesserae;
       for(tessera t : this.tesserae)

@@ -1,4 +1,5 @@
 // Run with: asy -noV regressions.asy
+// Expected failures: add -u radial-affine, negative-init, or negative-substitute.
 import mosaic;
 
 // Copying must preserve single-tile substitutions and accept empty mosaics.
@@ -196,4 +197,23 @@ import mosaic;
   assert(c.rules[0].tesserae[1].tag[0] == "group");
   assert(c.rules[0].tesserae[0].tag.length == 0);
   assert(m.rules[0].tesserae.length == 1);
+}
+
+// Zero substitutions preserve state; negative counts must be rejected.
+{
+  tile a=unitsquare;
+  substitution s=substitution(a);
+  s.addtile();
+  s.addtile(shift(1,0));
+  mosaic m=mosaic(1,s);
+  m.substitute(0);
+  assert(m.n == 1 && m.tesserae.length == 2 && m.tilecount.length == 2);
+  if(find(settings.user,"negative-init") == 0) {
+    mosaic invalid=mosaic(-1,s);
+    abort("Expected rejection of a negative initial substitution count.");
+  }
+  if(find(settings.user,"negative-substitute") == 0) {
+    m.substitute(-1);
+    abort("Expected rejection of a negative substitution count.");
+  }
 }
